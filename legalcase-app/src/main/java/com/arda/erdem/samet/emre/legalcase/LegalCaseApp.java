@@ -34,7 +34,8 @@ public class LegalCaseApp {
    * @param args The command-line arguments passed to the application.
    */
   public static void main(String[] args) {
-    
+	  LegalCase legalCase = new LegalCase(); // LegalCase sınıfından bir nesne oluştur
+      legalCase.mainMenu(); // Ana menüyü başlatmak için mainMenu metodunu çağır
   }
 
 }
