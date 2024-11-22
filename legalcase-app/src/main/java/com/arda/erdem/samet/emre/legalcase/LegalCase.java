@@ -22,3 +22,4 @@ package com.arda.erdem.samet.emre.legalcase;
 public class LegalCase {
 
 }
+d
