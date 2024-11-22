@@ -22,4 +22,3 @@ package com.arda.erdem.samet.emre.legalcase;
 public class LegalCase {
 
 }
-//git yüklendi
