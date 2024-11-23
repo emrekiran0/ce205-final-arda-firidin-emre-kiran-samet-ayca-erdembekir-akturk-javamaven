@@ -1,14 +1,3 @@
-/**
-
-@file LegalCaseApp.java
-@brief This file serves as the main application file for the LegalCase App.
-@details This file contains the entry point of the application, which is the main method. It initializes the necessary components and executes the LegalCase App.
-*/
-/**
-
-@package com.arda.erdem.samet.emre.legalcase
-@brief The com.arda.erdem.samet.emre.legalcase package contains all the classes and files related to the LegalCase App.
-*/
 package com.arda.erdem.samet.emre.legalcase;
 
 /**
@@ -22,7 +11,6 @@ package com.arda.erdem.samet.emre.legalcase;
  * @author ugur.coruh
  */
 public class LegalCaseApp {
- 
 
   /**
    * @brief The main entry point of the LegalCase App.
@@ -34,10 +22,8 @@ public class LegalCaseApp {
    * @param args The command-line arguments passed to the application.
    */
   public static void main(String[] args) {
-	  LegalCase legalCase = new LegalCase(); // LegalCase sınıfından bir nesne oluştur
-      legalCase.mainMenu(); // Ana menüyü başlatmak için mainMenu metodunu çağır
+      LegalCase.mainMenu(); // Statik metodu doğrudan çağırıyoruz
   }
-
 }
 
 
