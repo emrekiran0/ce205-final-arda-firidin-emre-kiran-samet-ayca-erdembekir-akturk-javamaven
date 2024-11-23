@@ -65,7 +65,6 @@ public class LegalCase {
             out.print("Seçiminizi girin: ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine(); // Tamponu temizle
                 return choice;
             } else {
                 out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
@@ -240,6 +239,7 @@ public class LegalCase {
             if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d%n", caseID, newIndex);
+                   
                 return true;
             }
 
@@ -248,6 +248,7 @@ public class LegalCase {
 
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
         return false;
+        
     }
 
 
@@ -355,8 +356,7 @@ public class LegalCase {
     	    // Uygun boş index bulundu, yeni davayı tabloya ekle
     	    hashTableProbing[index] = newCase.caseID;
 
-    	    // Debug çıktısı (isteğe bağlı)
-    	    out.printf("Case ID: %d inserted into hash table at index: %d%n", newCase.caseID, index);
+    	    
     	}
 
      public static boolean addCase() {
@@ -453,12 +453,12 @@ public class LegalCase {
     	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
 
     	    // Save case to file
-    	    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
-    	        oos.writeObject(newCase);
+    	    try (FileOutputStream fos = new FileOutputStream(fileName, true)) {
+    	        
     	    } catch (IOException e) {
-    	        out.println("Error saving the case: " + e.getMessage());
-    	        return false;
+    	        System.out.println("Debug: Failed to create FileOutputStream. Error: " + e.getMessage());
     	    }
+
 
     	    // Insert into hash table
     	    insertIntoHashTable(newCase);
