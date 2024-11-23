@@ -1,6 +1,9 @@
 package com.arda.erdem.samet.emre.legalcase;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -13,12 +16,17 @@ import java.util.Scanner;
  */
 
 public class LegalCase {
+	
     private static final Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
-        mainMenu(); // `mainMenu()` metodunu çağırırken bu metodu `static` olarak tanımladık.
-    } // <-- `main` metodunun eksik kapanış parantezi burada eklenmiştir.
-
+        mainMenu();
+        
+    }
+    
+    static int MAX_YEARS = 10;
+    static int MAX_MONTHS = 12;
+    static int MAX_DAYS = 31;
+    
     public static void clearScreen() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -37,11 +45,49 @@ public class LegalCase {
             System.out.print("Seçiminizi girin: ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine();
+                scanner.nextLine(); // Tamponu temizle
                 return choice;
             } else {
-                System.out.println("Geçersiz seçim! Lütfen tekrar deneyin: ");
-                scanner.nextLine();
+                System.out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
+                scanner.nextLine(); // Geçersiz girişi temizle
+            }
+        }
+    }
+    
+    private static int[][][] sparseMatrix = new int[MAX_YEARS][MAX_MONTHS][MAX_DAYS]; // Sparse matrix
+    
+    public static boolean isValidDate(int day, int month, int year) {
+        if (month < 1 || month > MAX_MONTHS) { // Ayın 1 ile 12 arasında olup olmadığını kontrol eder
+            return false;
+        }
+        if (day < 1 || day > MAX_DAYS) { // Günün 1 ile 31 arasında olup olmadığını kontrol eder
+            return false;
+        }
+        return true; // Tarih geçerliyse `true` döner
+    }
+   
+    private static void initializeSparseMatrix(int[][][] sparseMatrix) {
+        for (int year = 0; year < MAX_YEARS; year++) {
+            for (int month = 0; month < MAX_MONTHS; month++) {
+                for (int day = 0; day < MAX_DAYS; day++) {
+                    sparseMatrix[year][month][day] = 0; // Tüm tarihleri boş olarak işaretle
+                }
+            }
+        }
+    }
+	
+    private static void findNextAvailableDate(int[][][] sparseMatrix, int[] scheduledDate) {
+        for (int year = 0; year < sparseMatrix.length; year++) {
+            for (int month = 0; month < sparseMatrix[year].length; month++) {
+                for (int day = 0; day < sparseMatrix[year][month].length; day++) {
+                    if (sparseMatrix[year][month][day] == 0 && isValidDate(day + 1, month + 1, 2024 + year)) {
+                        sparseMatrix[year][month][day] = 1; // Tarihi işaretle
+                        scheduledDate[0] = day + 1;        // Gün
+                        scheduledDate[1] = month + 1;      // Ay
+                        scheduledDate[2] = 2024 + year;    // Yıl
+                        return;
+                    }
+                }
             }
         }
     }
@@ -63,15 +109,12 @@ public class LegalCase {
             switch (choice) {
                 case 1:
                     caseTracking(); // Dava Takibi ile ilgili fonksiyon
-                    System.out.println("Case Tracking...");
                     break;
                 case 2:
-                    createDocument(); // Belge oluşturma fonksiyonu
-                    System.out.println("Creating Document...");
+                //    createDocument(); // Belge oluşturma fonksiyonu
                     break;
                 case 3:
-                    documents(); // Belgeler ile ilgili fonksiyon
-                    System.out.println("Documents...");
+                //   documents(); // Belgeler ile ilgili fonksiyon
                     break;
                 case 4:
                     System.out.println("Exiting...");
@@ -89,19 +132,311 @@ public class LegalCase {
         return true;
     }
 
-    // Eksik metotların tanımlanması
-    public static void caseTracking() {
-        // `caseTracking()` metodunun içeriği burada
-        System.out.println("Tracking a case...");
+   
+    public static boolean caseTracking() {
+        int choice;
+
+        do {
+            clearScreen(); // Ekranı temizlemek için clearScreen metodunu çağırıyoruz
+            System.out.println("\n===== Case Tracking Menu =====");
+            System.out.println("1. Add Case");
+            System.out.println("2. Delete Case");
+            System.out.println("3. Incorrect Deletion");
+            System.out.println("4. Current Cases");
+            System.out.println("5. Case Dates");
+            System.out.println("6. Plaintiffs");
+            System.out.println("7. Cases That May Be Connected");
+            System.out.println("8. Cases That May Arise");
+            System.out.println("9. Sort By ID");
+            System.out.println("10. Exit");
+            System.out.print("\nEnter your choice: ");
+
+            choice = getInput(); // Kullanıcıdan seçim alıyoruz
+
+            switch (choice) {
+                case 1:
+                  // addCase();
+                    break;
+                case 2:
+                  //  deleteCase();
+                    break;
+                case 3:
+                  //  incorrectDeletionCase();
+                    break;
+                case 4:
+                  //  currentCases();
+                    break;
+                case 5:
+                  //  caseDates();
+                    break;
+                case 6:
+                 //   displayPlaintiffs();
+                    break;
+                case 7:
+                  //  casesThatMayBeConnectedMenu();
+                    break;
+                case 8:
+                 //   casesThatMayAriseMenu();
+                    break;
+                case 9:
+                  //  sortByID();
+                    break;
+                case 10:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.print("Invalid choice! Please press a key to continue: ");
+                    try {
+                        System.in.read(); // Kullanıcıdan bir tuşa basmasını bekliyoruz
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        } while (choice != 10);
+
+        return true;
+    }
+    
+    public static int TABLE_SIZE = 100; // Sabit bir değer
+    
+    public static void initializeHashTable(int[] hashTableProbing, int TABLE_SIZE) {
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            hashTableProbing[i] = -1;  // -1 indicates that the slot is empty
+        }
+    }
+    public static int hashFunction(int caseID, int TABLE_SIZE) {
+        return caseID % TABLE_SIZE;
     }
 
-    public static void createDocument() {
-        // `createDocument()` metodunun içeriği burada
-        System.out.println("Document created...");
+    public static boolean quadraticProbing(int caseID) {
+    	int index = hashFunction(caseID, TABLE_SIZE);
+        int i = 0;
+
+        while (hashTableProbing[(index + i * i) % TABLE_SIZE] != -1) {
+            i++;
+            if (i >= TABLE_SIZE) {
+                System.out.println("Hash table is full. Cannot insert case ID: " + caseID);
+                return false; // Tablo dolu
+            }
+        }
+
+        hashTableProbing[(index + i * i) % TABLE_SIZE] = caseID;
+        System.out.println("Case ID: " + caseID + " ----- Inserted at Index: " + ((index + i * i) % TABLE_SIZE));
+        return true;
+    }
+    public static boolean progressiveOverflow(int caseID) {
+        int index = hashFunction(caseID);
+        int i = 0;
+
+        // Progressive overflow kullanarak uygun boş alanı bul ve yerleştir
+        while (hashTableProbing[(index + i) % TABLE_SIZE] != -1) {
+            i++; // Bir sonraki indeksi dene
+            if (i >= TABLE_SIZE) {
+                System.out.println("Hash table is full. Cannot insert case ID: " + caseID);
+                return false; // Tablo dolu
+            }
+        }
+
+        // Boş bir yere yerleştir
+        hashTableProbing[(index + i) % TABLE_SIZE] = caseID;
+
+        // Debug çıktısı
+        System.out.println("Case ID: " + caseID + " ----- Inserted at Index: " + ((index + i) % TABLE_SIZE) + " (progressive overflow)");
+        return true;
     }
 
-    public static void documents() {
-        // `documents()` metodunun içeriği burada
-        System.out.println("Displaying documents...");
+    // Hash fonksiyonu
+    private static int hashFunction(int caseID) {
+        return caseID % TABLE_SIZE;
     }
+   
+     public static int[] hashTableProbing = new int[TABLE_SIZE]; // Hash table için dizi
+		
+     public static int doubleHashing(int caseID, int attempt) {
+         int primaryHash = hashFunction(caseID);       // Birinci hash fonksiyonu
+         int secondaryHash = secondHashFunction(caseID); // İkinci hash fonksiyonu
+         return (primaryHash + attempt * secondaryHash) % TABLE_SIZE; // Double hashing
+     }
+     
+     public static boolean linearProbing(int caseID) {
+    	    int index = hashFunction(caseID); // Başlangıç indeksi
+    	    int i = 0;
+
+    	    // Case ID'yi uygun yere yerleştir
+    	    hashTableProbing[(index + i) % TABLE_SIZE] = caseID;
+
+    	    // Debug çıktısı
+    	    System.out.printf("Case ID: %d ----- Inserted at Index: %d (linear probing)%n", caseID, (index + i) % TABLE_SIZE);
+
+    	    return true;
+    	}
+
+     
+     public static int secondHashFunction(int caseID) {
+         return 7 - (caseID % 7); // Double hashing için ikinci hash fonksiyonu
+     }
+     
+     public static boolean doubleHashingInsert(int caseID) {
+         int index = hashFunction(caseID); // İlk hash fonksiyonu ile başlangıç indeksi
+         int stepSize = secondHashFunction(caseID); // İkinci hash fonksiyonu ile adım boyutu
+         int i = 0;
+
+         // Boş bir yer bulana kadar ilerle
+         while (hashTableProbing[(index + i * stepSize) % TABLE_SIZE] != -1) {
+             i++; // Bir sonraki adımı dene
+             if (i >= TABLE_SIZE) {
+                 System.out.println("Hash table is full. Cannot insert case ID: " + caseID);
+                 return false; // Tablo dolu
+             }
+        
+      // Boş bir yere yerleştir
+         hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
+
+         // Debug çıktısı
+         System.out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
+
+         return true;
+     }
+
+         // Boş bir yere yerleştir
+         hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
+
+         // Debug çıktısı
+         System.out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
+
+         return true;
+     }
+    
+     public static boolean isHashTableFull() {
+         for (int i = 0; i < TABLE_SIZE; i++) {
+             if (hashTableProbing[i] == -1) {
+                 return false; // Tablo henüz dolu değil
+             }
+         }
+         return true; // Tablodaki tüm slotlar dolu
+     
+     }
+	
+     public static boolean addCase() {
+    	    clearScreen();
+    	    String fileName = "cases.bin";
+
+    	    Random rand = new Random();
+    	    int caseID;
+    	    int attempt = 0;
+    	    boolean inserted = false;
+
+    	    int choice;
+    	    do {
+    	        clearScreen();
+    	        System.out.println("----- Select Collision Resolution Strategy -----");
+    	        System.out.println("1- Quadratic Probing");
+    	        System.out.println("2- Progressive Overflow");
+    	        System.out.println("3- Linear Probing");
+    	        System.out.println("4- Double Hashing");
+    	        System.out.print("\nEnter your choice: ");
+    	        choice = getInput();
+
+    	        // Generate random Case ID
+    	        caseID = rand.nextInt(900000) + 100000;
+
+    	        switch (choice) {
+    	            case 1:
+    	                inserted = quadraticProbing(caseID);
+    	                break;
+    	            case 2:
+    	                inserted = progressiveOverflow(caseID);
+    	                break;
+    	            case 3:
+    	                inserted = linearProbing(caseID);
+    	                break;
+    	            case 4:
+    	                inserted = doubleHashing(caseID);
+    	                break;
+    	            default:
+    	                System.out.println("Invalid strategy choice! Defaulting to Quadratic Probing.");
+    	                inserted = quadraticProbing(caseID);
+    	                break;
+    	        }
+    	        attempt++;
+    	    } while (!inserted && attempt < MAX_ATTEMPTS);
+
+    	    if (!inserted) {
+    	        System.out.println("Failed to insert Case ID after maximum attempts.");
+    	        return false;
+    	    }
+
+    	    scanner.nextLine(); // Clear buffer
+    	    System.out.print("Enter Case Title: ");
+    	    String caseTitle = scanner.nextLine();
+
+    	    System.out.print("Plaintiff: ");
+    	    String plaintiff = scanner.nextLine();
+
+    	    System.out.print("Defendant: ");
+    	    String defendant = scanner.nextLine();
+
+    	    System.out.println("\nCase Types:");
+    	    System.out.println("- Criminal         - Civil         - Commercial        - Administrative");
+    	    System.out.println("- Divorce          - Custody       - Traffic           - Dismissal");
+    	    System.out.println("- Compensation     - Inheritance   - Title deed");
+    	    System.out.print("\nEnter Case Type: ");
+    	    String caseType = scanner.nextLine();
+
+    	    String date;
+    	    while (true) {
+    	        System.out.print("Date of Opening of the Case (dd/mm/yyyy): ");
+    	        date = scanner.nextLine();
+
+    	        String[] parts = date.split("/");
+    	        if (parts.length == 3 && isValidDate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]))) {
+    	            break;
+    	        } else {
+    	            System.out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
+    	        }
+    	    }
+
+    	    int[] scheduledDate = new int[3];
+    	    findNextAvailableDate(sparseMatrix, scheduledDate);
+
+    	    if (scheduledDate[0] == 0 && scheduledDate[1] == 0 && scheduledDate[2] == 0) {
+    	        System.out.println("No available date for scheduling.");
+    	        return false;
+    	    }
+
+    	    String scheduled = String.format("%02d/%02d/%d", scheduledDate[0], scheduledDate[1], scheduledDate[2]);
+
+    	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
+
+    	    // Save case to file
+    	    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName, true))) {
+    	        oos.writeObject(newCase);
+    	    } catch (IOException e) {
+    	        System.out.println("Error saving the case: " + e.getMessage());
+    	        return false;
+    	    }
+
+    	    // Insert into hash table
+    	    insertIntoHashTable(newCase);
+
+    	    System.out.println("\nScheduled Hearing Date: " + scheduled);
+    	    System.out.print("Please press Enter to return to the Case Tracking Menu...");
+    	    scanner.nextLine();
+
+    	    return true;
+    	}
 }
+
+
+    
+  
+
+
+
+
+   
+
+
+ 
+
