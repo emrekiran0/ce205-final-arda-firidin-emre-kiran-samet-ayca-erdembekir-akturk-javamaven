@@ -113,6 +113,8 @@ public class LegalCase {
     }
 
     public static boolean mainMenu() {
+        initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
+
         int choice;
 
         do {
@@ -232,30 +234,18 @@ public class LegalCase {
         int index = hashFunction(caseID, TABLE_SIZE);
         int i = 0;
 
-        // Tablonun doluluğunu kontrol et
-        if (isHashTableFull()) {
-            out.println("Hash table is full. Cannot insert case ID: " + caseID);
-            return false;
-        }
-
-        // Çakışma çözümleme döngüsü
         while (i < TABLE_SIZE) {
             int newIndex = (index + i * i) % TABLE_SIZE;
 
-            // Debugging: İndeks bilgilerini yazdır
-            out.printf("Probing: i=%d, Trying Index=%d%n", i, newIndex);
-
-            // Boş yer bulunduğunda ekle
-            if (hashTableProbing[newIndex] == -1) {
+            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d%n", caseID, newIndex);
                 return true;
             }
 
-            i++;
+            i++; // Bir sonraki deneme
         }
 
-        // Tüm tabloda boş yer bulunamazsa
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
         return false;
     }
@@ -266,30 +256,18 @@ public class LegalCase {
         int index = hashFunction(caseID);
         int i = 0;
 
-        // Tablonun doluluğunu kontrol et
-        if (isHashTableFull()) {
-            out.println("Hash table is full. Cannot insert case ID: " + caseID);
-            return false;
-        }
-
-        // Çakışma çözümleme
         while (i < TABLE_SIZE) {
             int newIndex = (index + i) % TABLE_SIZE;
 
-            // Debugging: İndeks bilgilerini yazdır
-            out.printf("Probing: i=%d, Trying Index=%d%n", i, newIndex);
-
-            // Boş yer bulunduğunda ekle
-            if (hashTableProbing[newIndex] == -1) {
+            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d (progressive overflow)%n", caseID, newIndex);
                 return true;
             }
 
-            i++;
+            i++; // Bir sonraki deneme
         }
 
-        // Tüm tabloda boş yer bulunamazsa
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
         return false;
     }
@@ -383,6 +361,8 @@ public class LegalCase {
 
      public static boolean addCase() {
     	    clearScreen();
+    	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
+
     	    String fileName = "cases.bin";
 
     	    Random rand = new Random();

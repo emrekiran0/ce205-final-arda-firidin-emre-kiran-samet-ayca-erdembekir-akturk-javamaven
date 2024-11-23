@@ -21,9 +21,14 @@ public class LegalCaseApp {
    *
    * @param args The command-line arguments passed to the application.
    */
-  public static void main(String[] args) {
-      LegalCase.mainMenu(); // Statik metodu doğrudan çağırıyoruz
-  }
+	public static void main(String[] args) {
+	    // Hash tablosunu başlat
+	    LegalCase.initializeHashTable(LegalCase.hashTableProbing, LegalCase.TABLE_SIZE);
+
+	    // Ana menüyü çağır
+	    LegalCase.mainMenu();
+	}
+
 }
 
 
