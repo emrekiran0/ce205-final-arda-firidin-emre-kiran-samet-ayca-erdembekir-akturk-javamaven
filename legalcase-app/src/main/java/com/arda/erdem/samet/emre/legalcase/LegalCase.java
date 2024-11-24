@@ -4,13 +4,17 @@ import static java.lang.System.out;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -22,7 +26,8 @@ import java.util.Scanner;
  * @author ugur.coruh
  */
 
-public class LegalCase {
+public class LegalCase implements Serializable {
+    private static final long serialVersionUID = 1L;
 	public static final int MAX_ATTEMPTS = 1000;
 	private int caseID;
     private String title;
@@ -43,13 +48,17 @@ public class LegalCase {
         this.plaintiff = plaintiff;
         this.defendant = defendant;
         this.status = status;
-        this.hearingDate = hearingDate;}
+        this.hearingDate = hearingDate;
+        this.date = date;
+        this.scheduled = scheduled;}
 	
     private static final Scanner scanner = new Scanner(System.in);
 
     static int MAX_YEARS = 10;
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
+    
+    public static final String FILE_NAME = "cases.bin";
     
     public static void clearScreen() {
         try {
@@ -188,7 +197,7 @@ public class LegalCase {
                   //  incorrectDeletionCase();
                     break;
                 case 4:
-                  //  currentCases();
+                	currentCases();
                     break;
                 case 5:
                   //  caseDates();
@@ -400,7 +409,6 @@ public class LegalCase {
     	    clearScreen();
     	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
 
-    	    String fileName = "cases.bin";
 
     	    Random rand = new Random();
     	    int caseID;
@@ -490,7 +498,7 @@ public class LegalCase {
     	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
 
     	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
-    	    appendCaseFile(newCase, fileName);
+    	    appendCaseFile(newCase, FILE_NAME);
 
     	    // Insert into hash table
     	    insertIntoHashTable(newCase);
@@ -502,7 +510,114 @@ public class LegalCase {
     	    return true;
     	}
 
-}
+     
+     public static class CaseNode {
+    	    LegalCase data;
+    	    CaseNode next;
+    	    CaseNode prev;
+
+    	    public CaseNode(LegalCase data) {
+    	        this.data = data;
+    	        this.next = null;
+    	        this.prev = null;
+    	    }
+    	}
+
+     public static CaseNode appendNode(CaseNode head, LegalCase data) {
+    	    CaseNode newNode = new CaseNode(data);
+
+    	    if (head == null) {
+    	        return newNode; // Eğer liste boşsa, yeni düğüm baş olur
+    	    } else {
+    	        CaseNode temp = head;
+    	        while (temp.next != null) {
+    	            temp = temp.next; // Listenin sonuna git
+    	        }
+    	        temp.next = newNode; // Yeni düğümü sona ekle
+    	        newNode.prev = temp; // Önceki düğümü ayarla
+    	        return head; // Baş düğümü geri döndür
+    	    }
+    	}
+
+     
+     public static boolean printCase(CaseNode node) {
+    	    System.out.println("\nCase ID: " + node.data.caseID);
+    	    System.out.println("Case Title: " + node.data.title);
+    	    System.out.println("Plaintiff: " + node.data.plaintiff);
+    	    System.out.println("Defendant: " + node.data.defendant);
+    	    System.out.println("Case Type: " + node.data.type);
+    	    System.out.println("Beginning Date: " + node.data.date);
+    	    System.out.println("Scheduled Hearing Date: " + node.data.scheduled);
+    	    System.out.println("-----------------------------");
+    	    return true;
+    	}
+
+     
+     
+     public static boolean currentCases() {
+    	    Scanner scanner = new Scanner(System.in);
+
+    	    CaseNode head = null;
+    	    CaseNode currentNode = null;
+
+    	    File file = new File(FILE_NAME);
+    	    if (!file.exists()) {
+    	        System.out.println("Error: File does not exist. Please add cases first.");
+    	        return false;
+    	    }
+
+    	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+    	        System.out.println("\n===== Current Cases =====\n");
+
+    	        // Dosyadan tüm davaları oku ve listeye ekle
+    	        while (true) {
+    	            try {
+    	                LegalCase currentCase = (LegalCase) ois.readObject();
+    	                head = appendNode(head, currentCase); // Tüm davalar listeye eklenir
+    	            } catch (EOFException e) {
+    	                break; // Dosyanın sonuna ulaşıldı
+    	            }
+    	        }
+
+    	        currentNode = head;
+    	        char choice;
+
+    	        while (true) {
+    	            clearScreen();
+    	            printCase(currentNode); // Mevcut düğümü ekrana yazdır
+
+    	            System.out.println("Options:");
+    	            if (currentNode.prev != null) {
+    	                System.out.println("P - Previous case");
+    	            }
+    	            if (currentNode.next != null) {
+    	                System.out.println("N - Next case");
+    	            }
+    	            System.out.println("Q - Quit");
+    	            System.out.print("Enter your choice: ");
+    	            choice = scanner.next().charAt(0);
+
+    	            if (choice == 'P' || choice == 'p') {
+    	                if (currentNode.prev != null) {
+    	                    currentNode = currentNode.prev; // Önceki düğüme git
+    	                }
+    	            } else if (choice == 'N' || choice == 'n') {
+    	                if (currentNode.next != null) {
+    	                    currentNode = currentNode.next; // Sonraki düğüme git
+    	                }
+    	            } else if (choice == 'Q' || choice == 'q') {
+    	                break; // Çık
+    	            } else {
+    	                System.out.println("Invalid choice. Please try again.");
+    	            }
+    	        }
+
+    	    } catch (IOException | ClassNotFoundException e) {
+    	        System.out.println("Error reading cases: " + e.getClass().getName() + ": " + e.getMessage());
+    	    }
+
+    	    return true;
+    	}}
 
 
     
