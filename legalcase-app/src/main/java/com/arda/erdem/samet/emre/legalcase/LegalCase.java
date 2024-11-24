@@ -1,10 +1,16 @@
 package com.arda.erdem.samet.emre.legalcase;
 
 import static java.lang.System.out;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -26,6 +32,8 @@ public class LegalCase {
     private String status;
     private String hearingDate;
 	private LegalCase next;
+	private Object date;
+	private Object scheduled;
 
     // Constructor
     public LegalCase(int caseID, String title, String type, String plaintiff, String defendant, String status, String hearingDate) {
@@ -38,11 +46,7 @@ public class LegalCase {
         this.hearingDate = hearingDate;}
 	
     private static final Scanner scanner = new Scanner(System.in);
-    public static void main(String[] args) {
-        mainMenu();
-        
-    }
-    
+
     static int MAX_YEARS = 10;
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
@@ -62,12 +66,11 @@ public class LegalCase {
     public static int getInput() {
         int choice;
         while (true) {
-            out.print("Seçiminizi girin: ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
                 return choice;
             } else {
-                out.println("Geçersiz seçim! Lütfen tekrar deneyin.");
+                out.println("Invalid choice! Please try again.");
                 scanner.nextLine(); // Geçersiz girişi temizle
             }
         }
@@ -359,6 +362,40 @@ public class LegalCase {
     	    
     	}
 
+     public static class AppendableObjectOutputStream extends ObjectOutputStream {
+    	    public AppendableObjectOutputStream(OutputStream out) throws IOException {
+    	        super(out);
+    	    }
+
+    	    @Override
+    	    protected void writeStreamHeader() throws IOException {
+    	        // Header'ı yazmaz, böylece dosyaya ekleme yapılabilir
+    	        reset();
+    	    }
+    	}
+     
+
+     public static void appendCaseFile(LegalCase legalCase, String fileName) {
+         try {
+             // Dosya var mı kontrol et
+             boolean fileExists = new File(fileName).exists();
+
+             try (FileOutputStream fos = new FileOutputStream(fileName, true);
+                  ObjectOutputStream oos = fileExists
+                          ? new AppendableObjectOutputStream(fos) // Header eklenmesini önler
+                          : new ObjectOutputStream(fos)) {       // İlk yazma işlemi için
+
+                 // Yeni dava bilgilerini binary formatta dosyaya yaz
+                 oos.writeObject(legalCase);
+             }
+
+             System.out.println("Case has been appended successfully to " + fileName);
+         } catch (IOException e) {
+             System.out.println("Error appending case to file: " + e.getMessage());
+         }
+     }
+
+     
      public static boolean addCase() {
     	    clearScreen();
     	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
@@ -403,7 +440,7 @@ public class LegalCase {
     	                break;
     	        }
     	        attempt++;
-    	      } while (!inserted && attempt < LegalCase.MAX_ATTEMPTS);
+    	    } while (!inserted && attempt < LegalCase.MAX_ATTEMPTS);
 
     	    if (!inserted) {
     	        out.println("Failed to insert Case ID after maximum attempts.");
@@ -452,13 +489,8 @@ public class LegalCase {
 
     	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
 
-    	    // Save case to file
-    	    try (FileOutputStream fos = new FileOutputStream(fileName, true)) {
-    	        
-    	    } catch (IOException e) {
-    	        System.out.println("Debug: Failed to create FileOutputStream. Error: " + e.getMessage());
-    	    }
-
+    	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
+    	    appendCaseFile(newCase, fileName);
 
     	    // Insert into hash table
     	    insertIntoHashTable(newCase);
@@ -469,6 +501,7 @@ public class LegalCase {
 
     	    return true;
     	}
+
 }
 
 
