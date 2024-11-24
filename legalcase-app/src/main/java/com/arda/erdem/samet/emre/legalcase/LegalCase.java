@@ -196,7 +196,7 @@ public class LegalCase implements Serializable {
                    deleteCase();
                     break;
                 case 3:
-                  //  incorrectDeletionCase();
+                  incorrectDeletionCase();
                     break;
                 case 4:
                 	currentCases();
@@ -698,8 +698,58 @@ public class LegalCase implements Serializable {
     	 }
 
     	 return found;
-     }}
+     }
 
+     public static boolean undoDeleteCase() {
+    if (deletedCasesStack.isEmpty()) {
+        System.out.println("No cases available to undo.");
+        return false;
+    }
+
+    LegalCase lastDeletedCase = deletedCasesStack.pop(); // Silinen davayı yığından çıkar
+    try (ObjectOutputStream oos = new AppendableObjectOutputStream(new FileOutputStream(FILE_NAME, true))) {
+        oos.writeObject(lastDeletedCase); // Dosyaya geri ekle
+        System.out.println("Undo successful for Case ID: " + lastDeletedCase.caseID);
+        return true;
+    } catch (IOException e) {
+        System.out.println("Error undoing delete: " + e.getMessage());
+        return false;
+    }
+}
+
+// View and optionally undo the last deleted case
+     public static boolean incorrectDeletionCase() {
+    if (deletedCasesStack.isEmpty()) {
+        System.out.println("No deleted cases to view.");
+        return false;
+    }
+
+    LegalCase lastDeletedCase = deletedCasesStack.peek(); // Yığındaki son davayı gör
+    System.out.println("Last deleted case details:");
+    System.out.println("Case ID: " + lastDeletedCase.caseID);
+    System.out.println("Case Title: " + lastDeletedCase.title);
+
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Do you want to undo the last deleted case? (y/n): ");
+    char confirmation = scanner.nextLine().toLowerCase().charAt(0);
+
+    if (confirmation == 'y') {
+        return undoDeleteCase(); // Geri alma işlemini gerçekleştir
+    } else {
+        System.out.println("Undo operation cancelled.");
+        return false;
+    }
+}
+
+// Check if a case is deleted
+	public static boolean isDeleted(int caseID) {
+    for (LegalCase deletedCase : deletedCasesStack) {
+        if (deletedCase.caseID == caseID) {
+            return true; // Silinmiş bir dava bulundu
+        }
+    }
+    return false; // Silinmiş bir dava yok
+}}
     
   
 
