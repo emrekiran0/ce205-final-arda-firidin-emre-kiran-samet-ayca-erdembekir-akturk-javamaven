@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Stack;
 
 /**
  * @class LegalCase
@@ -28,7 +29,10 @@ import java.util.Scanner;
 
 public class LegalCase implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static Stack<LegalCase> deletedCasesStack = new Stack<>();
 
+
+    private static final int MAX_ATTEMPTS = 1000;
     private int caseID;
     private String title;
     private String type;
@@ -37,12 +41,6 @@ public class LegalCase implements Serializable {
 	private LegalCase next;
 	private String date;
 	private String scheduled;
-
-	
-    // Serializable olmayan alanları transient olarak işaretle
-    
-   // private transient Object scheduled; // Aynı şekilde, transient olarak işaretlenir
-
 
 
     // Constructor
@@ -64,8 +62,6 @@ public class LegalCase implements Serializable {
     
     public static final String FILE_NAME = "cases.bin";
 
-	private static final int MAX_ATTEMPTS = 0;
-    
     public static void clearScreen() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -197,7 +193,7 @@ public class LegalCase implements Serializable {
                  addCase();
                     break;
                 case 2:
-                  //  deleteCase();
+                   deleteCase();
                     break;
                 case 3:
                   //  incorrectDeletionCase();
@@ -560,7 +556,6 @@ public class LegalCase implements Serializable {
     	}
 
      
-     
      public static boolean currentCases() {
     	    Scanner scanner = new Scanner(System.in);
 
@@ -624,8 +619,86 @@ public class LegalCase implements Serializable {
     	    }
 
     	    return true;
-    	}}
+    	}
 
+     
+     //Push deleted case to the stack
+     public static void pushDeletedCase(LegalCase deletedCase) {
+    deletedCasesStack.push(deletedCase);
+     }
+
+     // Pop a deleted case from the stack
+     public static LegalCase popDeletedCase() {
+    if (!deletedCasesStack.isEmpty()) {
+        return deletedCasesStack.pop();
+    } else {
+        System.out.println("No deleted cases available to restore.");
+        return null;
+    }
+}
+
+     
+     // Delete from hash table
+    public static void deleteFromHashTable(int caseID) {
+    int index = hashFunction(caseID);
+    if (hashTableProbing[index] == caseID) {
+        hashTableProbing[index] = -1; // Mark slot as empty
+        System.out.println("Case ID " + caseID + " removed from hash table.");
+    }
+}
+     //Delete case method
+     public static boolean deleteCase() {
+    	 clearScreen();
+    	 Scanner scanner = new Scanner(System.in);
+
+    	 System.out.print("Enter Case ID to delete: ");
+    	 int id = scanner.nextInt();
+
+    	 File file = new File(FILE_NAME);
+    	 File tempFile = new File("temp.bin");
+
+    	 boolean found = false;
+
+    	 try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+    	 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
+
+    		while (true) {
+           try {
+           LegalCase currentCase = (LegalCase) ois.readObject();
+
+           if (currentCase.caseID == id) {
+               found = true;
+               pushDeletedCase(currentCase); // Add to the stack
+               System.out.println("Case ID " + id + " deleted successfully.");
+               System.out.println("Please press Enter to return to Case Tracking Menu...");
+               scanner.nextLine(); // Wait for user input
+           } else {
+               oos.writeObject(currentCase); // Write other cases to temp file
+           }
+
+       } catch (EOFException e) {
+           break; // End of file reached
+       } 
+           }
+
+    	 } catch (IOException | ClassNotFoundException e) {
+    		 System.out.println("Error handling files: " + e.getMessage());
+    	 }
+
+    	 if (found) {
+    		 file.delete(); // Delete original file
+    		 tempFile.renameTo(file); // Rename temp file to original file name
+    		 deleteFromHashTable(id); // Remove from hash table
+    	 } 
+     else {
+	tempFile.delete(); // Remove temporary file
+	System.out.println("Case ID " + id + " not found.");
+	System.out.println("\nPlease press Enter to return to Case Tracking Menu...");
+	scanner.nextLine();
+    	 }
+
+    	 return found;
+     }}
 
     
   
