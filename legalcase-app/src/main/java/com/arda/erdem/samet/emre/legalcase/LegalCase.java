@@ -28,29 +28,33 @@ import java.util.Scanner;
 
 public class LegalCase implements Serializable {
     private static final long serialVersionUID = 1L;
-	public static final int MAX_ATTEMPTS = 1000;
-	private int caseID;
+
+    private int caseID;
     private String title;
     private String type;
     private String plaintiff;
     private String defendant;
-    private String status;
-    private String hearingDate;
 	private LegalCase next;
-	private Object date;
-	private Object scheduled;
+	private String date;
+	private String scheduled;
+
+	
+    // Serializable olmayan alanları transient olarak işaretle
+    
+   // private transient Object scheduled; // Aynı şekilde, transient olarak işaretlenir
+
+
 
     // Constructor
-    public LegalCase(int caseID, String title, String type, String plaintiff, String defendant, String status, String hearingDate) {
+    public LegalCase(int caseID, String title, String type, String plaintiff, String defendant, String date, String scheduled) {
         this.caseID = caseID;
         this.title = title;
         this.type = type;
         this.plaintiff = plaintiff;
         this.defendant = defendant;
-        this.status = status;
-        this.hearingDate = hearingDate;
         this.date = date;
-        this.scheduled = scheduled;}
+        this.scheduled = scheduled;
+    }
 	
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -59,6 +63,8 @@ public class LegalCase implements Serializable {
     static int MAX_DAYS = 31;
     
     public static final String FILE_NAME = "cases.bin";
+
+	private static final int MAX_ATTEMPTS = 0;
     
     public static void clearScreen() {
         try {
@@ -496,6 +502,7 @@ public class LegalCase implements Serializable {
     	    String scheduled = String.format("%02d/%02d/%d", scheduledDate[0], scheduledDate[1], scheduledDate[2]);
 
     	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
+    	    
 
     	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
     	    appendCaseFile(newCase, FILE_NAME);
