@@ -15,6 +15,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -38,7 +43,6 @@ public class LegalCase implements Serializable {
     private String type;
     private String plaintiff;
     private String defendant;
-	private LegalCase next;
 	private String date;
 	private String scheduled;
 
@@ -202,7 +206,9 @@ public class LegalCase implements Serializable {
                 	currentCases();
                     break;
                 case 5:
-                  //  caseDates();
+                    caseDates();
+                    out.print(" ");
+                    scanner.nextLine(); // Kullanıcının bir giriş yapmasını bekler
                     break;
                 case 6:
                  //   displayPlaintiffs();
@@ -214,7 +220,9 @@ public class LegalCase implements Serializable {
                  //   casesThatMayAriseMenu();
                     break;
                 case 9:
-                  //  sortByID();
+                    sortByID();
+                    out.print(" ");
+                    scanner.nextLine();
                     break;
                 case 10:
                     out.println("Exiting...");
@@ -544,14 +552,14 @@ public class LegalCase implements Serializable {
 
      
      public static boolean printCase(CaseNode node) {
-    	    System.out.println("\nCase ID: " + node.data.caseID);
-    	    System.out.println("Case Title: " + node.data.title);
-    	    System.out.println("Plaintiff: " + node.data.plaintiff);
-    	    System.out.println("Defendant: " + node.data.defendant);
-    	    System.out.println("Case Type: " + node.data.type);
-    	    System.out.println("Beginning Date: " + node.data.date);
-    	    System.out.println("Scheduled Hearing Date: " + node.data.scheduled);
-    	    System.out.println("-----------------------------");
+    	    out.println("\nCase ID: " + node.data.caseID);
+    	    out.println("Case Title: " + node.data.title);
+    	    out.println("Plaintiff: " + node.data.plaintiff);
+    	    out.println("Defendant: " + node.data.defendant);
+    	    out.println("Case Type: " + node.data.type);
+    	    out.println("Beginning Date: " + node.data.date);
+    	    out.println("Scheduled Hearing Date: " + node.data.scheduled);
+    	    out.println("-----------------------------");
     	    return true;
     	}
 
@@ -564,12 +572,12 @@ public class LegalCase implements Serializable {
 
     	    File file = new File(FILE_NAME);
     	    if (!file.exists()) {
-    	        System.out.println("Error: File does not exist. Please add cases first.");
+    	        out.println("Error: File does not exist. Please add cases first.");
     	        return false;
     	    }
 
     	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
-    	        System.out.println("\n===== Current Cases =====\n");
+    	        out.println("\n===== Current Cases =====\n");
 
     	        // Dosyadan tüm davaları oku ve listeye ekle
     	        while (true) {
@@ -588,15 +596,15 @@ public class LegalCase implements Serializable {
     	            clearScreen();
     	            printCase(currentNode); // Mevcut düğümü ekrana yazdır
 
-    	            System.out.println("Options:");
+    	            out.println("Options:");
     	            if (currentNode.prev != null) {
-    	                System.out.println("P - Previous case");
+    	            	out.println("P - Previous case");
     	            }
     	            if (currentNode.next != null) {
-    	                System.out.println("N - Next case");
+    	                out.println("N - Next case");
     	            }
-    	            System.out.println("Q - Quit");
-    	            System.out.print("Enter your choice: ");
+    	            out.println("Q - Quit");
+    	            out.print("Enter your choice: ");
     	            choice = scanner.next().charAt(0);
 
     	            if (choice == 'P' || choice == 'p') {
@@ -610,12 +618,12 @@ public class LegalCase implements Serializable {
     	            } else if (choice == 'Q' || choice == 'q') {
     	                break; // Çık
     	            } else {
-    	                System.out.println("Invalid choice. Please try again.");
+    	                out.println("Invalid choice. Please try again.");
     	            }
     	        }
 
     	    } catch (IOException | ClassNotFoundException e) {
-    	        System.out.println("Error reading cases: " + e.getClass().getName() + ": " + e.getMessage());
+    	        out.println("Error reading cases: " + e.getClass().getName() + ": " + e.getMessage());
     	    }
 
     	    return true;
@@ -632,7 +640,7 @@ public class LegalCase implements Serializable {
     if (!deletedCasesStack.isEmpty()) {
         return deletedCasesStack.pop();
     } else {
-        System.out.println("No deleted cases available to restore.");
+        out.println("No deleted cases available to restore.");
         return null;
     }
 }
@@ -643,7 +651,7 @@ public class LegalCase implements Serializable {
     int index = hashFunction(caseID);
     if (hashTableProbing[index] == caseID) {
         hashTableProbing[index] = -1; // Mark slot as empty
-        System.out.println("Case ID " + caseID + " removed from hash table.");
+        out.println("Case ID " + caseID + " removed from hash table.");
     }
 }
      //Delete case method
@@ -651,7 +659,7 @@ public class LegalCase implements Serializable {
     	 clearScreen();
     	 Scanner scanner = new Scanner(System.in);
 
-    	 System.out.print("Enter Case ID to delete: ");
+    	 out.print("Enter Case ID to delete: ");
     	 int id = scanner.nextInt();
 
     	 File file = new File(FILE_NAME);
@@ -669,8 +677,8 @@ public class LegalCase implements Serializable {
            if (currentCase.caseID == id) {
                found = true;
                pushDeletedCase(currentCase); // Add to the stack
-               System.out.println("Case ID " + id + " deleted successfully.");
-               System.out.println("Please press Enter to return to Case Tracking Menu...");
+               out.println("Case ID " + id + " deleted successfully.");
+               out.println("Please press Enter to return to Case Tracking Menu...");
                scanner.nextLine(); // Wait for user input
            } else {
                oos.writeObject(currentCase); // Write other cases to temp file
@@ -682,7 +690,7 @@ public class LegalCase implements Serializable {
            }
 
     	 } catch (IOException | ClassNotFoundException e) {
-    		 System.out.println("Error handling files: " + e.getMessage());
+    		 out.println("Error handling files: " + e.getMessage());
     	 }
 
     	 if (found) {
@@ -692,8 +700,8 @@ public class LegalCase implements Serializable {
     	 } 
      else {
 	tempFile.delete(); // Remove temporary file
-	System.out.println("Case ID " + id + " not found.");
-	System.out.println("\nPlease press Enter to return to Case Tracking Menu...");
+	out.println("Case ID " + id + " not found.");
+	out.println("\nPlease press Enter to return to Case Tracking Menu...");
 	scanner.nextLine();
     	 }
 
@@ -702,17 +710,17 @@ public class LegalCase implements Serializable {
 
      public static boolean undoDeleteCase() {
     if (deletedCasesStack.isEmpty()) {
-        System.out.println("No cases available to undo.");
+        out.println("No cases available to undo.");
         return false;
     }
 
     LegalCase lastDeletedCase = deletedCasesStack.pop(); // Silinen davayı yığından çıkar
     try (ObjectOutputStream oos = new AppendableObjectOutputStream(new FileOutputStream(FILE_NAME, true))) {
         oos.writeObject(lastDeletedCase); // Dosyaya geri ekle
-        System.out.println("Undo successful for Case ID: " + lastDeletedCase.caseID);
+        out.println("Undo successful for Case ID: " + lastDeletedCase.caseID);
         return true;
     } catch (IOException e) {
-        System.out.println("Error undoing delete: " + e.getMessage());
+        out.println("Error undoing delete: " + e.getMessage());
         return false;
     }
 }
@@ -720,23 +728,23 @@ public class LegalCase implements Serializable {
 // View and optionally undo the last deleted case
      public static boolean incorrectDeletionCase() {
     if (deletedCasesStack.isEmpty()) {
-        System.out.println("No deleted cases to view.");
+        out.println("No deleted cases to view.");
         return false;
     }
 
     LegalCase lastDeletedCase = deletedCasesStack.peek(); // Yığındaki son davayı gör
-    System.out.println("Last deleted case details:");
-    System.out.println("Case ID: " + lastDeletedCase.caseID);
-    System.out.println("Case Title: " + lastDeletedCase.title);
+    out.println("Last deleted case details:");
+    out.println("Case ID: " + lastDeletedCase.caseID);
+    out.println("Case Title: " + lastDeletedCase.title);
 
     Scanner scanner = new Scanner(System.in);
-    System.out.print("Do you want to undo the last deleted case? (y/n): ");
+    out.print("Do you want to undo the last deleted case? (y/n): ");
     char confirmation = scanner.nextLine().toLowerCase().charAt(0);
 
     if (confirmation == 'y') {
         return undoDeleteCase(); // Geri alma işlemini gerçekleştir
     } else {
-        System.out.println("Undo operation cancelled.");
+        out.println("Undo operation cancelled.");
         return false;
     }
 }
@@ -749,8 +757,233 @@ public class LegalCase implements Serializable {
         }
     }
     return false; // Silinmiş bir dava yok
-}}
+}
     
+
+public static int compareDates(String date1, String date2) {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    try {
+        Date d1 = sdf.parse(date1);
+        Date d2 = sdf.parse(date2);
+        return d1.compareTo(d2);
+    } catch (ParseException e) {
+        e.printStackTrace();
+        return 0; // Geçersiz tarih durumunda eşit kabul edilir
+    }
+}
+
+
+public static void heapify(LegalCase[] cases, int n, int i) {
+    int largest = i; // Root
+    int left = 2 * i + 1; // Sol çocuk
+    int right = 2 * i + 2; // Sağ çocuk
+
+    if (left < n && compareDates(cases[left].scheduled, cases[largest].scheduled) > 0) {
+        largest = left;
+    }
+
+    if (right < n && compareDates(cases[right].scheduled, cases[largest].scheduled) > 0) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        LegalCase temp = cases[i];
+        cases[i] = cases[largest];
+        cases[largest] = temp;
+
+        // Alt ağacı heapify et
+        heapify(cases, n, largest);
+    }
+}
+
+public static void heapSort(LegalCase[] cases) {
+    int n = cases.length;
+
+    // Max heap oluştur
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(cases, n, i);
+    }
+
+    // Elemanları ayır ve heapify et
+    for (int i = n - 1; i > 0; i--) {
+        LegalCase temp = cases[0];
+        cases[0] = cases[i];
+        cases[i] = temp;
+
+        heapify(cases, i, 0);
+    }
+}
+
+
+public static boolean caseDates() {
+    clearScreen();
+
+    File file = new File(FILE_NAME);
+    if (!file.exists()) {
+        out.println("Error: File does not exist. Please add cases first.");
+        return false;
+    }
+
+    List<LegalCase> caseList = new ArrayList<>();
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+        while (true) {
+            try {
+                LegalCase legalCase = (LegalCase) ois.readObject();
+                caseList.add(legalCase);
+            } catch (EOFException e) {
+                break; // Dosyanın sonuna ulaşıldı
+            }
+        }
+    } catch (IOException | ClassNotFoundException e) {
+        out.println("Error reading cases: " + e.getMessage());
+        return false;
+    }
+
+    // Listeyi diziye çevir ve sıralama yap
+    LegalCase[] caseArray = caseList.toArray(new LegalCase[0]);
+    heapSort(caseArray);
+
+    // Sıralı davaları yazdır
+    out.println("\n===== Sorted Case Dates =====\n");
+    for (LegalCase legalCase : caseArray) {
+        out.println("Case ID: " + legalCase.caseID);
+        out.println("Scheduled Hearing Date: " + legalCase.scheduled);
+        out.println("-----------------------------");
+    }
+
+    out.print("Please press Enter to return to the Case Tracking Menu...");
+	scanner.nextLine();
+    return true;
+}
+
+
+
+static class BPlusTreeNode {
+    boolean isLeaf;               // Yaprak düğüm olup olmadığını belirtir
+    int numKeys;                  // Mevcut anahtar sayısı
+    int[] keys;                   // Anahtarları tutan dizi
+    LegalCase[] cases;            // LegalCase nesnelerini tutar
+    BPlusTreeNode[] children;     // Çocuk düğümleri tutan dizi
+    BPlusTreeNode next;           // Sonraki yaprak düğüme işaretçi
+
+    // Maksimum anahtar sayısını temsil eden sabit
+    public static final int MAX = 4;
+
+    // Yapıcı (Constructor)
+    public BPlusTreeNode(boolean isLeaf) {
+        this.isLeaf = isLeaf;                    // Yaprak mı değil mi
+        this.numKeys = 0;                        // Başlangıçta anahtar sayısı 0
+        this.keys = new int[MAX + 1];            // Anahtar dizisi
+        this.cases = new LegalCase[MAX + 1];     // LegalCase dizisi
+        this.children = new BPlusTreeNode[MAX + 2]; // Çocuklar dizisi
+        this.next = null;                        // Sonraki düğüm başlangıçta null
+    }
+
+	public void printSortedCases(BPlusTreeNode node) {
+		if (node == null) return;
+
+	    BPlusTreeNode current = node;
+	    while (current != null) {
+	        for (int i = 0; i < current.numKeys; i++) {
+	            LegalCase legalCase = current.cases[i];
+	            out.println("\nCase ID: " + legalCase.caseID);
+	            out.println("Case Title: " + legalCase.title);
+	            out.println("Plaintiff: " + legalCase.plaintiff);
+	            out.println("Defendant: " + legalCase.defendant);
+	            out.println("Case Type: " + legalCase.type);
+	            out.println("Beginning Date: " + legalCase.date);
+	            out.println("Scheduled Hearing Date: " + legalCase.scheduled);
+	            out.println("-----------------------------");
+	        }
+	        current = current.next;
+	    }
+	}
+}
+
+static class BPlusTree {
+    BPlusTreeNode root;
+
+    public BPlusTree() {
+        this.root = null;
+    }}
+
+static void insertInNode(BPlusTreeNode node, int key, LegalCase newCase) {
+    int i = node.numKeys - 1;
+
+    while (i >= 0 && node.keys[i] > key) {
+        node.keys[i + 1] = node.keys[i];
+        node.cases[i + 1] = node.cases[i];
+        i--;
+    }
+
+    node.keys[i + 1] = key;
+    node.cases[i + 1] = newCase;
+    node.numKeys++;
+}
+
+static void insert(BPlusTree tree, int key, LegalCase newCase) {
+    if (tree.root == null) {
+        tree.root = new BPlusTreeNode(true);
+        insertInNode(tree.root, key, newCase);
+    } else {
+        BPlusTreeNode current = tree.root;
+        while (!current.isLeaf) {
+            int i;
+            for (i = 0; i < current.numKeys; i++) {
+                if (key < current.keys[i]) {
+                    break;
+                }
+            }
+            current = current.children[i];
+        }
+        insertInNode(current, key, newCase);
+    }
+}
+
+
+public static boolean sortByID() {
+    clearScreen();
+
+    File file = new File(FILE_NAME);
+    if (!file.exists()) {
+        out.println("Error: File does not exist. Please add cases first.");
+        return false;
+    }
+
+    BPlusTree tree = new BPlusTree();
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+        while (true) {
+            try {
+                LegalCase legalCase = (LegalCase) ois.readObject();
+                insert(tree, legalCase.caseID, legalCase);
+            } catch (EOFException e) {
+                break; // Dosyanın sonuna ulaşıldı
+            }
+        }
+    } catch (IOException | ClassNotFoundException e) {
+        out.println("Error reading cases: " + e.getMessage());
+        return false;
+    }
+
+    // Ağacı sıralı şekilde yazdır
+    out.println("\n===== Sorted Case Dates =====\n");
+    tree.root.printSortedCases(tree.root);
+
+    out.print("Please press Enter to return to the Case Tracking Menu...");
+    scanner.nextLine(); // Kullanıcının Enter tuşuna basmasını bekler
+
+    return true;
+}}
+
+
+
+
+
+
+
+
+
+
   
 
 
