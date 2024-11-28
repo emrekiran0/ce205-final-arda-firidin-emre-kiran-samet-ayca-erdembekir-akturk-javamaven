@@ -19,7 +19,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -214,7 +216,7 @@ public class LegalCase implements Serializable {
                  //   displayPlaintiffs();
                     break;
                 case 7:
-                  //  casesThatMayBeConnectedMenu();
+                  casesThatMayBeConnectedMenu();
                     break;
                 case 8:
                  //   casesThatMayAriseMenu();
@@ -867,7 +869,7 @@ static class BPlusTreeNode {
     BPlusTreeNode next;           // Sonraki yaprak düğüme işaretçi
 
     // Maksimum anahtar sayısını temsil eden sabit
-    public static final int MAX = 4;
+    public static final int MAX = 20;
 
     // Yapıcı (Constructor)
     public BPlusTreeNode(boolean isLeaf) {
@@ -973,9 +975,178 @@ public static boolean sortByID() {
     scanner.nextLine(); // Kullanıcının Enter tuşuna basmasını bekler
 
     return true;
-}}
+}
+
+    // Dava türleri için sabit isim listesi
+    static final String[] caseNames = {
+        "Criminal", "Civil", "Commercial", "Administrative",
+        "Divorce", "Custody", "Traffic", "Dismissal",
+        "Compensation", "Inheritance", "Title deed"
+    };
+
+    // Grafik düğüm sınıfı
+    static class GraphNode {
+        int caseType;
+        GraphNode next;
+
+        public GraphNode(int caseType) {
+            this.caseType = caseType;
+            this.next = null;
+        }
+    }
+
+    // Grafik sınıfı
+    static class Graph {
+        int numVertices;           // Düğüm sayısı
+        GraphNode[] adjLists;      // Bağlı liste
+        boolean[] visited;         // Ziyaret kontrolü
+
+        public Graph(int vertices) {
+            this.numVertices = vertices;
+            this.adjLists = new GraphNode[vertices];
+            this.visited = new boolean[vertices];
+
+            // Başlangıçta tüm düğümler boş ve ziyaret edilmemiş
+            for (int i = 0; i < vertices; i++) {
+                adjLists[i] = null;
+                visited[i] = false;
+            }
+        }
+    }
+
+    // Kuyruk sınıfı
+    static class CustomQueue {
+        int front, rear;
+        int[] items;
+        int maxSize;
+
+        public CustomQueue(int size) {
+            this.front = -1;
+            this.rear = -1;
+            this.maxSize = size;
+            this.items = new int[size];
+        }
+
+        public boolean isEmpty() {
+            return rear == -1;
+        }
+
+        public void enqueue(int value) {
+            if (rear == maxSize - 1) {
+                System.out.println("Queue is full. Cannot enqueue " + value);
+                return;
+            }
+            if (front == -1) front = 0;
+            items[++rear] = value;
+        }
+
+        public int dequeue() {
+            if (isEmpty()) {
+                System.out.println("Queue is empty. Cannot dequeue.");
+                return -1;
+            }
+            int value = items[front++];
+            if (front > rear) {
+                front = rear = -1; // Kuyruk sıfırlanır
+            }
+            return value;
+        }
+    }
+
+    // Kenar ekleme işlemi
+    static void addEdge(Graph graph, int src, int dest) {
+        GraphNode newNode = new GraphNode(dest);
+        newNode.next = graph.adjLists[src];
+        graph.adjLists[src] = newNode;
+
+        newNode = new GraphNode(src);
+        newNode.next = graph.adjLists[dest];
+        graph.adjLists[dest] = newNode;
+    }
+
+    // BFS algoritması
+    static void BFS(Graph graph, int startCaseType) {
+        CustomQueue queue = new CustomQueue(graph.numVertices);
+
+        graph.visited[startCaseType] = true;
+        queue.enqueue(startCaseType);
+
+        System.out.println("Selected Case: " + caseNames[startCaseType]);
+        System.out.println("\nCases That May Be Related");
+        System.out.println("-----------------------------");
+
+        while (!queue.isEmpty()) {
+            int currentCase = queue.dequeue();
+            GraphNode temp = graph.adjLists[currentCase];
+
+            while (temp != null) {
+                int adjCase = temp.caseType;
+
+                if (!graph.visited[adjCase]) {
+                    System.out.println("** " + caseNames[adjCase]);
+                    graph.visited[adjCase] = true;
+                    queue.enqueue(adjCase);
+                }
+                temp = temp.next;
+            }
+        }
+
+        // Ziyaret edilenleri sıfırla
+        for (int i = 0; i < graph.numVertices; i++) {
+            graph.visited[i] = false;
+        }
+    }
+
+    // Menü
+    static boolean casesThatMayBeConnectedMenu() {
+        clearScreen(); // İlk açılışta ekranı temizle
+        int NUM_CASE_TYPES = caseNames.length;
+        Graph graph = new Graph(NUM_CASE_TYPES);
+
+        // Kenarları ekle
+        addEdge(graph, 4, 5); // Divorce - Custody
+        addEdge(graph, 4, 8); // Divorce - Compensation
+        addEdge(graph, 9, 10); // Inheritance - Title deed
+        addEdge(graph, 2, 1); // Commercial - Civil
+        addEdge(graph, 0, 7); // Criminal - Dismissal
+        addEdge(graph, 6, 0); // Traffic - Criminal
+
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        while (true) {
+            
+            System.out.println("\n===== Cases That May Be Connected Menu =====");
+            for (int i = 0; i < NUM_CASE_TYPES; i++) {
+                System.out.println(i + ". " + caseNames[i]);
+            }
+            System.out.println(NUM_CASE_TYPES + ". Return to Main Menu"); // Çıkış seçeneği
+
+            System.out.print("Please Enter The Number Next To Your Case: ");
+
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next(); // Geçersiz girdiyi temizle
+                continue;
+            }
+
+            if (choice >= 0 && choice < NUM_CASE_TYPES) {
+                clearScreen(); // Seçim yapıldıktan sonra ekranı temizle
+                BFS(graph, choice); // Geçerli bir dava türü seçildiğinde BFS çalıştır
+            } else if (choice == NUM_CASE_TYPES) {
+                return true; // Ana menüye dön
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
 
 
+
+ 
+    }
 
 
 
