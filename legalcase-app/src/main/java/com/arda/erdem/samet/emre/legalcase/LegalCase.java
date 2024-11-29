@@ -217,7 +217,7 @@ public class LegalCase implements Serializable {
                   casesThatMayBeConnectedMenu();
                     break;
                 case 8:
-                 //   casesThatMayAriseMenu();
+                  casesThatMayAriseMenu();
                     break;
                 case 9:
                     sortByID();
@@ -1140,11 +1140,156 @@ public static boolean sortByID() {
             }
         }
     }
+    
 
+        // Maksimum dava türü sayısı
+        static final int MAX = 44;
 
+        // Dava türlerini temsil eden sınıf
+        static class CaseTypeForSCC {
+            int id;
+            String name;
 
- 
+            public CaseTypeForSCC(int id, String name) {
+                this.id = id;
+                this.name = name;
+            }
+        }
+
+        // Dava türleri listesi
+        static final CaseTypeForSCC[] caseTypeSCC = {
+            new CaseTypeForSCC(0, "Administrative Cases"),
+            new CaseTypeForSCC(1, "Cancellation Cases"),
+            new CaseTypeForSCC(2, "Full Jurisdiction Cases"),
+            new CaseTypeForSCC(3, "Expropriation Cases"),
+            new CaseTypeForSCC(4, "Civil Cases"),
+            new CaseTypeForSCC(5, "Divorce Cases"),
+            new CaseTypeForSCC(6, "Alimony Cases"),
+            new CaseTypeForSCC(7, "Inheritance Cases"),
+            new CaseTypeForSCC(8, "Commercial Cases"),
+            new CaseTypeForSCC(9, "Debt Cases"),
+            new CaseTypeForSCC(10, "Bankruptcy Cases"),
+            new CaseTypeForSCC(11, "Tort Cases"),
+            new CaseTypeForSCC(12, "Criminal Cases"),
+            new CaseTypeForSCC(13, "Compensation Cases"),
+            new CaseTypeForSCC(14, "Insurance Cases"),
+            new CaseTypeForSCC(15, "Civil Liability Cases"),
+            new CaseTypeForSCC(16, "Compensation Cases"),
+            new CaseTypeForSCC(17, "Non-pecuniary Compensation Cases"),
+            new CaseTypeForSCC(18, "Pecuniary Compensation Cases"),
+            new CaseTypeForSCC(19, "Bodily Injury Compensation Cases"),
+            new CaseTypeForSCC(20, "Custody Cases"),
+            new CaseTypeForSCC(21, "Child Support Cases"),
+            new CaseTypeForSCC(22, "Parents Cases"),
+            new CaseTypeForSCC(23, "Change Of Residence Cases"),
+            new CaseTypeForSCC(24, "Divorce Cases"),
+            new CaseTypeForSCC(25, "Custody Cases"),
+            new CaseTypeForSCC(26, "Alimony Cases"),
+            new CaseTypeForSCC(27, "Compensation Cases"),
+            new CaseTypeForSCC(28, "Dismissal Cases"),
+            new CaseTypeForSCC(29, "Unjust Termination Cases"),
+            new CaseTypeForSCC(30, "Severance Pay Cases"),
+            new CaseTypeForSCC(31, "Reemployment Cases"),
+            new CaseTypeForSCC(32, "Inheritance Cases"),
+            new CaseTypeForSCC(33, "Land Registration Cases"),
+            new CaseTypeForSCC(34, "Testament Annulment Cases"),
+            new CaseTypeForSCC(35, "Rejection Inheritance Cases"),
+            new CaseTypeForSCC(36, "Title Deed Cases"),
+            new CaseTypeForSCC(37, "Border Dispute Cases"),
+            new CaseTypeForSCC(38, "Corruption Allegations Cases"),
+            new CaseTypeForSCC(39, "Faulty Registration Correction Cases"),
+            new CaseTypeForSCC(40, "Traffic Cases"),
+            new CaseTypeForSCC(41, "Non-pecuniary Compensation Cases"),
+            new CaseTypeForSCC(42, "Pecuniary Compensation Cases"),
+            new CaseTypeForSCC(43, "Inheritance Cases")
+        };
+
+        // Adjacency matrix
+        static int[][] adj = new int[MAX][MAX];
+
+        // Kenar ekleme fonksiyonu
+        static void addEdge(int u, int v) {
+            adj[u][v] = 1;
+        }
+
+        // Cases That May Arise Menüsü
+        static boolean casesThatMayAriseMenu() {
+            clearScreen();
+
+            // Kenarları ekle
+            addEdge(0, 1);
+            addEdge(0, 2);
+            addEdge(0, 3);
+            addEdge(4, 5);
+            addEdge(4, 6);
+            addEdge(4, 7);
+            addEdge(8, 9);
+            addEdge(8, 10);
+            addEdge(8, 11);
+            addEdge(12, 13);
+            addEdge(12, 14);
+            addEdge(12, 15);
+            addEdge(16, 17);
+            addEdge(16, 18);
+            addEdge(16, 19);
+            addEdge(20, 21);
+            addEdge(20, 22);
+            addEdge(20, 23);
+            addEdge(24, 25);
+            addEdge(24, 26);
+            addEdge(24, 27);
+            addEdge(28, 29);
+            addEdge(28, 30);
+            addEdge(28, 31);
+            addEdge(32, 33);
+            addEdge(32, 34);
+            addEdge(32, 35);
+            addEdge(36, 37);
+            addEdge(36, 38);
+            addEdge(36, 39);
+            addEdge(40, 41);
+            addEdge(40, 42);
+            addEdge(40, 43);
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("===== Cases That May Arise Menu =====\n");
+
+            for (int i = 1; i <= 11; i++) {
+                System.out.println(i + "-) " + caseTypeSCC[(i - 1) * 4].name);
+            }
+
+            System.out.print("Please Make Your Choice (1-11): ");
+            int caseChoice = scanner.nextInt();
+
+            if (caseChoice >= 1 && caseChoice <= 11) {
+                System.out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
+                System.out.println("\nCases That May Arise:");
+
+                for (int i = (caseChoice - 1) * 4 + 1; i < MAX; i++) {
+                    if (i % 4 == 0) break;
+                    System.out.println("- " + caseTypeSCC[i].name);
+                }
+            } else {
+                System.out.println("Invalid choice.");
+            }
+
+            System.out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
+            try {
+                System.in.read();
+            } catch (Exception e) {
+                System.out.println("Error reading input.");
+            }
+
+            return true;
+        }
+
+        // Ekranı temizlemek için kullanılan fonksiyon
+        
+      
+
+     
     }
+
 
 
 
