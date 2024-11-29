@@ -2,14 +2,10 @@ package com.arda.erdem.samet.emre.legalcase;
 
 import static java.lang.System.out;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
+
 
 /**
  * @class LegalCase
@@ -38,13 +35,13 @@ public class LegalCase implements Serializable {
 
 
     private static final int MAX_ATTEMPTS = 1000;
-    private int caseID;
-    private String title;
-    private String type;
-    private String plaintiff;
-    private String defendant;
-	private String date;
-	private String scheduled;
+    public int caseID;
+    public String title;
+    public String type;
+    public String plaintiff;
+    public String defendant;
+	public String date;
+	public String scheduled;
 
 
     // Constructor
@@ -207,11 +204,9 @@ public class LegalCase implements Serializable {
                     break;
                 case 5:
                     caseDates();
-                    out.print(" ");
-                    scanner.nextLine(); // Kullanıcının bir giriş yapmasını bekler
                     break;
                 case 6:
-                 //   displayPlaintiffs();
+                    displayPlaintiffs();
                     break;
                 case 7:
                   casesThatMayBeConnectedMenu();
@@ -221,8 +216,6 @@ public class LegalCase implements Serializable {
                     break;
                 case 9:
                     sortByID();
-                    out.print(" ");
-                    scanner.nextLine();
                     break;
                 case 10:
                     out.println("Exiting...");
@@ -351,6 +344,7 @@ public class LegalCase implements Serializable {
 
          // Boş bir yere yerleştir
          hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
+         
 
          // Debug çıktısı
          out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
@@ -408,9 +402,9 @@ public class LegalCase implements Serializable {
                  oos.writeObject(legalCase);
              }
 
-             System.out.println("Case has been appended successfully to " + fileName);
+             out.println("Case has been appended successfully to " + fileName);
          } catch (IOException e) {
-             System.out.println("Error appending case to file: " + e.getMessage());
+             out.println("Error appending case to file: " + e.getMessage());
          }
      }
 
@@ -521,19 +515,18 @@ public class LegalCase implements Serializable {
     	    return true;
     	}
 
-     
-     public static class CaseNode {
-    	    LegalCase data;
-    	    CaseNode next;
-    	    CaseNode prev;
-
-    	    public CaseNode(LegalCase data) {
-    	        this.data = data;
-    	        this.next = null;
-    	        this.prev = null;
-    	    }
+     public static boolean printCase(CaseNode node) {
+    	    out.println("\nCase ID: " + node.data.caseID);
+    	    out.println("Case Title: " + node.data.title);
+    	    out.println("Plaintiff: " + node.data.plaintiff);
+    	    out.println("Defendant: " + node.data.defendant);
+    	    out.println("Case Type: " + node.data.type);
+    	    out.println("Beginning Date: " + node.data.date);
+    	    out.println("Scheduled Hearing Date: " + node.data.scheduled);
+    	    out.println("-----------------------------");
+    	    return true;
     	}
-
+     
      public static CaseNode appendNode(CaseNode head, LegalCase data) {
     	    CaseNode newNode = new CaseNode(data);
 
@@ -547,23 +540,7 @@ public class LegalCase implements Serializable {
     	        temp.next = newNode; // Yeni düğümü sona ekle
     	        newNode.prev = temp; // Önceki düğümü ayarla
     	        return head; // Baş düğümü geri döndür
-    	    }
-    	}
-
-     
-     public static boolean printCase(CaseNode node) {
-    	    out.println("\nCase ID: " + node.data.caseID);
-    	    out.println("Case Title: " + node.data.title);
-    	    out.println("Plaintiff: " + node.data.plaintiff);
-    	    out.println("Defendant: " + node.data.defendant);
-    	    out.println("Case Type: " + node.data.type);
-    	    out.println("Beginning Date: " + node.data.date);
-    	    out.println("Scheduled Hearing Date: " + node.data.scheduled);
-    	    out.println("-----------------------------");
-    	    return true;
-    	}
-
-     
+    	    }}
      public static boolean currentCases() {
     	    Scanner scanner = new Scanner(System.in);
 
@@ -853,33 +830,12 @@ public static boolean caseDates() {
 
     out.print("Please press Enter to return to the Case Tracking Menu...");
 	scanner.nextLine();
+    out.print(" ");
+    scanner.nextLine();
     return true;
 }
 
-
-
-static class BPlusTreeNode {
-    boolean isLeaf;               // Yaprak düğüm olup olmadığını belirtir
-    int numKeys;                  // Mevcut anahtar sayısı
-    int[] keys;                   // Anahtarları tutan dizi
-    LegalCase[] cases;            // LegalCase nesnelerini tutar
-    BPlusTreeNode[] children;     // Çocuk düğümleri tutan dizi
-    BPlusTreeNode next;           // Sonraki yaprak düğüme işaretçi
-
-    // Maksimum anahtar sayısını temsil eden sabit
-    public static final int MAX = 20;
-
-    // Yapıcı (Constructor)
-    public BPlusTreeNode(boolean isLeaf) {
-        this.isLeaf = isLeaf;                    // Yaprak mı değil mi
-        this.numKeys = 0;                        // Başlangıçta anahtar sayısı 0
-        this.keys = new int[MAX + 1];            // Anahtar dizisi
-        this.cases = new LegalCase[MAX + 1];     // LegalCase dizisi
-        this.children = new BPlusTreeNode[MAX + 2]; // Çocuklar dizisi
-        this.next = null;                        // Sonraki düğüm başlangıçta null
-    }
-
-	public void printSortedCases(BPlusTreeNode node) {
+public void printSortedCases(BPlusTreeNode node) {
 		if (node == null) return;
 
 	    BPlusTreeNode current = node;
@@ -896,16 +852,9 @@ static class BPlusTreeNode {
 	            out.println("-----------------------------");
 	        }
 	        current = current.next;
-	    }
-	}
-}
+	    }}
 
-static class BPlusTree {
-    BPlusTreeNode root;
 
-    public BPlusTree() {
-        this.root = null;
-    }}
 
 static void insertInNode(BPlusTreeNode node, int key, LegalCase newCase) {
     int i = node.numKeys - 1;
@@ -937,9 +886,7 @@ static void insert(BPlusTree tree, int key, LegalCase newCase) {
             current = current.children[i];
         }
         insertInNode(current, key, newCase);
-    }
-}
-
+    }}
 
 public static boolean sortByID() {
     clearScreen();
@@ -971,6 +918,8 @@ public static boolean sortByID() {
 
     out.print("Please press Enter to return to the Case Tracking Menu...");
     scanner.nextLine(); // Kullanıcının Enter tuşuna basmasını bekler
+    out.print(" ");
+    scanner.nextLine();
 
     return true;
 }
@@ -979,77 +928,7 @@ public static boolean sortByID() {
     static final String[] caseNames = {
         "Criminal", "Civil", "Commercial", "Administrative",
         "Divorce", "Custody", "Traffic", "Dismissal",
-        "Compensation", "Inheritance", "Title deed"
-    };
-
-    // Grafik düğüm sınıfı
-    static class GraphNode {
-        int caseType;
-        GraphNode next;
-
-        public GraphNode(int caseType) {
-            this.caseType = caseType;
-            this.next = null;
-        }
-    }
-
-    // Grafik sınıfı
-    static class Graph {
-        int numVertices;           // Düğüm sayısı
-        GraphNode[] adjLists;      // Bağlı liste
-        boolean[] visited;         // Ziyaret kontrolü
-
-        public Graph(int vertices) {
-            this.numVertices = vertices;
-            this.adjLists = new GraphNode[vertices];
-            this.visited = new boolean[vertices];
-
-            // Başlangıçta tüm düğümler boş ve ziyaret edilmemiş
-            for (int i = 0; i < vertices; i++) {
-                adjLists[i] = null;
-                visited[i] = false;
-            }
-        }
-    }
-
-    // Kuyruk sınıfı
-    static class CustomQueue {
-        int front, rear;
-        int[] items;
-        int maxSize;
-
-        public CustomQueue(int size) {
-            this.front = -1;
-            this.rear = -1;
-            this.maxSize = size;
-            this.items = new int[size];
-        }
-
-        public boolean isEmpty() {
-            return rear == -1;
-        }
-
-        public void enqueue(int value) {
-            if (rear == maxSize - 1) {
-                System.out.println("Queue is full. Cannot enqueue " + value);
-                return;
-            }
-            if (front == -1) front = 0;
-            items[++rear] = value;
-        }
-
-        public int dequeue() {
-            if (isEmpty()) {
-                System.out.println("Queue is empty. Cannot dequeue.");
-                return -1;
-            }
-            int value = items[front++];
-            if (front > rear) {
-                front = rear = -1; // Kuyruk sıfırlanır
-            }
-            return value;
-        }
-    }
+        "Compensation", "Inheritance", "Title deed"};
 
     // Kenar ekleme işlemi
     static void addEdge(Graph graph, int src, int dest) {
@@ -1069,9 +948,9 @@ public static boolean sortByID() {
         graph.visited[startCaseType] = true;
         queue.enqueue(startCaseType);
 
-        System.out.println("Selected Case: " + caseNames[startCaseType]);
-        System.out.println("\nCases That May Be Related");
-        System.out.println("-----------------------------");
+        out.println("Selected Case: " + caseNames[startCaseType]);
+        out.println("\nCases That May Be Related");
+        out.println("-----------------------------");
 
         while (!queue.isEmpty()) {
             int currentCase = queue.dequeue();
@@ -1081,7 +960,7 @@ public static boolean sortByID() {
                 int adjCase = temp.caseType;
 
                 if (!graph.visited[adjCase]) {
-                    System.out.println("** " + caseNames[adjCase]);
+                    out.println("** " + caseNames[adjCase]);
                     graph.visited[adjCase] = true;
                     queue.enqueue(adjCase);
                 }
@@ -1114,18 +993,18 @@ public static boolean sortByID() {
 
         while (true) {
             
-            System.out.println("\n===== Cases That May Be Connected Menu =====");
+            out.println("\n===== Cases That May Be Connected Menu =====");
             for (int i = 0; i < NUM_CASE_TYPES; i++) {
-                System.out.println(i + ". " + caseNames[i]);
+                out.println(i + ". " + caseNames[i]);
             }
-            System.out.println(NUM_CASE_TYPES + ". Return to Main Menu"); // Çıkış seçeneği
+            out.println(NUM_CASE_TYPES + ". Return to Main Menu"); // Çıkış seçeneği
 
-            System.out.print("Please Enter The Number Next To Your Case: ");
+            out.print("Please Enter The Number Next To Your Case: ");
 
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
             } else {
-                System.out.println("Invalid input. Please enter a number.");
+                out.println("Invalid input. Please enter a number.");
                 scanner.next(); // Geçersiz girdiyi temizle
                 continue;
             }
@@ -1136,7 +1015,7 @@ public static boolean sortByID() {
             } else if (choice == NUM_CASE_TYPES) {
                 return true; // Ana menüye dön
             } else {
-                System.out.println("Invalid choice. Please try again.");
+                out.println("Invalid choice. Please try again.");
             }
         }
     }
@@ -1144,17 +1023,6 @@ public static boolean sortByID() {
 
         // Maksimum dava türü sayısı
         static final int MAX = 44;
-
-        // Dava türlerini temsil eden sınıf
-        static class CaseTypeForSCC {
-            int id;
-            String name;
-
-            public CaseTypeForSCC(int id, String name) {
-                this.id = id;
-                this.name = name;
-            }
-        }
 
         // Dava türleri listesi
         static final CaseTypeForSCC[] caseTypeSCC = {
@@ -1252,43 +1120,165 @@ public static boolean sortByID() {
             addEdge(40, 43);
 
             Scanner scanner = new Scanner(System.in);
-            System.out.println("===== Cases That May Arise Menu =====\n");
+            out.println("===== Cases That May Arise Menu =====\n");
 
             for (int i = 1; i <= 11; i++) {
-                System.out.println(i + "-) " + caseTypeSCC[(i - 1) * 4].name);
+                out.println(i + "-) " + caseTypeSCC[(i - 1) * 4].name);
             }
 
-            System.out.print("Please Make Your Choice (1-11): ");
+            out.print("Please Make Your Choice (1-11): ");
             int caseChoice = scanner.nextInt();
 
             if (caseChoice >= 1 && caseChoice <= 11) {
-                System.out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
-                System.out.println("\nCases That May Arise:");
+                out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
+                out.println("\nCases That May Arise:");
 
                 for (int i = (caseChoice - 1) * 4 + 1; i < MAX; i++) {
                     if (i % 4 == 0) break;
-                    System.out.println("- " + caseTypeSCC[i].name);
+                    out.println("- " + caseTypeSCC[i].name);
                 }
             } else {
-                System.out.println("Invalid choice.");
+                out.println("Invalid choice.");
             }
 
-            System.out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
+            out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
             try {
                 System.in.read();
             } catch (Exception e) {
-                System.out.println("Error reading input.");
+                out.println("Error reading input.");
             }
 
             return true;
         }
 
-        // Ekranı temizlemek için kullanılan fonksiyon
-        
-      
 
-     
-    }
+        public int getCaseID() {
+            return caseID;
+        }
+
+        // Getter for plaintiff
+        public String getPlaintiff() {
+            return plaintiff;
+        }
+
+        
+        private static PlaintiffNode XOR(PlaintiffNode a, PlaintiffNode b) {
+            return (a == null ? b : (b == null ? a : new PlaintiffNode(null)));
+        }
+
+
+        public static PlaintiffNode addPlaintiffNode(PlaintiffNode head, LegalCase data) {
+            PlaintiffNode newNode = new PlaintiffNode(data);
+            newNode.xorLink = head;
+
+            if (head != null) {
+                head.xorLink = XOR(newNode, head.xorLink);
+            }
+
+            return newNode; // Yeni head düğümünü döndür
+        }
+        // Davacı bilgilerini yazdırma
+        public static void printPlaintiff(PlaintiffNode node) {
+            if (node == null || node.data == null) {
+                out.println("No plaintiff found.");
+                return;
+            }
+            out.println("Case ID: " + node.data.getCaseID());
+            out.println("Plaintiff: " + node.data.getPlaintiff());
+            out.println("-----------------------------");
+        }
+
+        // Davacı isimlerini ve dava ID'lerini ekrana çıktı veren fonksiyon
+        // Davacı isimlerini ve dava ID'lerini ekrana çıktı veren fonksiyon
+        public static boolean displayPlaintiffs() {
+            PlaintiffNode head = null;
+
+            // Davaları XOR bağlı listeye ekle (dosyadan verileri oku)
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+                while (true) {
+                    try {
+                        LegalCase currentCase = (LegalCase) ois.readObject();
+                        if (currentCase != null) {
+                            head = addPlaintiffNode(head, currentCase); // Listeye ekle
+                        }
+                    } catch (EOFException e) {
+                        break; // Dosyanın sonuna ulaşıldı
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                out.println("Error reading cases: " + e.getMessage());
+                return false;
+            }
+
+            // Eğer liste boşsa kullanıcıya bilgi ver
+            if (head == null) {
+                out.println("No plaintiffs found.");
+                return false;
+            }
+
+            // Liste üzerinde gezinme
+            PlaintiffNode current = head;
+            PlaintiffNode prev = null;
+            PlaintiffNode next;
+
+            Scanner scanner = new Scanner(System.in);
+
+            while (current != null) {
+                clearScreen();
+                printPlaintiff(current);
+
+                // Mevcut düğümün bir sonraki düğümünü hesapla
+                next = XOR(prev, current.xorLink);
+
+                // Kullanıcı seçenekleri
+                out.println("Options:");
+                if (prev != null) {
+                    out.println("P - Previous plaintiff"); // Önceki düğüm
+                }
+                if (next != null) {
+                    out.println("N - Next plaintiff"); // Sonraki düğüm
+                }
+                out.println("Q - Quit");
+                out.print("Enter your choice: ");
+                char choice = scanner.next().charAt(0);
+
+                if (choice == 'P' || choice == 'p') {
+                    if (prev == null) {
+                        out.println("No previous plaintiff available.");
+                        pause();
+                    } else {
+                        PlaintiffNode temp = current;
+                        current = prev; // Önceki düğüme geç
+                        prev = XOR(temp, current.xorLink);
+                    }
+                } else if (choice == 'N' || choice == 'n') {
+                    if (next == null) {
+                        out.println("No next plaintiff available.");
+                        pause();
+                    } else {
+                        PlaintiffNode temp = current;
+                        prev = current;
+                        current = next; // Sonraki düğüme geç
+                    }
+                } else if (choice == 'Q' || choice == 'q') {
+                    break; // Çıkış
+                } else {
+                    out.println("Invalid choice. Please try again.");
+                    pause();
+                }
+            }
+
+            return true;
+        }
+
+        private static void pause() {
+            out.println("\nPress Enter to continue...");
+            try {
+                System.in.read();
+            } catch (IOException ignored) {
+            }
+        }}
+
 
 
 
