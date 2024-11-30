@@ -62,6 +62,7 @@ public class LegalCase implements Serializable {
     static int MAX_DAYS = 31;
     
     public static final String FILE_NAME = "cases.bin";
+    public static final String DOCUMENT_FILE_NAME = "documents.bin";
 
     public static void clearScreen() {
         try {
@@ -147,10 +148,10 @@ public class LegalCase implements Serializable {
                     caseTracking(); // Dava Takibi ile ilgili fonksiyon
                     break;
                 case 2:
-                //    createDocument(); // Belge oluşturma fonksiyonu
+                 createDocument(); // Belge oluşturma fonksiyonu
                     break;
                 case 3:
-                //   documents(); // Belgeler ile ilgili fonksiyon
+                  documents(); // Belgeler ile ilgili fonksiyon
                     break;
                 case 4:
                     out.println("Exiting...");
@@ -1277,18 +1278,423 @@ public static boolean sortByID() {
                 System.in.read();
             } catch (IOException ignored) {
             }
-        }}
+        }
+        
+        public static class LegalCaseDocument implements Serializable {
+            private static final long serialVersionUID = 1L;
+            int caseID;
+            String title, plaintiff, defendant, winner, loser, decision, sentence;
+
+            public LegalCaseDocument(int caseID, String title, String plaintiff, String defendant,
+                                     String winner, String loser, String decision, String sentence) {
+                this.caseID = caseID;
+                this.title = title;
+                this.plaintiff = plaintiff;
+                this.defendant = defendant;
+                this.winner = winner;
+                this.loser = loser;
+                this.decision = decision;
+                this.sentence = sentence;
+            }
+        }
+
+     
+
+        public static boolean appendDocument(LegalCaseDocument document) {
+            try {
+                boolean fileExists = new File(DOCUMENT_FILE_NAME).exists();
+
+                try (FileOutputStream fos = new FileOutputStream(DOCUMENT_FILE_NAME, true);
+                     ObjectOutputStream oos = fileExists
+                             ? new AppendableObjectOutputStream(fos)
+                             : new ObjectOutputStream(fos)) {
+
+                    oos.writeObject(document);
+                }
+
+                out.println("Document saved successfully to " + DOCUMENT_FILE_NAME);
+            } catch (IOException e) {
+                out.println("Error saving document: " + e.getMessage());
+            }
+			return false;
+        }
 
 
+       
 
+        public static boolean createDocument() {
+            clearScreen();
 
+            File file = new File(FILE_NAME);
+            if (!file.exists()) {
+                out.println("Error: File not found!");
+                
+            }
 
+            LegalCase selectedCase = null;
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                out.println("\n===== Current Cases =====");
 
+                while (true) {
+                    try {
+                        LegalCase currentCase = (LegalCase) ois.readObject();
+                        out.println("Case ID: " + currentCase.caseID);
+                        out.println("Title: " + currentCase.title);
+                        out.println("Plaintiff: " + currentCase.plaintiff);
+                        out.println("Defendant: " + currentCase.defendant);
+                        out.println("Type: " + currentCase.type);
+                        out.println("Date: " + currentCase.date);
+                        out.println("Scheduled: " + currentCase.scheduled);
+                        out.println("-----------------------------");
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                out.println("Error reading cases: " + e.getMessage());
+            }
 
+            Scanner scanner = new Scanner(System.in);
+            out.print("\nEnter Case ID to create a document for: ");
+            int id = scanner.nextInt();
 
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                while (true) {
+                    try {
+                        LegalCase currentCase = (LegalCase) ois.readObject();
+                        if (currentCase.caseID == id) {
+                            selectedCase = currentCase;
+                            break;
+                        }
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                out.println("Error reading cases: " + e.getMessage());
+                
+            }
 
+            if (selectedCase == null) {
+                out.println("Case ID not found!");
+                out.println("Press Enter to return to the menu...");
+                scanner.nextLine();
+                scanner.nextLine();
+               
+            }
 
-  
+            clearScreen();
+            out.println("\n===== Selected Case =====");
+            out.println("Case ID: " + selectedCase.caseID);
+            out.println("Title: " + selectedCase.title);
+            out.println("Plaintiff: " + selectedCase.plaintiff);
+            out.println("Defendant: " + selectedCase.defendant);
+            out.println("Type: " + selectedCase.type);
+            out.println("Date: " + selectedCase.date);
+            out.println("Scheduled: " + selectedCase.scheduled);
+
+            scanner.nextLine(); // Clear buffer
+            out.print("Winner: ");
+            String winner = scanner.nextLine();
+
+            out.print("Loser: ");
+            String loser = scanner.nextLine();
+
+            out.print("Decision: ");
+            String decision = scanner.nextLine();
+
+            out.print("Sentence: ");
+            String sentence = scanner.nextLine();
+
+            LegalCaseDocument document = new LegalCaseDocument(
+                    selectedCase.caseID,
+                    selectedCase.title,
+                    selectedCase.plaintiff,
+                    selectedCase.defendant,
+                    winner,
+                    loser,
+                    decision,
+                    sentence
+            );
+
+            appendDocument(document);
+
+            out.println("Document created and saved successfully!");
+            out.println("Press Enter to return to the menu...");
+            scanner.nextLine();
+			return false;
+        }
+
+        public static boolean documents() {
+            Scanner scanner = new Scanner(System.in);
+            int choice;
+
+            do {
+                clearScreen();
+                out.println("\n===== Case Tracking Menu =====");
+                out.println("1. All Documents");
+                out.println("2. Searching With Case Title");
+                out.println("3. Searching With ID");
+                out.println("4. Exit");
+                out.print("\nEnter your choice: ");
+
+                choice = getInput();
+
+                switch (choice) {
+                    case 1:
+                        allDocuments();
+                        break;
+                    case 2:
+                        searchingWithCaseTitle();
+                        break;
+                    case 3:
+                        searchByID();
+                        break;
+                    case 4:
+                        out.println("Exiting...");
+                        break;
+                    default:
+                        out.print("Invalid choice! Please press Enter to continue: ");
+                        scanner.nextLine(); // Kullanıcıdan giriş bekler
+                        break;
+                }
+            } while (choice != 4);
+
+            return true;
+        }
+
+       
+
+        public static boolean allDocuments() {
+            clearScreen();
+
+            File docFile = new File(DOCUMENT_FILE_NAME);
+            if (!docFile.exists()) {
+                out.println("Error: Document file not found!");
+                return false;
+            }
+
+            out.println("\n===== All Documents =====\n");
+
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(docFile))) {
+                while (true) {
+                    try {
+                        // Dosyadan bir `LegalCaseDocument` nesnesi oku
+                        LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
+
+                        // Nesne bilgilerini ekrana yazdır
+                        out.println("Case ID: " + document.caseID);
+                        out.println("Title: " + document.title);
+                        out.println("Plaintiff: " + document.plaintiff);
+                        out.println("Defendant: " + document.defendant);
+                        out.println("Winner: " + document.winner);
+                        out.println("Loser: " + document.loser);
+                        out.println("Decision: " + document.decision);
+                        out.println("Sentence: " + document.sentence);
+                        out.println("-----------------------------");
+                    } catch (EOFException e) {
+                        break; // Dosyanın sonuna ulaşıldı
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                out.println("Error reading document file: " + e.getMessage());
+                return false;
+            }
+
+            out.println("\nPress Enter to return to the menu...");
+            try {
+                new Scanner(System.in).nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+            } catch (Exception e) {
+                out.println("Error reading input.");
+            }
+
+            return true;
+        }
+
+   
+    // Compute LPS Array for KMP Algorithm
+    public static void computeLPSArray(String pattern, int M, int[] lps) {
+        int len = 0;
+        lps[0] = 0;
+        int i = 1;
+
+        while (i < M) {
+            if (pattern.charAt(i) == pattern.charAt(len)) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else {
+                if (len != 0) {
+                    len = lps[len - 1];
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+    }
+
+    // KMP Algorithm for Pattern Matching
+    public static boolean KMPSearch(String pattern, String text) {
+        int M = pattern.length();
+        int N = text.length();
+        int[] lps = new int[M];
+
+        computeLPSArray(pattern, M, lps);
+
+        int i = 0; // index for text
+        int j = 0; // index for pattern
+
+        while (i < N) {
+            if (pattern.charAt(j) == text.charAt(i)) {
+                j++;
+                i++;
+            }
+
+            if (j == M) {
+                return true;
+            } else if (i < N && pattern.charAt(j) != text.charAt(i)) {
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    i++;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Search for Case Titles in the Document File
+    public static boolean searchingWithCaseTitle() {
+        clearScreen();
+
+        File file = new File("documents.bin");
+        if (!file.exists()) {
+            out.println("Error: Document file not found!");
+            return false;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        out.print("Enter the Case Title to search: ");
+        String searchTitle = scanner.nextLine();
+
+        boolean found = false;
+        out.println("\n===== Search Results =====\n");
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    // `LegalCaseDocument` nesnesini oku
+                    LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
+
+                    // Başlık eşleşmesini KMP ile kontrol et
+                    if (KMPSearch(searchTitle.toLowerCase(), document.title.toLowerCase())) {
+                        out.println("Case ID: " + document.caseID);
+                        out.println("Title: " + document.title);
+                        out.println("Plaintiff: " + document.plaintiff);
+                        out.println("Defendant: " + document.defendant);
+                        out.println("Winner: " + document.winner);
+                        out.println("Loser: " + document.loser);
+                        out.println("Decision: " + document.decision);
+                        out.println("Sentence: " + document.sentence);
+                        out.println("-----------------------------");
+                        found = true;
+                    }
+                } catch (EOFException e) {
+                    break; // Dosyanın sonuna ulaşıldı
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            out.println("Error reading document file: " + e.getMessage());
+            return false;
+        }
+
+        if (!found) {
+            out.println("No matching case title found.");
+        }
+
+        out.println("Press Enter to return to the menu...");
+        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+        return true;
+    }
+   
+ // Search for a case in the hash table
+    public static LegalCase[] hashTableCases = new LegalCase[TABLE_SIZE]; // LegalCase nesnelerini tutar
+
+    public static LegalCase searchInHashTable(int caseID) {
+        int index = hashFunction(caseID, TABLE_SIZE); // Başlangıç indeksi hesaplanır
+        int startIndex = index;
+
+        while (hashTableProbing[index] != -1) { // Eğer mevcutsa
+            if (hashTableProbing[index] == caseID) {
+                return hashTableCases[index]; // İlgili dava döndürülür
+            }
+            index = (index + 1) % TABLE_SIZE; // Linear probing ile bir sonraki indeks
+            if (index == startIndex) {
+                break; // Döngüyü kır
+            }
+        }
+        return null; // Bulunamadıysa null döner
+    }
+    
+    // Search for a case by ID
+    public static boolean searchByID() {
+        clearScreen();
+        Scanner scanner = new Scanner(System.in);
+
+        out.print("Enter Case ID to search: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Buffer temizleme
+
+        // Hash table'da arama
+        LegalCase foundCase = searchInHashTable(id);
+        if (foundCase != null) {
+            out.println("\n===== Case Found in Hash Table =====");
+            printCaseDetails(foundCase);
+        } else {
+            // Dosyada arama
+            boolean found = false;
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+                while (true) {
+                    try {
+                        LegalCase currentCase = (LegalCase) ois.readObject();
+                        if (currentCase.caseID == id) {
+                            found = true;
+                            out.println("\n===== Case Found in File =====");
+                            printCaseDetails(currentCase);
+                            break;
+                        }
+                    } catch (EOFException e) {
+                        break; // Dosyanın sonuna ulaşıldı
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                out.println("Error reading file: " + e.getMessage());
+            }
+
+            if (!found) {
+                out.println("Case ID " + id + " not found in both hash table and file.");
+            }
+        }
+
+        out.println("Press Enter to return to the Case Tracking Menu...");
+        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+        return true;
+    }
+    // Print the details of a LegalCase
+    public static boolean printCaseDetails(LegalCase legalCase) {
+        out.println("Case ID: " + legalCase.caseID);
+        out.println("Case Title: " + legalCase.title);
+        out.println("Plaintiff: " + legalCase.plaintiff);
+        out.println("Defendant: " + legalCase.defendant);
+        out.println("Case Type: " + legalCase.type);
+        out.println("Date of Opening: " + legalCase.date);
+        out.println("Scheduled Hearing Date: " + legalCase.scheduled);
+        out.println("-----------------------------");
+		return true;
+    }}
+
+    
 
 
 
