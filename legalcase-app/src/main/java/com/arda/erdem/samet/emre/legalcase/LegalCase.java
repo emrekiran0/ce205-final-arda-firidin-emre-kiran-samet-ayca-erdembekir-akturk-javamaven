@@ -1086,7 +1086,7 @@ public static boolean sortByID() {
     
 
         // Maksimum dava türü sayısı
-        static final int MAX = 44;
+        static final int MAX = 45;
 
         // Dava türleri listesi
         static final CaseTypeForSCC[] caseTypeSCC = {
