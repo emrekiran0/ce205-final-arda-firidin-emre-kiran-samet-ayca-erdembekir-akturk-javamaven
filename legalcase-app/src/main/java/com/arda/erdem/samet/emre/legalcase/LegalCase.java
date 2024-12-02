@@ -836,48 +836,22 @@ public static boolean caseDates() {
     return true;
 }
 
-public void printSortedCases(BPlusTreeNode node) {
-		if (node == null) return;
+// B+ Ağacının kök düğümü
+private static BPlusTreeNode root;
 
-	    BPlusTreeNode current = node;
-	    while (current != null) {
-	        for (int i = 0; i < current.numKeys; i++) {
-	            LegalCase legalCase = current.cases[i];
-	            out.println("\nCase ID: " + legalCase.caseID);
-	            out.println("Case Title: " + legalCase.title);
-	            out.println("Plaintiff: " + legalCase.plaintiff);
-	            out.println("Defendant: " + legalCase.defendant);
-	            out.println("Case Type: " + legalCase.type);
-	            out.println("Beginning Date: " + legalCase.date);
-	            out.println("Scheduled Hearing Date: " + legalCase.scheduled);
-	            out.println("-----------------------------");
-	        }
-	        current = current.next;
-	    }}
-
-
-
-static void insertInNode(BPlusTreeNode node, int key, LegalCase newCase) {
-    int i = node.numKeys - 1;
-
-    while (i >= 0 && node.keys[i] > key) {
-        node.keys[i + 1] = node.keys[i];
-        node.cases[i + 1] = node.cases[i];
-        i--;
-    }
-
-    node.keys[i + 1] = key;
-    node.cases[i + 1] = newCase;
-    node.numKeys++;
-}
-
-static void insert(BPlusTree tree, int key, LegalCase newCase) {
-    if (tree.root == null) {
-        tree.root = new BPlusTreeNode(true);
-        insertInNode(tree.root, key, newCase);
+// Yeni dava ekleme
+public static void insert(int key, LegalCase newCase) {
+    if (root == null) {
+        root = new BPlusTreeNode(true);
+        root.keys[0] = key;
+        root.cases[0] = newCase;
+        root.numKeys = 1;
     } else {
-        BPlusTreeNode current = tree.root;
+        BPlusTreeNode current = root;
+        BPlusTreeNode parent = null;
+
         while (!current.isLeaf) {
+            parent = current;
             int i;
             for (i = 0; i < current.numKeys; i++) {
                 if (key < current.keys[i]) {
@@ -886,44 +860,133 @@ static void insert(BPlusTree tree, int key, LegalCase newCase) {
             }
             current = current.children[i];
         }
+
         insertInNode(current, key, newCase);
-    }}
+        if (current.numKeys == BPlusTreeNode.MAX) {
+            split(parent, current);
+        }
+    }
+}
+
+// Bir düğüme anahtar ve dava ekleme
+private static void insertInNode(BPlusTreeNode node, int key, LegalCase newCase) {
+    int i = node.numKeys - 1;
+    while (i >= 0 && node.keys[i] > key) {
+        node.keys[i + 1] = node.keys[i];
+        node.cases[i + 1] = node.cases[i];
+        i--;
+    }
+    node.keys[i + 1] = key;
+    node.cases[i + 1] = newCase;
+    node.numKeys++;
+}
+
+// Düğüm bölme işlemi
+private static void split(BPlusTreeNode parent, BPlusTreeNode node) {
+    int midIndex = BPlusTreeNode.MAX / 2;
+    BPlusTreeNode newNode = new BPlusTreeNode(node.isLeaf);
+
+    newNode.numKeys = BPlusTreeNode.MAX - midIndex - 1;
+    for (int i = 0; i < newNode.numKeys; i++) {
+        newNode.keys[i] = node.keys[midIndex + 1 + i];
+        newNode.cases[i] = node.cases[midIndex + 1 + i];
+    }
+
+    if (!node.isLeaf) {
+        for (int i = 0; i <= newNode.numKeys; i++) {
+            newNode.children[i] = node.children[midIndex + 1 + i];
+        }
+    }
+
+    node.numKeys = midIndex;
+
+    if (node.isLeaf) {
+        newNode.next = node.next;
+        node.next = newNode;
+    }
+
+    if (parent == null) {
+        parent = new BPlusTreeNode(false);
+        parent.keys[0] = node.keys[midIndex];
+        parent.children[0] = node;
+        parent.children[1] = newNode;
+        parent.numKeys = 1;
+        root = parent;
+    } else {
+        insertInNode(parent, node.keys[midIndex], null);
+        for (int i = parent.numKeys; i > 0; i--) {
+            if (parent.children[i - 1] == node) {
+                parent.children[i] = newNode;
+                break;
+            }
+        }
+    }
+}
+
+// Davaları sıralı olarak yazdırır
+public static void printSortedCases() {
+    if (root == null) {
+        System.out.println("No cases to display.");
+        return;
+    }
+
+    BPlusTreeNode current = root;
+    while (!current.isLeaf) {
+        current = current.children[0];
+    }
+
+    while (current != null) {
+        for (int i = 0; i < current.numKeys; i++) {
+            LegalCase legalCase = current.cases[i];
+            System.out.println("Case ID: " + legalCase.caseID);
+            System.out.println("Case Title: " + legalCase.title);
+            System.out.println("Plaintiff: " + legalCase.plaintiff);
+            System.out.println("Defendant: " + legalCase.defendant);
+            System.out.println("Case Type: " + legalCase.type);
+            System.out.println("Beginning Date: " + legalCase.date);
+            System.out.println("Scheduled Hearing Date: " + legalCase.scheduled);
+            System.out.println("-----------------------------");
+        }
+        current = current.next;
+    }
+}
+
 
 public static boolean sortByID() {
     clearScreen();
 
     File file = new File(FILE_NAME);
     if (!file.exists()) {
-        out.println("Error: File does not exist. Please add cases first.");
+        System.out.println("Error: File does not exist. Please add cases first.");
         return false;
     }
 
-    BPlusTree tree = new BPlusTree();
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
         while (true) {
             try {
+                // Dosyadan davaları oku ve ağaca ekle
                 LegalCase legalCase = (LegalCase) ois.readObject();
-                insert(tree, legalCase.caseID, legalCase);
+                LegalCase.insert(legalCase.caseID, legalCase);
             } catch (EOFException e) {
                 break; // Dosyanın sonuna ulaşıldı
             }
         }
     } catch (IOException | ClassNotFoundException e) {
-        out.println("Error reading cases: " + e.getMessage());
+        System.out.println("Error reading cases: " + e.getMessage());
         return false;
     }
 
     // Ağacı sıralı şekilde yazdır
-    out.println("\n===== Sorted Case Dates =====\n");
-    tree.root.printSortedCases(tree.root);
+    System.out.println("\n===== Sorted Case Dates =====\n");
+    LegalCase.printSortedCases();
 
-    out.print("Please press Enter to return to the Case Tracking Menu...");
-    scanner.nextLine(); // Kullanıcının Enter tuşuna basmasını bekler
+    System.out.print("Please press Enter to return to the Case Tracking Menu...");
+    scanner.nextLine();
     out.print(" ");
     scanner.nextLine();
-
     return true;
 }
+
 
     // Dava türleri için sabit isim listesi
     static final String[] caseNames = {
