@@ -1,6 +1,5 @@
 package com.arda.erdem.samet.emre.legalcase;
 
-import static java.lang.System.out;
 
 import java.io.EOFException;
 import java.io.File;
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
-
+import java.util.InputMismatchException;
 
 /**
  * @class LegalCase
@@ -30,14 +30,16 @@ import java.util.Stack;
  */
 
 public class LegalCase implements Serializable {
+    public static Scanner scanner;
+    public static PrintStream out;
     private static final long serialVersionUID = 1L;
     private static Stack<LegalCase> deletedCasesStack = new Stack<>();
 
 
     private static final int MAX_ATTEMPTS = 1000;
     public int caseID;
-    public String title;
-    public String type;
+    public static String title;
+    public static String type;
     public String plaintiff;
     public String defendant;
 	public String date;
@@ -45,19 +47,23 @@ public class LegalCase implements Serializable {
 
 
     // Constructor
-    public LegalCase(int caseID, String title, String type, String plaintiff, String defendant, String date, String scheduled) {
-        this.caseID = caseID;
-        this.title = title;
+    public LegalCase(String type, int caseID, String title, String defendant, String plaintiff, String scheduled, String date) {
         this.type = type;
-        this.plaintiff = plaintiff;
+    	this.caseID = caseID;
+        this.title = title;
         this.defendant = defendant;
-        this.date = date;
+        this.plaintiff = plaintiff;
         this.scheduled = scheduled;
+        this.date = date;
     }
 	
-    private static final Scanner scanner = new Scanner(System.in);
+    public LegalCase(Scanner scanner, PrintStream out) {
+        this.scanner = scanner;
+        this.out = out;
+    }
 
-    static int MAX_YEARS = 10;
+
+	static int MAX_YEARS = 10;
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
     
@@ -81,13 +87,16 @@ public class LegalCase implements Serializable {
         while (true) {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // Tamponu temizlemek için ekleyelim
                 return choice;
             } else {
                 out.println("Invalid choice! Please try again.");
-                scanner.nextLine(); // Geçersiz girişi temizle
+                scanner.nextLine(); // Tampondaki tüm kalan veriyi temizle
             }
         }
     }
+
+
     
     private static int[][][] sparseMatrix = new int[MAX_YEARS][MAX_MONTHS][MAX_DAYS]; // Sparse matrix
     
@@ -168,7 +177,6 @@ public class LegalCase implements Serializable {
         } while (choice != 4);
         return true;
     }
-
    
     public static boolean caseTracking() {
         int choice;
@@ -234,9 +242,11 @@ public class LegalCase implements Serializable {
 
         return true;
     }
+   
     public static int hashFunction(int caseID, int TABLE_SIZE) {
         return caseID % TABLE_SIZE;
     }
+    
     public static int TABLE_SIZE = 10000; // Sabit bir değer
     
     public static void initializeHashTable(int[] hashTableProbing, int TABLE_SIZE) {
@@ -267,8 +277,6 @@ public class LegalCase implements Serializable {
         
     }
 
-
-
     public static boolean progressiveOverflow(int caseID) {
         int index = hashFunction(caseID);
         int i = 0;
@@ -288,7 +296,6 @@ public class LegalCase implements Serializable {
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
         return false;
     }
-
 
     // Hash fonksiyonu
     private static int hashFunction(int caseID) {
@@ -315,8 +322,7 @@ public class LegalCase implements Serializable {
 
     	    return true;
     	}
-
-     
+   
      public static int secondHashFunction(int caseID) {
          return 7 - (caseID % 7); // Double hashing için ikinci hash fonksiyonu
      }
@@ -362,6 +368,7 @@ public class LegalCase implements Serializable {
          return true; // Tablodaki tüm slotlar dolu
      
      }
+     
      public static void insertIntoHashTable(LegalCase newCase) {
     	    int index = hashFunction(newCase.caseID); // Hash fonksiyonu ile index hesaplanır
 
@@ -388,7 +395,6 @@ public class LegalCase implements Serializable {
     	    }
     	}
      
-
      public static void appendCaseFile(LegalCase legalCase, String fileName) {
          try {
              // Dosya var mı kontrol et
@@ -403,13 +409,15 @@ public class LegalCase implements Serializable {
                  oos.writeObject(legalCase);
              }
 
-             out.println("Case has been appended successfully to " + fileName);
          } catch (IOException e) {
              out.println("Error appending case to file: " + e.getMessage());
          }
      }
 
-     
+     public static boolean isValidDateFormat(String date) {
+    	    return date.matches("\\d{2}/\\d{2}/\\d{4}"); // Tarihin "dd/mm/yyyy" formatında olup olmadığını kontrol eder
+    	}
+  
      public static boolean addCase() {
     	    clearScreen();
     	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
@@ -432,7 +440,7 @@ public class LegalCase implements Serializable {
     	        choice = getInput();
 
     	        // Generate random Case ID
-    	        caseID = rand.nextInt(900) + 100;
+    	        caseID = rand.nextInt(900000) + 100000;
 
     	        switch (choice) {
     	            case 1:
@@ -482,13 +490,28 @@ public class LegalCase implements Serializable {
     	        out.print("Date of Opening of the Case (dd/mm/yyyy): ");
     	        date = scanner.nextLine();
 
-    	        String[] parts = date.split("/");
-    	        if (parts.length == 3 && isValidDate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]))) {
-    	            break;
+    	        // Tarihin formatını kontrol et
+    	        if (isValidDateFormat(date)) {
+    	            String[] parts = date.split("/");
+    	            if (parts.length == 3) {
+    	                try {
+    	                    int day = Integer.parseInt(parts[0]);
+    	                    int month = Integer.parseInt(parts[1]);
+    	                    int year = Integer.parseInt(parts[2]);
+    	                    if (isValidDate(day, month, year)) {
+    	                        break; // Geçerli bir tarih bulundu
+    	                    }
+    	                } catch (NumberFormatException e) {
+    	                    out.println("Invalid date format! Please enter numbers only (dd/mm/yyyy).");
+    	                }
+    	            } else {
+    	                out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
+    	            }
     	        } else {
     	            out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
     	        }
     	    }
+
 
     	    int[] scheduledDate = new int[3];
     	    findNextAvailableDate(sparseMatrix, scheduledDate);
@@ -500,7 +523,7 @@ public class LegalCase implements Serializable {
 
     	    String scheduled = String.format("%02d/%02d/%d", scheduledDate[0], scheduledDate[1], scheduledDate[2]);
 
-    	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
+    	    LegalCase newCase = new LegalCase(type, caseID, title, defendant, plaintiff, scheduled, date);
     	    
 
     	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
@@ -542,8 +565,8 @@ public class LegalCase implements Serializable {
     	        newNode.prev = temp; // Önceki düğümü ayarla
     	        return head; // Baş düğümü geri döndür
     	    }}
+     
      public static boolean currentCases() {
-    	    Scanner scanner = new Scanner(System.in);
 
     	    CaseNode head = null;
     	    CaseNode currentNode = null;
@@ -597,6 +620,10 @@ public class LegalCase implements Serializable {
     	                break; // Çık
     	            } else {
     	                out.println("Invalid choice. Please try again.");
+    	                out.print(" ");
+    	                scanner.nextLine();
+    	                out.print("");
+    	                scanner.nextLine();
     	            }
     	        }
 
@@ -606,8 +633,7 @@ public class LegalCase implements Serializable {
 
     	    return true;
     	}
-
-     
+    
      //Push deleted case to the stack
      public static void pushDeletedCase(LegalCase deletedCase) {
     deletedCasesStack.push(deletedCase);
@@ -622,7 +648,6 @@ public class LegalCase implements Serializable {
         return null;
     }
 }
-
      
      // Delete from hash table
     public static void deleteFromHashTable(int caseID) {
@@ -633,58 +658,66 @@ public class LegalCase implements Serializable {
     }
 }
      //Delete case method
-     public static boolean deleteCase() {
-    	 clearScreen();
-    	 Scanner scanner = new Scanner(System.in);
+    public static boolean deleteCase() {
+        clearScreen();
+        Scanner scanner = new Scanner(System.in);
 
-    	 out.print("Enter Case ID to delete: ");
-    	 int id = scanner.nextInt();
+        int id = -1; // Varsayılan geçersiz değer
+        while (true) {
+            try {
+                out.print("Enter Case ID to delete: ");
+                id = scanner.nextInt(); // Kullanıcıdan tam sayı al
+                scanner.nextLine(); // Tampondaki fazlalıkları temizle
+                break; // Geçerli bir giriş alındıysa döngüden çık
+            } catch (InputMismatchException e) {
+                out.println("Invalid input! Please enter a valid numeric Case ID.");
+                scanner.nextLine(); // Geçersiz girişi temizle
+            }
+        }
 
-    	 File file = new File(FILE_NAME);
-    	 File tempFile = new File("temp.bin");
+        File file = new File(FILE_NAME);
+        File tempFile = new File("temp.bin");
 
-    	 boolean found = false;
+        boolean found = false;
 
-    	 try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-    	 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
 
-    		while (true) {
-           try {
-           LegalCase currentCase = (LegalCase) ois.readObject();
+            while (true) {
+                try {
+                    LegalCase currentCase = (LegalCase) ois.readObject();
 
-           if (currentCase.caseID == id) {
-               found = true;
-               pushDeletedCase(currentCase); // Add to the stack
-               out.println("Case ID " + id + " deleted successfully.");
-               out.println("Please press Enter to return to Case Tracking Menu...");
-               scanner.nextLine(); // Wait for user input
-           } else {
-               oos.writeObject(currentCase); // Write other cases to temp file
-           }
+                    if (currentCase.caseID == id) {
+                        found = true;
+                        pushDeletedCase(currentCase); // Silinen davayı yığına ekle
+                        out.println("Case ID " + id + " deleted successfully.");
+                    } else {
+                        oos.writeObject(currentCase); // Diğer davaları geçici dosyaya yaz
+                    }
 
-       } catch (EOFException e) {
-           break; // End of file reached
-       } 
-           }
+                } catch (EOFException e) {
+                    break; // Dosyanın sonuna ulaşıldı
+                }
+            }
 
-    	 } catch (IOException | ClassNotFoundException e) {
-    		 out.println("Error handling files: " + e.getMessage());
-    	 }
+        } catch (IOException | ClassNotFoundException e) {
+            out.println("Error handling files: " + e.getMessage());
+        }
 
-    	 if (found) {
-    		 file.delete(); // Delete original file
-    		 tempFile.renameTo(file); // Rename temp file to original file name
-    		 deleteFromHashTable(id); // Remove from hash table
-    	 } 
-     else {
-	tempFile.delete(); // Remove temporary file
-	out.println("Case ID " + id + " not found.");
-	out.println("\nPlease press Enter to return to Case Tracking Menu...");
-	scanner.nextLine();
-    	 }
+        if (found) {
+            file.delete(); // Orijinal dosyayı sil
+            tempFile.renameTo(file); // Geçici dosyayı orijinal dosyayla değiştir
+            deleteFromHashTable(id); // Hash tablosundan kaldır
+        } else {
+            tempFile.delete(); // Geçici dosyayı sil
+            out.println("Case ID " + id + " not found.");
+        }
 
-    	 return found;
-     }
+        out.println("\nPlease press Enter to return to Case Tracking Menu...");
+        scanner.nextLine();
+
+        return found;
+    }
 
      public static boolean undoDeleteCase() {
     if (deletedCasesStack.isEmpty()) {
@@ -715,7 +748,7 @@ public class LegalCase implements Serializable {
     out.println("Case ID: " + lastDeletedCase.caseID);
     out.println("Case Title: " + lastDeletedCase.title);
 
-    Scanner scanner = new Scanner(System.in);
+
     out.print("Do you want to undo the last deleted case? (y/n): ");
     char confirmation = scanner.nextLine().toLowerCase().charAt(0);
 
@@ -736,8 +769,7 @@ public class LegalCase implements Serializable {
     }
     return false; // Silinmiş bir dava yok
 }
-    
-
+   
 public static int compareDates(String date1, String date2) {
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     try {
@@ -749,7 +781,6 @@ public static int compareDates(String date1, String date2) {
         return 0; // Geçersiz tarih durumunda eşit kabul edilir
     }
 }
-
 
 public static void heapify(LegalCase[] cases, int n, int i) {
     int largest = i; // Root
@@ -792,7 +823,6 @@ public static void heapSort(LegalCase[] cases) {
     }
 }
 
-
 public static boolean caseDates() {
     clearScreen();
 
@@ -831,8 +861,6 @@ public static boolean caseDates() {
 
     out.print("Please press Enter to return to the Case Tracking Menu...");
 	scanner.nextLine();
-    out.print(" ");
-    scanner.nextLine();
     return true;
 }
 
@@ -951,7 +979,6 @@ public static void printSortedCases() {
     }
 }
 
-
 public static boolean sortByID() {
     clearScreen();
 
@@ -986,7 +1013,6 @@ public static boolean sortByID() {
     scanner.nextLine();
     return true;
 }
-
 
     // Dava türleri için sabit isim listesi
     static final String[] caseNames = {
@@ -1052,7 +1078,6 @@ public static boolean sortByID() {
         addEdge(graph, 0, 7); // Criminal - Dismissal
         addEdge(graph, 6, 0); // Traffic - Criminal
 
-        Scanner scanner = new Scanner(System.in);
         int choice;
 
         while (true) {
@@ -1084,7 +1109,6 @@ public static boolean sortByID() {
         }
     }
     
-
         // Maksimum dava türü sayısı
         static final int MAX = 44;
 
@@ -1183,7 +1207,6 @@ public static boolean sortByID() {
             addEdge(40, 42);
             addEdge(40, 43);
 
-            Scanner scanner = new Scanner(System.in);
             out.println("===== Cases That May Arise Menu =====\n");
 
             for (int i = 1; i <= 11; i++) {
@@ -1215,7 +1238,6 @@ public static boolean sortByID() {
             return true;
         }
 
-
         public int getCaseID() {
             return caseID;
         }
@@ -1224,12 +1246,10 @@ public static boolean sortByID() {
         public String getPlaintiff() {
             return plaintiff;
         }
-
-        
+       
         private static PlaintiffNode XOR(PlaintiffNode a, PlaintiffNode b) {
             return (a == null ? b : (b == null ? a : new PlaintiffNode(null)));
         }
-
 
         public static PlaintiffNode addPlaintiffNode(PlaintiffNode head, LegalCase data) {
             PlaintiffNode newNode = new PlaintiffNode(data);
@@ -1285,7 +1305,6 @@ public static boolean sortByID() {
             PlaintiffNode prev = null;
             PlaintiffNode next;
 
-            Scanner scanner = new Scanner(System.in);
 
             while (current != null) {
                 clearScreen();
@@ -1361,8 +1380,6 @@ public static boolean sortByID() {
             }
         }
 
-     
-
         public static boolean appendDocument(LegalCaseDocument document) {
             try {
                 boolean fileExists = new File(DOCUMENT_FILE_NAME).exists();
@@ -1381,9 +1398,6 @@ public static boolean sortByID() {
             }
 			return false;
         }
-
-
-       
 
         public static boolean createDocument() {
             clearScreen();
@@ -1417,7 +1431,6 @@ public static boolean sortByID() {
                 out.println("Error reading cases: " + e.getMessage());
             }
 
-            Scanner scanner = new Scanner(System.in);
             out.print("\nEnter Case ID to create a document for: ");
             int id = scanner.nextInt();
 
@@ -1489,7 +1502,6 @@ public static boolean sortByID() {
         }
 
         public static boolean documents() {
-            Scanner scanner = new Scanner(System.in);
             int choice;
 
             do {
@@ -1525,8 +1537,6 @@ public static boolean sortByID() {
 
             return true;
         }
-
-       
 
         public static boolean allDocuments() {
             clearScreen();
@@ -1573,7 +1583,6 @@ public static boolean sortByID() {
 
             return true;
         }
-
    
     // Compute LPS Array for KMP Algorithm
     public static void computeLPSArray(String pattern, int M, int[] lps) {
@@ -1637,7 +1646,6 @@ public static boolean sortByID() {
             return false;
         }
 
-        Scanner scanner = new Scanner(System.in);
         out.print("Enter the Case Title to search: ");
         String searchTitle = scanner.nextLine();
 
@@ -1703,7 +1711,6 @@ public static boolean sortByID() {
     // Search for a case by ID
     public static boolean searchByID() {
         clearScreen();
-        Scanner scanner = new Scanner(System.in);
 
         out.print("Enter Case ID to search: ");
         int id = scanner.nextInt();

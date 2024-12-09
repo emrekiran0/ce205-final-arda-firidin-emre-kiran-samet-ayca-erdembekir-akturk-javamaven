@@ -1,5 +1,7 @@
 package com.arda.erdem.samet.emre.legalcase;
 
+import java.util.Scanner;
+
 /**
  *
  * @class LegalCaseApp
@@ -24,6 +26,9 @@ public class LegalCaseApp {
 	public static void main(String[] args) {
 	    // Hash tablosunu başlat
 	    LegalCase.initializeHashTable(LegalCase.hashTableProbing, LegalCase.TABLE_SIZE);
+        Scanner Scanner = new Scanner(System.in);
+        LegalCase legalcase = new LegalCase(Scanner, System.out);
+
 
 	    // Ana menüyü çağır
 	    LegalCase.mainMenu();
