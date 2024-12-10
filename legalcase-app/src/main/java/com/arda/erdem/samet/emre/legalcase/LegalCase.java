@@ -38,8 +38,8 @@ public class LegalCase implements Serializable {
 
     private static final int MAX_ATTEMPTS = 1000;
     public int caseID;
-    public static String title;
-    public static String type;
+    public String title;
+    public String type;
     public String plaintiff;
     public String defendant;
 	public String date;
@@ -47,7 +47,7 @@ public class LegalCase implements Serializable {
 
 
     // Constructor
-    public LegalCase(String type, int caseID, String title, String defendant, String plaintiff, String scheduled, String date) {
+    public LegalCase(int caseID, String type, String title, String defendant, String plaintiff, String scheduled, String date) {
         this.type = type;
     	this.caseID = caseID;
         this.title = title;
@@ -523,7 +523,7 @@ public class LegalCase implements Serializable {
 
     	    String scheduled = String.format("%02d/%02d/%d", scheduledDate[0], scheduledDate[1], scheduledDate[2]);
 
-    	    LegalCase newCase = new LegalCase(type, caseID, title, defendant, plaintiff, scheduled, date);
+    	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
     	    
 
     	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
