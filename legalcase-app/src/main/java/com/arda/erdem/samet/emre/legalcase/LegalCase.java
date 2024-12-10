@@ -457,7 +457,7 @@ public class LegalCase implements Serializable {
     	                break;
     	            default:
     	                out.println("Invalid strategy choice! Defaulting to Quadratic Probing.");
-    	                inserted = quadraticProbing(caseID);
+    	                
     	                break;
     	        }
     	        attempt++;
@@ -1093,11 +1093,12 @@ public static boolean sortByID() {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
             } else {
+
                 out.println("Invalid input. Please enter a number.");
                 scanner.next(); // Geçersiz girdiyi temizle
                 continue;
             }
-
+            clearScreen();
             if (choice >= 0 && choice < NUM_CASE_TYPES) {
                 clearScreen(); // Seçim yapıldıktan sonra ekranı temizle
                 BFS(graph, choice); // Geçerli bir dava türü seçildiğinde BFS çalıştır
@@ -1213,27 +1214,38 @@ public static boolean sortByID() {
                 out.println(i + "-) " + caseTypeSCC[(i - 1) * 4].name);
             }
 
-            out.print("Please Make Your Choice (1-11): ");
-            int caseChoice = scanner.nextInt();
+            int caseChoice = -1;
+            boolean validInput = false;
 
-            if (caseChoice >= 1 && caseChoice <= 11) {
-                out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
-                out.println("\nCases That May Arise:");
-
-                for (int i = (caseChoice - 1) * 4 + 1; i < MAX; i++) {
-                    if (i % 4 == 0) break;
-                    out.println("- " + caseTypeSCC[i].name);
+            // Geçerli bir giriş alınana kadar döngü
+            while (!validInput) {
+                out.print("Please Make Your Choice (1-11): ");
+                if (scanner.hasNextInt()) {
+                    caseChoice = scanner.nextInt();
+                    scanner.nextLine(); // Buffer temizleme
+                    if (caseChoice >= 1 && caseChoice <= 11) {
+                        validInput = true; // Geçerli giriş
+                    } else {
+                        out.println("Invalid choice. Please enter a number between 1 and 11.");
+                    }
+                } else {
+                    out.println("Invalid input! Please enter a valid numeric choice.");
+                    scanner.nextLine(); // Geçersiz girdiyi temizle
                 }
-            } else {
-                out.println("Invalid choice.");
+            }
+
+            // Seçilen dava türünü göster ve ilgili işlemleri yap
+            clearScreen();
+            out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
+            out.println("\nCases That May Arise:");
+
+            for (int i = (caseChoice - 1) * 4 + 1; i < MAX; i++) {
+                if (i % 4 == 0) break;
+                out.println("- " + caseTypeSCC[i].name);
             }
 
             out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
-            try {
-                System.in.read();
-            } catch (Exception e) {
-                out.println("Error reading input.");
-            }
+            scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
 
             return true;
         }
@@ -1405,10 +1417,21 @@ public static boolean sortByID() {
             File file = new File(FILE_NAME);
             if (!file.exists()) {
                 out.println("Error: File not found!");
-                
+                out.println("Press Enter to return to the menu...");
+                scanner.nextLine(); // Kullanıcının Enter'a basmasını bekler
+                return false;
             }
 
+            if (isFileEmpty(FILE_NAME)) {
+    	        out.println("No cases available in the system!");
+    	        out.println("Press Enter to return to the menu...");
+    	        scanner.nextLine(); // Kullanıcının Enter'a basmasını bekler
+    	        return false;
+    	    }
+            
             LegalCase selectedCase = null;
+
+            // Dosyadaki mevcut davaları göster
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 out.println("\n===== Current Cases =====");
 
@@ -1429,36 +1452,48 @@ public static boolean sortByID() {
                 }
             } catch (IOException | ClassNotFoundException e) {
                 out.println("Error reading cases: " + e.getMessage());
+                return false;
             }
 
-            out.print("\nEnter Case ID to create a document for: ");
-            int id = scanner.nextInt();
+            boolean validCaseID = false; // Geçerli bir ID bulundu mu
+            int id = -1;
 
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-                while (true) {
-                    try {
-                        LegalCase currentCase = (LegalCase) ois.readObject();
-                        if (currentCase.caseID == id) {
-                            selectedCase = currentCase;
-                            break;
+            // Geçerli bir Case ID alana kadar döngü
+            while (!validCaseID) {
+                out.print("\nEnter Case ID to create a document for: ");
+                if (scanner.hasNextInt()) {
+                    id = scanner.nextInt();
+                    scanner.nextLine(); // Buffer temizleme
+
+                    // Girilen Case ID'nin dosyada olup olmadığını kontrol et
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                        while (true) {
+                            try {
+                                LegalCase currentCase = (LegalCase) ois.readObject();
+                                if (currentCase.caseID == id) {
+                                    selectedCase = currentCase;
+                                    validCaseID = true; // Geçerli bir ID bulundu
+                                    break;
+                                }
+                            } catch (EOFException e) {
+                                break;
+                            }
                         }
-                    } catch (EOFException e) {
-                        break;
+                    } catch (IOException | ClassNotFoundException e) {
+                        out.println("Error reading cases: " + e.getMessage());
+                        return false;
                     }
+
+                    if (!validCaseID) {
+                        out.println("Case ID not found! Please try again.");
+                    }
+                } else {
+                    out.println("Invalid input! Please enter a valid numeric Case ID.");
+                    scanner.next(); // Geçersiz girdiyi temizle
                 }
-            } catch (IOException | ClassNotFoundException e) {
-                out.println("Error reading cases: " + e.getMessage());
-                
             }
 
-            if (selectedCase == null) {
-                out.println("Case ID not found!");
-                out.println("Press Enter to return to the menu...");
-                scanner.nextLine();
-                scanner.nextLine();
-               
-            }
-
+            // Seçilen davanın bilgilerini göster
             clearScreen();
             out.println("\n===== Selected Case =====");
             out.println("Case ID: " + selectedCase.caseID);
@@ -1469,7 +1504,6 @@ public static boolean sortByID() {
             out.println("Date: " + selectedCase.date);
             out.println("Scheduled: " + selectedCase.scheduled);
 
-            scanner.nextLine(); // Clear buffer
             out.print("Winner: ");
             String winner = scanner.nextLine();
 
@@ -1498,9 +1532,8 @@ public static boolean sortByID() {
             out.println("Document created and saved successfully!");
             out.println("Press Enter to return to the menu...");
             scanner.nextLine();
-			return false;
+            return true;
         }
-
         public static boolean documents() {
             int choice;
 
@@ -1649,6 +1682,14 @@ public static boolean sortByID() {
         out.print("Enter the Case Title to search: ");
         String searchTitle = scanner.nextLine();
 
+        // Kullanıcı giriş yapmazsa tekrar iste
+        while (searchTitle.isEmpty()) {
+        	clearScreen();
+            out.println("Invalid input! Please enter a valid case title.");
+            out.print("Enter the Case Title to search: ");
+            searchTitle = scanner.nextLine().trim();
+        }
+       
         boolean found = false;
         out.println("\n===== Search Results =====\n");
 
@@ -1681,6 +1722,7 @@ public static boolean sortByID() {
         }
 
         if (!found) {
+        	clearScreen();
             out.println("No matching case title found.");
         }
 
@@ -1711,10 +1753,19 @@ public static boolean sortByID() {
     // Search for a case by ID
     public static boolean searchByID() {
         clearScreen();
-
-        out.print("Enter Case ID to search: ");
-        int id = scanner.nextInt();
-        scanner.nextLine(); // Buffer temizleme
+        int id = -1; // ID değişkeni
+        while (true) {
+            out.print("Enter Case ID to search: ");
+            if (scanner.hasNextInt()) {
+                id = scanner.nextInt();
+                scanner.nextLine(); // Buffer temizleme
+                break; // Geçerli giriş alındığında döngüden çık
+            } else {
+            	clearScreen();
+                out.println("Invalid input! Please enter a valid numeric Case ID.");
+                scanner.nextLine(); // Hatalı girdiyi temizle
+            }
+        }
 
         // Hash table'da arama
         LegalCase foundCase = searchInHashTable(id);
@@ -1743,6 +1794,7 @@ public static boolean sortByID() {
             }
 
             if (!found) {
+            	clearScreen();
                 out.println("Case ID " + id + " not found in both hash table and file.");
             }
         }
@@ -1751,6 +1803,7 @@ public static boolean sortByID() {
         scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
         return true;
     }
+
     // Print the details of a LegalCase
     public static boolean printCaseDetails(LegalCase legalCase) {
         out.println("Case ID: " + legalCase.caseID);
@@ -1762,7 +1815,33 @@ public static boolean sortByID() {
         out.println("Scheduled Hearing Date: " + legalCase.scheduled);
         out.println("-----------------------------");
 		return true;
-    }}
+    }
+    
+    public static boolean isFileEmpty(String fileName) {
+        File file = new File(fileName);
+
+        if (!file.exists()) {
+            return true; // Eğer dosya yoksa, boş kabul edilir
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    ois.readObject(); // Dosyada en az bir nesne var mı kontrol et
+                    return false; // Nesne bulundu, dosya boş değil
+                } catch (EOFException e) {
+                    break; // Dosyanın sonuna ulaşıldı
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return true; // Dosya tamamen boşsa
+    }
+        
+
+}
 
     
 
