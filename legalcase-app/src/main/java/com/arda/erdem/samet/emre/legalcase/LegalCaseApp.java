@@ -1,5 +1,6 @@
 package com.arda.erdem.samet.emre.legalcase;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -22,8 +23,9 @@ public class LegalCaseApp {
    *          message, and handles user input.
    *
    * @param args The command-line arguments passed to the application.
+ * @throws IOException 
    */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 	    // Hash tablosunu başlat
 	    LegalCase.initializeHashTable(LegalCase.hashTableProbing, LegalCase.TABLE_SIZE);
         Scanner Scanner = new Scanner(System.in);

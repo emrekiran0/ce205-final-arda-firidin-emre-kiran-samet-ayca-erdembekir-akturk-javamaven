@@ -33,7 +33,7 @@ public class LegalCase implements Serializable {
     public static Scanner scanner;
     public static PrintStream out;
     private static final long serialVersionUID = 1L;
-    private static Stack<LegalCase> deletedCasesStack = new Stack<>();
+    static Stack<LegalCase> deletedCasesStack = new Stack<>();
 
 
     private static final int MAX_ATTEMPTS = 1000;
@@ -67,7 +67,7 @@ public class LegalCase implements Serializable {
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
     
-    public static final String FILE_NAME = "cases.bin";
+    public static  String FILE_NAME = "cases.bin";
     public static final String DOCUMENT_FILE_NAME = "documents.bin";
 
     public static void clearScreen() {
@@ -110,7 +110,7 @@ public class LegalCase implements Serializable {
         return true; // Tarih geçerliyse `true` döner
     }
    
-    private static void initializeSparseMatrix(int[][][] sparseMatrix) {
+    public static void initializeSparseMatrix(int[][][] sparseMatrix) {
         for (int year = 0; year < MAX_YEARS; year++) {
             for (int month = 0; month < MAX_MONTHS; month++) {
                 for (int day = 0; day < MAX_DAYS; day++) {
@@ -136,7 +136,7 @@ public class LegalCase implements Serializable {
         }
     }
 
-    public static boolean mainMenu() {
+    public static boolean mainMenu() throws IOException {
         initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
 
         int choice;
@@ -167,11 +167,7 @@ public class LegalCase implements Serializable {
                     break;
                 default:
                     out.print("Invalid choice! Please press a key to continue: ");
-                    try {
-                        System.in.read(); // Kullanıcıdan bir tuşa basmasını bekliyoruz
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    System.in.read();
                     break;
             }
         } while (choice != 4);
@@ -455,10 +451,6 @@ public class LegalCase implements Serializable {
     	            case 4:
     	                inserted = doubleHashingInsert(caseID);
     	                break;
-    	            default:
-    	                out.println("Invalid strategy choice! Defaulting to Quadratic Probing.");
-    	                
-    	                break;
     	        }
     	        attempt++;
     	    } while (!inserted && attempt < LegalCase.MAX_ATTEMPTS);
@@ -503,6 +495,7 @@ public class LegalCase implements Serializable {
     	                    }
     	                } catch (NumberFormatException e) {
     	                    out.println("Invalid date format! Please enter numbers only (dd/mm/yyyy).");
+    	                    
     	                }
     	            } else {
     	                out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
@@ -865,7 +858,7 @@ public static boolean caseDates() {
 }
 
 // B+ Ağacının kök düğümü
-private static BPlusTreeNode root;
+public static BPlusTreeNode root;
 
 // Yeni dava ekleme
 public static void insert(int key, LegalCase newCase) {
@@ -910,7 +903,7 @@ private static void insertInNode(BPlusTreeNode node, int key, LegalCase newCase)
 }
 
 // Düğüm bölme işlemi
-private static void split(BPlusTreeNode parent, BPlusTreeNode node) {
+static void split(BPlusTreeNode parent, BPlusTreeNode node) {
     int midIndex = BPlusTreeNode.MAX / 2;
     BPlusTreeNode newNode = new BPlusTreeNode(node.isLeaf);
 
@@ -952,10 +945,10 @@ private static void split(BPlusTreeNode parent, BPlusTreeNode node) {
 }
 
 // Davaları sıralı olarak yazdırır
-public static void printSortedCases() {
+public static boolean printSortedCases() {
     if (root == null) {
         System.out.println("No cases to display.");
-        return;
+        return false;
     }
 
     BPlusTreeNode current = root;
@@ -977,6 +970,7 @@ public static void printSortedCases() {
         }
         current = current.next;
     }
+	return true;
 }
 
 public static boolean sortByID() {
@@ -1842,14 +1836,3 @@ public static boolean sortByID() {
         
 
 }
-
-    
-
-
-
-
-   
-
-
- 
-
