@@ -39,22 +39,23 @@ public class LegalCase implements Serializable {
     private static final int MAX_ATTEMPTS = 1000;
     public int caseID;
     public String title;
-    public String type;
     public String plaintiff;
     public String defendant;
+    public  String type;
 	public String date;
 	public String scheduled;
 
 
     // Constructor
-    public LegalCase(int caseID, String type, String title, String defendant, String plaintiff, String scheduled, String date) {
-        this.type = type;
+    public LegalCase(int caseID,  String title,String type, String defendant, String plaintiff,  String date, String scheduled) {
     	this.caseID = caseID;
         this.title = title;
-        this.defendant = defendant;
         this.plaintiff = plaintiff;
-        this.scheduled = scheduled;
+        this.defendant = defendant;
+        this.type = type;
         this.date = date;
+        this.scheduled = scheduled;
+      
     }
 	
     public LegalCase(Scanner scanner, PrintStream out) {
@@ -62,13 +63,14 @@ public class LegalCase implements Serializable {
         this.out = out;
     }
 
+   
 
 	static int MAX_YEARS = 10;
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
     
     public static  String FILE_NAME = "cases.bin";
-    public static final String DOCUMENT_FILE_NAME = "documents.bin";
+    public static  String DOCUMENT_FILE_NAME = "documents.bin";
 
     public static void clearScreen() {
         try {
@@ -516,7 +518,7 @@ public class LegalCase implements Serializable {
 
     	    String scheduled = String.format("%02d/%02d/%d", scheduledDate[0], scheduledDate[1], scheduledDate[2]);
 
-    	    LegalCase newCase = new LegalCase(caseID, caseTitle, plaintiff, defendant, caseType, date, scheduled);
+    	    LegalCase newCase = new LegalCase(caseID, caseTitle,caseType, defendant,plaintiff,   date, scheduled);
     	    
 
     	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
@@ -569,6 +571,7 @@ public class LegalCase implements Serializable {
     	        out.println("Error: File does not exist. Please add cases first.");
     	        return false;
     	    }
+    	   
 
     	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
     	        out.println("\n===== Current Cases =====\n");
@@ -1416,13 +1419,7 @@ public static boolean sortByID() {
                 return false;
             }
 
-            if (isFileEmpty(FILE_NAME)) {
-    	        out.println("No cases available in the system!");
-    	        out.println("Press Enter to return to the menu...");
-    	        scanner.nextLine(); // Kullanıcının Enter'a basmasını bekler
-    	        return false;
-    	    }
-            
+        
             LegalCase selectedCase = null;
 
             // Dosyadaki mevcut davaları göster
