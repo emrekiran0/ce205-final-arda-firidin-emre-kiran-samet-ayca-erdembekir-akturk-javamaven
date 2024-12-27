@@ -1,10 +1,15 @@
 package com.arda.erdem.samet.emre.legalcase;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Console;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,7 +20,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -35,6 +42,8 @@ public class LegalCase implements Serializable {
     private static final long serialVersionUID = 1L;
     static Stack<LegalCase> deletedCasesStack = new Stack<>();
 
+    private static final String USER_FILE = "user.huff";
+    private static final Map<Character, String> huffmanCodes = new HashMap<>();
 
     private static final int MAX_ATTEMPTS = 1000;
     public int caseID;
@@ -1006,8 +1015,6 @@ public static boolean sortByID() {
 
     System.out.print("Please press Enter to return to the Case Tracking Menu...");
     scanner.nextLine();
-    out.print(" ");
-    scanner.nextLine();
     return true;
 }
 
@@ -1831,5 +1838,116 @@ public static boolean sortByID() {
         return true; // Dosya tamamen boşsa
     }
         
+    private static Map<Character, Integer> initializeFrequencyMap() {
+        Map<Character, Integer> map = new HashMap<>();
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        for (char ch : characters.toCharArray()) {
+            map.put(ch, (int) (Math.random() * 100 + 1)); // Random frequencies
+        }
+        return map;
+    }
+
+    private static String encodePassword(String password) {
+        StringBuilder encoded = new StringBuilder();
+        for (char ch : password.toCharArray()) {
+            encoded.append(huffmanCodes.get(ch));
+        }
+        return encoded.toString();
+    }
+
+    private static boolean registerUser() {
+        clearScreen();
+        out.print("Enter username: ");
+        String username = scanner.nextLine();
+        out.print("Enter password: ");
+        String password = readPassword(scanner);
+
+        String encodedPassword = encodePassword(password);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE, true))) {
+            writer.write(username + ":" + encodedPassword);
+            writer.newLine();
+        } catch (IOException e) {
+            out.println("Error writing to file.");
+            return false;
+        }
+
+        out.println("User registered successfully.");
+        clearScreen();
+        return true;
+    }
+
+    private static boolean loginUser() {
+        clearScreen();
+        out.print("Enter username: ");
+        String username = scanner.nextLine();
+        out.print("Enter password: ");
+        String password = readPassword(scanner);
+
+        String encodedPassword = encodePassword(password);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts[0].equals(username) && parts[1].equals(encodedPassword)) {
+                    out.println("Login successful.");
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            out.println("Error reading from file.");
+        }
+
+        out.println("Invalid username or password.");
+        return false;
+    }
+
+    static boolean mainEntry() {
+        while (true) {
+            out.println("\n===== User Authentication System =====");
+            out.println("1. Register");
+            out.println("2. Login");
+            out.println("3. Exit");
+            out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    registerUser();
+                    break;
+                case 2:
+                    if (loginUser()) {
+                        return true;
+                    }
+                    break;
+                case 3:
+                    out.println("Exiting...");
+                    return false;
+                default:
+                    out.println("Invalid choice! Please enter a valid option.");
+            }
+        }
+    }
+
+    private static String readPassword(Scanner scanner) {
+        Console console = System.console();
+        if (console != null) {
+            char[] passwordArray = console.readPassword();
+            return new String(passwordArray);
+        } else {
+            StringBuilder password = new StringBuilder();
+            while (true) {
+                char ch = scanner.nextLine().charAt(0);
+                if (ch == '\n') break;
+                password.append(ch);
+                out.print("*");
+            }
+            return password.toString();
+        }
+    }
 
 }
