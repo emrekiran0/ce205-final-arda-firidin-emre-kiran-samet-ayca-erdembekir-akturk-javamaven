@@ -13,27 +13,37 @@ import java.util.Scanner;
 public class LegalCaseApp {
 
     /**
-     * @brief The main entry point of the LegalCase App.
+     * The main entry point of the Legal Case Tracker application.
+     * 
+     * @details This method initializes the hash table for storing legal case data, 
+     * sets up user input and output resources, and manages the application's flow by 
+     * invoking the user authentication system and the main menu.
      *
-     * @details The main method is the starting point of the LegalCase App. It initializes the 
-     * logger, performs logging, displays a greeting message, and handles user input.
+     * @param args Command-line arguments passed to the application (not used in this implementation).
+     * @throws IOException If an error occurs during input/output operations.
      *
-     * @param args The command-line arguments passed to the application.
-     * @throws IOException
+     * @steps
+     * - Initialize the hash table for case management.
+     * - Create input and output resources using `Scanner` and `PrintStream`.
+     * - Run the user authentication system using `LegalCase.mainEntry`.
+     * - Upon successful login, display the main menu of the application.
+     * - If login fails, exit the application with a farewell message.
+     *
+     * @see LegalCase#initializeHashTable(int[], int)
+     * @see LegalCase#mainEntry()
+     * @see LegalCase#mainMenu()
      */
     public static void main(String[] args) throws IOException {
-        // Hash tablosunu başlat
         LegalCase.initializeHashTable(LegalCase.hashTableProbing, LegalCase.TABLE_SIZE);
 
-        // Scanner ve LegalCase nesnesi oluştur
+
         Scanner scanner = new Scanner(System.in);
         LegalCase legalCase = new LegalCase(scanner, System.out);
         
 
-        // Kullanıcı giriş ekranını çalıştır
+        
         boolean isLoggedIn = LegalCase.mainEntry();
 
-        // Kullanıcı giriş yaptıysa ana menüyü çalıştır
         if (isLoggedIn) {
             LegalCase.mainMenu();
         } else {
