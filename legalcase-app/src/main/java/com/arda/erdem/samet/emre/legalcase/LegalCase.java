@@ -29,13 +29,6 @@ import java.util.Stack;
 import java.util.InputMismatchException;
 
 /**
- * @class LegalCase
- * @brief This class represents a LegalCase that performs mathematical operations.
- * @details The LegalCase class provides methods to perform mathematical operations such as addition, subtraction, multiplication, and division.
- * It also supports logging functionality using the logger object.
- * @author ugur.coruh
- */
-/**
  * Represents a legal case with details such as case ID, title, involved parties, type, and dates.
  * This class is used as the core data structure for storing and managing legal case information.
  *
@@ -60,36 +53,145 @@ import java.util.InputMismatchException;
  *
  * @note This class supports serialization for saving and retrieving legal case objects from files.
  */
+
 public class LegalCase implements Serializable {
+	
+	/**
+	 * @brief Global variables and constants for the `LegalCase` class.
+	 *
+	 * @details
+	 * - `scanner`: A global `Scanner` instance for user input.
+	 * - `out`: A `PrintStream` instance for output operations.
+	 * - `serialVersionUID`: Ensures proper serialization compatibility.
+	 * - `deletedCasesStack`: A stack for storing deleted `LegalCase` objects for potential restoration.
+	 * - `USER_FILE`: The file name used to store user credentials in a compressed format.
+	 * - `huffmanCodes`: A map containing Huffman-encoded character mappings.
+	 * - `MAX_ATTEMPTS`: The maximum number of attempts allowed for certain operations.
+	 *
+	 * @fields
+	 * - `caseID`: The unique identifier for each legal case.
+	 * - `title`: The title or name of the legal case.
+	 * - `plaintiff`: The name of the plaintiff involved in the case.
+	 * - `defendant`: The name of the defendant involved in the case.
+	 * - `type`: The type or category of the case.
+	 * - `date`: The opening date of the case.
+	 * - `scheduled`: The scheduled hearing date for the case.
+	 */
     public static Scanner scanner;
+    
+    /**
+     * @brief The output stream for displaying information to the user.
+     * 
+     * @details This stream is used to print messages or information
+     * to the console or any designated output destination.
+     */
     public static PrintStream out;
+    /**
+     * @brief A unique identifier for serialization.
+     *
+     * @details This field ensures compatibility during the deserialization process 
+     * by verifying that the sender and receiver of a serialized object maintain 
+     * the same class version. It prevents `InvalidClassException` when deserializing 
+     * objects from older or newer versions of the class.
+     *
+     * @note The `serialVersionUID` is recommended for all classes implementing 
+     * the `Serializable` interface to explicitly define the version.
+     */
     private static final long serialVersionUID = 1L;
     static Stack<LegalCase> deletedCasesStack = new Stack<>();
 
+    /**
+     * @brief File name for storing user data.
+     *
+     * @details This constant represents the name of the file used to store 
+     * user credentials securely. The file contains user data encoded with 
+     * Huffman encoding for added security.
+     *
+     * @note Changing the file name requires updating all references to this constant.
+     */
     private static final String USER_FILE = "user.huff";
+    
+    /**
+     * @brief Stores Huffman codes for characters.
+     *
+     * @details This map holds the Huffman encoding for each character, used 
+     * for secure encoding and decoding of user passwords. Keys represent 
+     * characters, and values represent their corresponding Huffman codes.
+     *
+     * @note The map is initialized during the application's setup process 
+     * and should not be modified directly.
+     */
     private static final Map<Character, String> huffmanCodes = new HashMap<>();
 
+    /**
+     * @brief Defines the maximum number of attempts allowed.
+     *
+     * @details This constant specifies the upper limit on the number of 
+     * attempts for certain operations, such as finding an available slot 
+     * in a hash table or retrying a failed operation.
+     *
+     * @note Exceeding this limit may result in an error or alternative 
+     * handling logic, depending on the context.
+     */
     private static final int MAX_ATTEMPTS = 1000;
+    
+    /**
+     * @brief The unique identifier for the legal case.
+     */
     public int caseID;
-    public String title;
-    public String plaintiff;
-    public String defendant;
-    public  String type;
-	public String date;
-	public String scheduled;
 
+    /**
+     * @brief The title or subject of the legal case.
+     */
+    public String title;
+
+    /**
+     * @brief The name of the plaintiff involved in the case.
+     */
+    public String plaintiff;
+
+    /**
+     * @brief The name of the defendant involved in the case.
+     */
+    public String defendant;
+
+    /**
+     * @brief The type or category of the case (e.g., civil, criminal).
+     */
+    public String type;
+
+    /**
+     * @brief The date when the case was filed or started.
+     */
+    public String date;
+
+    /**
+     * @brief The scheduled hearing date for the case.
+     */
+    public String scheduled;
+
+
+
+    // Constructor
 	/**
-	 * Constructs a new LegalCase object with the specified details.
-	 * This constructor initializes a legal case with relevant information such as
-	 * case ID, title, type, plaintiff, defendant, and scheduled dates.
+	 * @brief Constructs a new `LegalCase` object.
 	 *
-	 * @param caseID     A unique identifier for the case.
-	 * @param title      The title or summary of the legal case.
-	 * @param type       The type of the legal case (e.g., criminal, civil).
-	 * @param defendant  The name of the defendant in the case.
-	 * @param plaintiff  The name of the plaintiff in the case.
-	 * @param date       The creation date of the legal case.
-	 * @param scheduled  The scheduled hearing date for the legal case.
+	 * @details Initializes a `LegalCase` instance with the provided attributes:
+	 * - `caseID`: A unique identifier for the legal case.
+	 * - `title`: The title or name of the legal case.
+	 * - `type`: The type or category of the case (e.g., civil, criminal).
+	 * - `defendant`: The name of the defendant in the case.
+	 * - `plaintiff`: The name of the plaintiff in the case.
+	 * - `date`: The date when the case was opened.
+	 * - `scheduled`: The scheduled hearing date for the case.
+	 *
+	 * @param caseID The unique identifier for the legal case.
+	 * @param title The title of the legal case.
+	 * @param type The type of the legal case.
+	 * @param defendant The defendant involved in the case.
+	 * @param plaintiff The plaintiff involved in the case.
+	 * @param date The opening date of the case.
+	 * @param scheduled The scheduled hearing date of the case.
 	 */
     public LegalCase(int caseID,  String title,String type, String defendant, String plaintiff,  String date, String scheduled) {
     	this.caseID = caseID;
@@ -102,15 +204,15 @@ public class LegalCase implements Serializable {
       
     }
 	
-    
     /**
-     * Constructs a LegalCase object with input and output streams.
-     * This constructor associates a `Scanner` object for input reading and 
-     * a `PrintStream` object for output display. It is useful for operations 
-     * that require real-time user interaction.
+     * @brief Constructs a new `LegalCase` object with input and output streams.
      *
-     * @param scanner A `Scanner` object for reading user inputs.
-     * @param out     A `PrintStream` object for displaying outputs.
+     * @details This constructor initializes a `LegalCase` instance by associating it 
+     * with the provided `Scanner` for user input and `PrintStream` for output. 
+     * It allows seamless interaction with the user through these streams.
+     *
+     * @param scanner A `Scanner` object to handle user input.
+     * @param out A `PrintStream` object to handle output display.
      */
     public LegalCase(Scanner scanner, PrintStream out) {
         this.scanner = scanner;
@@ -123,10 +225,22 @@ public class LegalCase implements Serializable {
     static int MAX_MONTHS = 12;
     static int MAX_DAYS = 31;
     
+    /**
+     * @brief The file name used for storing case data.
+     * 
+     * @details This constant represents the name of the file where all 
+     * legal case information is saved and retrieved.
+     */
     public static  String FILE_NAME = "cases.bin";
+    
+    /**
+     * @brief The file name used for storing document data.
+     * 
+     * @details This constant represents the name of the file where all 
+     * legal case documents are saved and retrieved.
+     */
     public static  String DOCUMENT_FILE_NAME = "documents.bin";
 
-    
     /**
      * Clears the console screen for better readability.
      * This method works on both Windows and Unix-based operating systems by 
@@ -138,6 +252,9 @@ public class LegalCase implements Serializable {
      *
      * @throws Exception if the process fails to execute the clear command.
      */
+    
+    
+    
     public static void clearScreen() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -150,7 +267,6 @@ public class LegalCase implements Serializable {
         }
     }
 
-    
     /**
      * Reads an integer input from the user with input validation.
      * Ensures that the user enters a valid integer. If the input is invalid,
@@ -161,22 +277,48 @@ public class LegalCase implements Serializable {
      * @note The method uses `scanner` to read input and `out` to display messages.
      *       The method also clears any invalid data from the scanner buffer.
      */
+    
     public static int getInput() {
         int choice;
         while (true) {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine(); 
+                scanner.nextLine(); // Tamponu temizlemek için ekleyelim
                 return choice;
             } else {
                 out.println("Invalid choice! Please try again.");
-                scanner.nextLine(); 
+                scanner.nextLine(); // Tampondaki tüm kalan veriyi temizle
             }
         }
     }
 
 
-    
+    /**
+     * @brief Sparse matrix for storing scheduled hearing dates.
+     *
+     * @details
+     * The `sparseMatrix` is a three-dimensional array used to track 
+     * the availability of hearing dates. It is organized by year, month, and day.
+     * Each entry in the matrix represents a specific day and contains an integer value:
+     * - `0`: The date is available.
+     * - `1`: The date is occupied.
+     *
+     * ### Structure:
+     * - Dimensions:
+     *   - First dimension: Years (e.g., `MAX_YEARS` specifies the range of years tracked).
+     *   - Second dimension: Months (1-12, representing January to December).
+     *   - Third dimension: Days (1-31, representing the days of each month).
+     *
+     * @note
+     * - The `MAX_YEARS`, `MAX_MONTHS`, and `MAX_DAYS` constants determine 
+     *   the maximum size of the matrix.
+     * - The sparse matrix is initialized to all zeros, indicating that 
+     *   all dates are initially available.
+     * - Ensure that valid ranges are maintained for months (1-12) and days (1-31) 
+     *   depending on the year and month.
+     *
+     * @see addCase() for date assignment logic.
+     */
     private static int[][][] sparseMatrix = new int[MAX_YEARS][MAX_MONTHS][MAX_DAYS]; // Sparse matrix
     
     
@@ -194,17 +336,17 @@ public class LegalCase implements Serializable {
      * @note This method does not account for leap years or month-specific day limits 
      *       (e.g., February having 28 or 29 days).
      */
+    
     public static boolean isValidDate(int day, int month, int year) {
-        if (month < 1 || month > MAX_MONTHS) { 
+        if (month < 1 || month > MAX_MONTHS) { // Ayın 1 ile 12 arasında olup olmadığını kontrol eder
             return false;
         }
-        if (day < 1 || day > MAX_DAYS) { 
+        if (day < 1 || day > MAX_DAYS) { // Günün 1 ile 31 arasında olup olmadığını kontrol eder
             return false;
         }
-        return true; 
+        return true; // Tarih geçerliyse `true` döner
     }
    
-    
     /**
      * Initializes the given sparse matrix to mark all dates as unoccupied.
      * This method sets every element of the provided 3D matrix to `0`, indicating
@@ -216,17 +358,18 @@ public class LegalCase implements Serializable {
      * @note This method assumes the sparse matrix dimensions are predefined with
      *       constants `MAX_YEARS`, `MAX_MONTHS`, and `MAX_DAYS`.
      */
+    
+    
     public static void initializeSparseMatrix(int[][][] sparseMatrix) {
         for (int year = 0; year < MAX_YEARS; year++) {
             for (int month = 0; month < MAX_MONTHS; month++) {
                 for (int day = 0; day < MAX_DAYS; day++) {
-                    sparseMatrix[year][month][day] = 0; 
+                    sparseMatrix[year][month][day] = 0; // Tüm tarihleri boş olarak işaretle
                 }
             }
         }
     }
 	
-    
     /**
      * Finds the next available date in the sparse matrix and marks it as scheduled.
      * This method searches through the sparse matrix to locate the first unoccupied date
@@ -244,15 +387,16 @@ public class LegalCase implements Serializable {
      *       to validate each candidate date.
      * @note If no valid date is found, the array remains unchanged.
      */
+    
     private static void findNextAvailableDate(int[][][] sparseMatrix, int[] scheduledDate) {
         for (int year = 0; year < sparseMatrix.length; year++) {
             for (int month = 0; month < sparseMatrix[year].length; month++) {
                 for (int day = 0; day < sparseMatrix[year][month].length; day++) {
                     if (sparseMatrix[year][month][day] == 0 && isValidDate(day + 1, month + 1, 2024 + year)) {
-                        sparseMatrix[year][month][day] = 1; 
-                        scheduledDate[0] = day + 1;        
-                        scheduledDate[1] = month + 1;      
-                        scheduledDate[2] = 2024 + year;    
+                        sparseMatrix[year][month][day] = 1; // Tarihi işaretle
+                        scheduledDate[0] = day + 1;        // Gün
+                        scheduledDate[1] = month + 1;      // Ay
+                        scheduledDate[2] = 2024 + year;    // Yıl
                         return;
                     }
                 }
@@ -260,7 +404,6 @@ public class LegalCase implements Serializable {
         }
     }
 
-    
     /**
      * Displays the main menu of the Legal Case Tracker application.
      * This method presents the user with several options, such as case tracking,
@@ -280,13 +423,14 @@ public class LegalCase implements Serializable {
      *       for better readability.
      * @note If an invalid choice is entered, the user is prompted to retry.
      */
+    
     public static boolean mainMenu() throws IOException {
-        initializeHashTable(hashTableProbing, TABLE_SIZE); 
+        initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
 
         int choice;
 
         do {
-            clearScreen(); 
+            clearScreen(); // clearScreen fonksiyonunu daha önce yazdığımız gibi kullanıyoruz
             out.println("\n===== Legal Case Tracker Menu =====\n");
             out.println("1. Case Tracking");
             out.println("2. Create Document");
@@ -294,17 +438,17 @@ public class LegalCase implements Serializable {
             out.println("4. Exit");
             out.print("\nEnter your choice: ");
 
-            choice = getInput(); 
+            choice = getInput(); // Kullanıcıdan giriş alıyoruz
 
             switch (choice) {
                 case 1:
-                    caseTracking(); 
+                    caseTracking(); // Dava Takibi ile ilgili fonksiyon
                     break;
                 case 2:
-                 createDocument(); 
+                 createDocument(); // Belge oluşturma fonksiyonu
                     break;
                 case 3:
-                  documents(); 
+                  documents(); // Belgeler ile ilgili fonksiyon
                     break;
                 case 4:
                     out.println("Exiting...");
@@ -340,11 +484,12 @@ public class LegalCase implements Serializable {
      * @note If an invalid choice is entered, the user is prompted to retry.
      * @throws IOException If an error occurs while waiting for user input.
      */
+    
     public static boolean caseTracking() {
         int choice;
 
         do {
-            clearScreen(); 
+            clearScreen(); // Ekranı temizlemek için clearScreen metodunu çağırıyoruz
             out.println("\n===== Case Tracking Menu =====");
             out.println("1. Add Case");
             out.println("2. Delete Case");
@@ -358,7 +503,7 @@ public class LegalCase implements Serializable {
             out.println("10. Exit");
             out.print("\nEnter your choice: ");
 
-            choice = getInput(); 
+            choice = getInput(); // Kullanıcıdan seçim alıyoruz
 
             switch (choice) {
                 case 1:
@@ -394,7 +539,7 @@ public class LegalCase implements Serializable {
                 default:
                     out.print("Invalid choice! Please press a key to continue: ");
                     try {
-                        System.in.read(); 
+                        System.in.read(); // Kullanıcıdan bir tuşa basmasını bekliyoruz
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -414,11 +559,32 @@ public class LegalCase implements Serializable {
      * @param TABLE_SIZE The size of the hash table.
      * @return The computed hash value, which is the index in the hash table.
      */
+    
     public static int hashFunction(int caseID, int TABLE_SIZE) {
         return caseID % TABLE_SIZE;
     }
     
+    
+    /**
+     * @brief Size of the hash table used for storing case IDs.
+     *
+     * @details
+     * The `TABLE_SIZE` constant defines the fixed size of the hash table used 
+     * in the application. It is primarily used to determine the total number of 
+     * available slots in the hash table for storing and retrieving case IDs efficiently.
+     *
+     * ### Characteristics:
+     * - **Fixed Size**: The table size is set to `10000`.
+     * - **Purpose**: Ensures that the hash table has enough capacity to minimize collisions 
+     *   and maintain efficient lookup, insertion, and deletion operations.
+     *
+     * @note
+     * - A larger table size reduces the likelihood of collisions but increases memory usage.
+     * - The value of `TABLE_SIZE` should ideally be a prime number for better hash table distribution,
+     *   though in this case, it is not.
+     */
     public static int TABLE_SIZE = 10000; 
+    
     
     /**
      * Initializes the hash table by marking all slots as empty.
@@ -451,14 +617,14 @@ public class LegalCase implements Serializable {
         while (i < TABLE_SIZE) {
             int newIndex = (index + i * i) % TABLE_SIZE;
 
-            if (hashTableProbing[newIndex] == -1) { 
+            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d%n", caseID, newIndex);
                    
                 return true;
             }
 
-            i++; 
+            i++; // Bir sonraki deneme
         }
 
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
@@ -466,6 +632,7 @@ public class LegalCase implements Serializable {
         
     }
 
+    
     /**
      * Inserts a case ID into the hash table using progressive overflow for collision resolution.
      * This method uses linear probing by incrementing the index one step at a time until an empty slot is found.
@@ -475,7 +642,6 @@ public class LegalCase implements Serializable {
      *
      * @note Progressive overflow may cause clustering, which can affect performance.
      */
-
     public static boolean progressiveOverflow(int caseID) {
         int index = hashFunction(caseID);
         int i = 0;
@@ -483,13 +649,13 @@ public class LegalCase implements Serializable {
         while (i < TABLE_SIZE) {
             int newIndex = (index + i) % TABLE_SIZE;
 
-            if (hashTableProbing[newIndex] == -1) { 
+            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d (progressive overflow)%n", caseID, newIndex);
                 return true;
             }
 
-            i++; 
+            i++; // Bir sonraki deneme
         }
 
         out.println("Hash table is full. Cannot insert case ID: " + caseID);
@@ -518,8 +684,9 @@ public class LegalCase implements Serializable {
      *
      * @note The size of the table is determined by the constant `TABLE_SIZE`.
      */
-     public static int[] hashTableProbing = new int[TABLE_SIZE]; 
+     public static int[] hashTableProbing = new int[TABLE_SIZE]; // Hash table için dizi
 		
+     
      /**
       * Computes the index for a given case ID using double hashing.
       * Double hashing combines two hash functions to minimize clustering and improve collision resolution.
@@ -533,9 +700,9 @@ public class LegalCase implements Serializable {
       * @see secondHashFunction(int caseID) For the implementation of the secondary hash function.
       */
      public static int doubleHashing(int caseID, int attempt) {
-         int primaryHash = hashFunction(caseID);       
-         int secondaryHash = secondHashFunction(caseID); 
-         return (primaryHash + attempt * secondaryHash) % TABLE_SIZE; 
+         int primaryHash = hashFunction(caseID);       // Birinci hash fonksiyonu
+         int secondaryHash = secondHashFunction(caseID); // İkinci hash fonksiyonu
+         return (primaryHash + attempt * secondaryHash) % TABLE_SIZE; // Double hashing
      }
      
      /**
@@ -549,13 +716,13 @@ public class LegalCase implements Serializable {
       * @see doubleHashing(int caseID, int attempt) For an alternative collision resolution method.
       */
      public static boolean linearProbing(int caseID) {
-    	    int index = hashFunction(caseID); 
+    	    int index = hashFunction(caseID); // Başlangıç indeksi
     	    int i = 0;
 
-    	    
+    	    // Case ID'yi uygun yere yerleştir
     	    hashTableProbing[(index + i) % TABLE_SIZE] = caseID;
 
-    	    
+    	    // Debug çıktısı
     	    out.printf("Case ID: %d ----- Inserted at Index: %d (linear probing)%n", caseID, (index + i) % TABLE_SIZE);
 
     	    return true;
@@ -572,45 +739,54 @@ public class LegalCase implements Serializable {
       *       This ensures the step size is relatively prime to the hash table size (`TABLE_SIZE`).
       */
      public static int secondHashFunction(int caseID) {
-         return 7 - (caseID % 7); 
+         return 7 - (caseID % 7); // Double hashing için ikinci hash fonksiyonu
      }
      
      /**
-      * Inserts a case ID into the hash table using double hashing for collision resolution.
-      * Double hashing calculates a secondary hash value to determine step size and avoids clustering.
+      * @brief Inserts a case ID into the hash table using double hashing for collision resolution.
       *
-      * @param caseID The unique identifier of the case to insert.
-      * @return `true` if the case ID is successfully inserted, `false` if the table is full.
+      * @details
+      * Double hashing ensures efficient collision handling by combining two hash functions.
+      * The primary hash determines the initial index, and the secondary hash provides a step size
+      * for resolving collisions. The function iterates until an empty slot is found or the table is full.
       *
-      * @note The secondary hash function must be relatively prime to the table size to ensure all slots are probed.
+      * @param caseID The unique ID of the case to be inserted into the hash table.
+      * 
+      * @return 
+      * - **`true`**: If the case ID is successfully inserted into the table.
+      * - **`false`**: If the hash table is full and no empty slot is available.
+      *
+      * @note
+      * - Ensure the hash table size is prime to maximize the effectiveness of double hashing.
+      * - The `secondHashFunction` must always return a non-zero value to avoid infinite loops.
       */
      public static boolean doubleHashingInsert(int caseID) {
-         int index = hashFunction(caseID); 
-         int stepSize = secondHashFunction(caseID);
+         int index = hashFunction(caseID); // İlk hash fonksiyonu ile başlangıç indeksi
+         int stepSize = secondHashFunction(caseID); // İkinci hash fonksiyonu ile adım boyutu
          int i = 0;
 
-
+         // Boş bir yer bulana kadar ilerle
          while (hashTableProbing[(index + i * stepSize) % TABLE_SIZE] != -1) {
-             i++; 
+             i++; // Bir sonraki adımı dene
              if (i >= TABLE_SIZE) {
                  out.println("Hash table is full. Cannot insert case ID: " + caseID);
-                 return false; 
+                 return false; // Tablo dolu
              }
         
-      
+      // Boş bir yere yerleştir
          hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
 
-         
+         // Debug çıktısı
          out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
 
          return true;
      }
 
-         
+         // Boş bir yere yerleştir
          hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
          
 
-         
+         // Debug çıktısı
          out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
 
          return true;
@@ -625,10 +801,10 @@ public class LegalCase implements Serializable {
      public static boolean isHashTableFull() {
          for (int i = 0; i < TABLE_SIZE; i++) {
              if (hashTableProbing[i] == -1) {
-                 return false; 
+                 return false; // Tablo henüz dolu değil
              }
          }
-         return true; 
+         return true; // Tablodaki tüm slotlar dolu
      
      }
      
@@ -641,13 +817,14 @@ public class LegalCase implements Serializable {
       * @note This method updates the hash table to associate the given case ID with an available slot.
       */
      public static void insertIntoHashTable(LegalCase newCase) {
-    	    int index = hashFunction(newCase.caseID); 
+    	    int index = hashFunction(newCase.caseID); // Hash fonksiyonu ile index hesaplanır
 
-
+    	    // Eğer hash tablosunda bu index'e denk gelen bir değer varsa çakışmayı kontrol et
     	    while (hashTableProbing[index] != -1) {
-    	        index = (index + 1) % TABLE_SIZE; 
+    	        index = (index + 1) % TABLE_SIZE; // Linear probing ile sonraki indeksi kontrol et
     	    }
 
+    	    // Uygun boş index bulundu, yeni davayı tabloya ekle
     	    hashTableProbing[index] = newCase.caseID;
 
     	    
@@ -668,17 +845,22 @@ public class LegalCase implements Serializable {
     	     * @param out The output stream to which objects are written.
     	     * @throws IOException If an I/O error occurs while creating the stream.
     	     */
+    	 
+    	 
     	    public AppendableObjectOutputStream(OutputStream out) throws IOException {
     	        super(out);
     	    }
-
+    	    
     	    /**
     	     * Overrides the default stream header writing behavior to support appending.
     	     *
     	     * @throws IOException If an I/O error occurs while resetting the stream.
     	     */
+    	    
+    	    
     	    @Override
     	    protected void writeStreamHeader() throws IOException {
+    	        // Header'ı yazmaz, böylece dosyaya ekleme yapılabilir
     	        reset();
     	    }
     	}
@@ -697,21 +879,18 @@ public class LegalCase implements Serializable {
       *
       * @throws IOException If an I/O error occurs during the file writing process.
       *
-      * @example
-      * ```java
-      * LegalCase newCase = new LegalCase(101, "Case Title", "Civil", "Defendant", "Plaintiff", "01/01/2024", "10/01/2024");
-      * appendCaseFile(newCase, "cases.bin");
-      * ```
       */
      public static void appendCaseFile(LegalCase legalCase, String fileName) {
          try {
+             // Dosya var mı kontrol et
              boolean fileExists = new File(fileName).exists();
 
              try (FileOutputStream fos = new FileOutputStream(fileName, true);
                   ObjectOutputStream oos = fileExists
-                          ? new AppendableObjectOutputStream(fos) 
-                          : new ObjectOutputStream(fos)) {      
+                          ? new AppendableObjectOutputStream(fos) // Header eklenmesini önler
+                          : new ObjectOutputStream(fos)) {       // İlk yazma işlemi için
 
+                 // Yeni dava bilgilerini binary formatta dosyaya yaz
                  oos.writeObject(legalCase);
              }
 
@@ -727,17 +906,12 @@ public class LegalCase implements Serializable {
       * @param date The date string to validate.
       * @return `true` if the date matches the "dd/mm/yyyy" format, `false` otherwise.
       *
-      * @example
-      * ```java
-      * boolean isValid = isValidDateFormat("01/01/2024"); // Returns true
-      * boolean isInvalid = isValidDateFormat("2024-01-01"); // Returns false
-      * ```
       *
       * @note This method does not verify the logical validity of the date
       *       (e.g., "31/02/2024" would pass this check but is not a valid calendar date).
       */
      public static boolean isValidDateFormat(String date) {
-    	    return date.matches("\\d{2}/\\d{2}/\\d{4}"); 
+    	    return date.matches("\\d{2}/\\d{2}/\\d{4}"); // Tarihin "dd/mm/yyyy" formatında olup olmadığını kontrol eder
     	}
   
      /**
@@ -767,9 +941,10 @@ public class LegalCase implements Serializable {
       *
       * @note The method ensures user input is validated at every step and provides retry prompts for invalid entries.
       */
+     
      public static boolean addCase() {
     	    clearScreen();
-    	    initializeHashTable(hashTableProbing, TABLE_SIZE); 
+    	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
 
 
     	    Random rand = new Random();
@@ -813,7 +988,7 @@ public class LegalCase implements Serializable {
     	        return false;
     	    }
 
-    	    scanner.nextLine(); 
+    	    scanner.nextLine(); // Clear buffer
     	    out.print("Enter Case Title: ");
     	    String caseTitle = scanner.nextLine();
 
@@ -835,6 +1010,7 @@ public class LegalCase implements Serializable {
     	        out.print("Date of Opening of the Case (dd/mm/yyyy): ");
     	        date = scanner.nextLine();
 
+    	        // Tarihin formatını kontrol et
     	        if (isValidDateFormat(date)) {
     	            String[] parts = date.split("/");
     	            if (parts.length == 3) {
@@ -843,7 +1019,7 @@ public class LegalCase implements Serializable {
     	                    int month = Integer.parseInt(parts[1]);
     	                    int year = Integer.parseInt(parts[2]);
     	                    if (isValidDate(day, month, year)) {
-    	                        break; 
+    	                        break; // Geçerli bir tarih bulundu
     	                    }
     	                } catch (NumberFormatException e) {
     	                    out.println("Invalid date format! Please enter numbers only (dd/mm/yyyy).");
@@ -871,6 +1047,7 @@ public class LegalCase implements Serializable {
     	    LegalCase newCase = new LegalCase(caseID, caseTitle,caseType, defendant,plaintiff,   date, scheduled);
     	    
 
+    	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
     	    appendCaseFile(newCase, FILE_NAME);
 
     	    // Insert into hash table
@@ -890,11 +1067,6 @@ public class LegalCase implements Serializable {
       * @param node The `CaseNode` object containing the legal case data to print.
       * @return `true` after successfully printing the case details.
       *
-      * @example
-      * ```java
-      * CaseNode caseNode = new CaseNode(new LegalCase(101, "Case Title", "Civil", "Defendant", "Plaintiff", "01/01/2024", "10/01/2024"));
-      * printCase(caseNode);
-      * ```
       *
       * @note The printed output includes the case ID, title, plaintiff, defendant, type, opening date, and scheduled hearing date.
       */
@@ -918,12 +1090,6 @@ public class LegalCase implements Serializable {
       * @param data The `LegalCase` object to store in the new node.
       * @return The head of the updated linked list.
       *
-      * @example
-      * ```java
-      * CaseNode head = null;
-      * LegalCase newCase = new LegalCase(101, "Case Title", "Civil", "Defendant", "Plaintiff", "01/01/2024", "10/01/2024");
-      * head = appendNode(head, newCase);
-      * ```
       *
       * @note If the list is empty (`head == null`), the new node becomes the head of the list.
       * @note This method maintains the doubly linked structure by updating the `prev` and `next` pointers accordingly.
@@ -932,15 +1098,15 @@ public class LegalCase implements Serializable {
     	    CaseNode newNode = new CaseNode(data);
 
     	    if (head == null) {
-    	        return newNode; 
+    	        return newNode; // Eğer liste boşsa, yeni düğüm baş olur
     	    } else {
     	        CaseNode temp = head;
     	        while (temp.next != null) {
-    	            temp = temp.next; 
+    	            temp = temp.next; // Listenin sonuna git
     	        }
-    	        temp.next = newNode; 
-    	        newNode.prev = temp; 
-    	        return head; 
+    	        temp.next = newNode; // Yeni düğümü sona ekle
+    	        newNode.prev = temp; // Önceki düğümü ayarla
+    	        return head; // Baş düğümü geri döndür
     	    }}
      
      /**
@@ -980,12 +1146,13 @@ public class LegalCase implements Serializable {
     	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
     	        out.println("\n===== Current Cases =====\n");
 
+    	        // Dosyadan tüm davaları oku ve listeye ekle
     	        while (true) {
     	            try {
     	                LegalCase currentCase = (LegalCase) ois.readObject();
-    	                head = appendNode(head, currentCase); 
+    	                head = appendNode(head, currentCase); // Tüm davalar listeye eklenir
     	            } catch (EOFException e) {
-    	                break; 
+    	                break; // Dosyanın sonuna ulaşıldı
     	            }
     	        }
 
@@ -994,7 +1161,7 @@ public class LegalCase implements Serializable {
 
     	        while (true) {
     	            clearScreen();
-    	            printCase(currentNode); 
+    	            printCase(currentNode); // Mevcut düğümü ekrana yazdır
 
     	            out.println("Options:");
     	            if (currentNode.prev != null) {
@@ -1009,14 +1176,14 @@ public class LegalCase implements Serializable {
 
     	            if (choice == 'P' || choice == 'p') {
     	                if (currentNode.prev != null) {
-    	                    currentNode = currentNode.prev; 
+    	                    currentNode = currentNode.prev; // Önceki düğüme git
     	                }
     	            } else if (choice == 'N' || choice == 'n') {
     	                if (currentNode.next != null) {
-    	                    currentNode = currentNode.next; 
+    	                    currentNode = currentNode.next; // Sonraki düğüme git
     	                }
     	            } else if (choice == 'Q' || choice == 'q') {
-    	                break; 
+    	                break; // Çık
     	            } else {
     	                out.println("Invalid choice. Please try again.");
     	                out.print(" ");
@@ -1078,8 +1245,6 @@ public class LegalCase implements Serializable {
         out.println("Case ID " + caseID + " removed from hash table.");
     }
 }
-
-    
     /**
      * Deletes a legal case from the system.
      * This method removes the case from the binary file, adds it to a stack for potential restoration,
@@ -1105,16 +1270,18 @@ public class LegalCase implements Serializable {
      */
     public static boolean deleteCase() {
         clearScreen();
-        int id = -1; 
+        Scanner scanner = new Scanner(System.in);
+
+        int id = -1; // Varsayılan geçersiz değer
         while (true) {
             try {
                 out.print("Enter Case ID to delete: ");
-                id = scanner.nextInt(); 
-                scanner.nextLine(); 
-                break; 
+                id = scanner.nextInt(); // Kullanıcıdan tam sayı al
+                scanner.nextLine(); // Tampondaki fazlalıkları temizle
+                break; // Geçerli bir giriş alındıysa döngüden çık
             } catch (InputMismatchException e) {
                 out.println("Invalid input! Please enter a valid numeric Case ID.");
-                scanner.nextLine(); 
+                scanner.nextLine(); // Geçersiz girişi temizle
             }
         }
 
@@ -1132,14 +1299,14 @@ public class LegalCase implements Serializable {
 
                     if (currentCase.caseID == id) {
                         found = true;
-                        pushDeletedCase(currentCase); 
+                        pushDeletedCase(currentCase); // Silinen davayı yığına ekle
                         out.println("Case ID " + id + " deleted successfully.");
                     } else {
-                        oos.writeObject(currentCase); 
+                        oos.writeObject(currentCase); // Diğer davaları geçici dosyaya yaz
                     }
 
                 } catch (EOFException e) {
-                    break; 
+                    break; // Dosyanın sonuna ulaşıldı
                 }
             }
 
@@ -1148,10 +1315,11 @@ public class LegalCase implements Serializable {
         }
 
         if (found) {
-            file.delete(); 
-            tempFile.renameTo(file); 
-            deleteFromHashTable(id); 
-            tempFile.delete(); 
+            file.delete(); // Orijinal dosyayı sil
+            tempFile.renameTo(file); // Geçici dosyayı orijinal dosyayla değiştir
+            deleteFromHashTable(id); // Hash tablosundan kaldır
+        } else {
+            tempFile.delete(); // Geçici dosyayı sil
             out.println("Case ID " + id + " not found.");
         }
 
@@ -1178,9 +1346,9 @@ public class LegalCase implements Serializable {
         return false;
     }
 
-    LegalCase lastDeletedCase = deletedCasesStack.pop(); 
+    LegalCase lastDeletedCase = deletedCasesStack.pop(); // Silinen davayı yığından çıkar
     try (ObjectOutputStream oos = new AppendableObjectOutputStream(new FileOutputStream(FILE_NAME, true))) {
-        oos.writeObject(lastDeletedCase); 
+        oos.writeObject(lastDeletedCase); // Dosyaya geri ekle
         out.println("Undo successful for Case ID: " + lastDeletedCase.caseID);
         return true;
     } catch (IOException e) {
@@ -1205,7 +1373,7 @@ public class LegalCase implements Serializable {
         return false;
     }
 
-    LegalCase lastDeletedCase = deletedCasesStack.peek(); 
+    LegalCase lastDeletedCase = deletedCasesStack.peek(); // Yığındaki son davayı gör
     out.println("Last deleted case details:");
     out.println("Case ID: " + lastDeletedCase.caseID);
     out.println("Case Title: " + lastDeletedCase.title);
@@ -1215,7 +1383,7 @@ public class LegalCase implements Serializable {
     char confirmation = scanner.nextLine().toLowerCase().charAt(0);
 
     if (confirmation == 'y') {
-        return undoDeleteCase();
+        return undoDeleteCase(); // Geri alma işlemini gerçekleştir
     } else {
         out.println("Undo operation cancelled.");
         return false;
@@ -1234,12 +1402,11 @@ public class LegalCase implements Serializable {
 	public static boolean isDeleted(int caseID) {
     for (LegalCase deletedCase : deletedCasesStack) {
         if (deletedCase.caseID == caseID) {
-            return true; 
+            return true; // Silinmiş bir dava bulundu
         }
     }
-    return false; 
+    return false; // Silinmiş bir dava yok
 }
-   
 	/**
 	 * Compares two dates in the "dd/MM/yyyy" format.
 	 * This method parses the input strings into `Date` objects and compares them using `Date.compareTo()`.
@@ -1261,7 +1428,7 @@ public static int compareDates(String date1, String date2) {
         return d1.compareTo(d2);
     } catch (ParseException e) {
         e.printStackTrace();
-        return 0; 
+        return 0; // Geçersiz tarih durumunda eşit kabul edilir
     }
 }
 
@@ -1277,9 +1444,9 @@ public static int compareDates(String date1, String date2) {
  * @see heapSort(LegalCase[]) For sorting the array using heap sort.
  */
 public static void heapify(LegalCase[] cases, int n, int i) {
-    int largest = i; 
-    int left = 2 * i + 1; 
-    int right = 2 * i + 2; 
+    int largest = i; // Root
+    int left = 2 * i + 1; // Sol çocuk
+    int right = 2 * i + 2; // Sağ çocuk
 
     if (left < n && compareDates(cases[left].scheduled, cases[largest].scheduled) > 0) {
         largest = left;
@@ -1294,6 +1461,7 @@ public static void heapify(LegalCase[] cases, int n, int i) {
         cases[i] = cases[largest];
         cases[largest] = temp;
 
+        // Alt ağacı heapify et
         heapify(cases, n, largest);
     }
 }
@@ -1310,12 +1478,12 @@ public static void heapify(LegalCase[] cases, int n, int i) {
 public static void heapSort(LegalCase[] cases) {
     int n = cases.length;
 
-
+    // Max heap oluştur
     for (int i = n / 2 - 1; i >= 0; i--) {
         heapify(cases, n, i);
     }
 
-
+    // Elemanları ayır ve heapify et
     for (int i = n - 1; i > 0; i--) {
         LegalCase temp = cases[0];
         cases[0] = cases[i];
@@ -1360,17 +1528,19 @@ public static boolean caseDates() {
                 LegalCase legalCase = (LegalCase) ois.readObject();
                 caseList.add(legalCase);
             } catch (EOFException e) {
-                break;
+                break; // Dosyanın sonuna ulaşıldı
             }
         }
     } catch (IOException | ClassNotFoundException e) {
         out.println("Error reading cases: " + e.getMessage());
         return false;
     }
-  
+
+    // Listeyi diziye çevir ve sıralama yap
     LegalCase[] caseArray = caseList.toArray(new LegalCase[0]);
     heapSort(caseArray);
 
+    // Sıralı davaları yazdır
     out.println("\n===== Sorted Case Dates =====\n");
     for (LegalCase legalCase : caseArray) {
         out.println("Case ID: " + legalCase.caseID);
@@ -1573,10 +1743,11 @@ public static boolean sortByID() {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
         while (true) {
             try {
+                // Dosyadan davaları oku ve ağaca ekle
                 LegalCase legalCase = (LegalCase) ois.readObject();
                 LegalCase.insert(legalCase.caseID, legalCase);
             } catch (EOFException e) {
-                break; 
+                break; // Dosyanın sonuna ulaşıldı
             }
         }
     } catch (IOException | ClassNotFoundException e) {
@@ -1584,6 +1755,7 @@ public static boolean sortByID() {
         return false;
     }
 
+    // Ağacı sıralı şekilde yazdır
     System.out.println("\n===== Sorted Case Dates =====\n");
     LegalCase.printSortedCases();
 
@@ -1592,7 +1764,7 @@ public static boolean sortByID() {
     return true;
 }
 
-
+    // Dava türleri için sabit isim listesi
     static final String[] caseNames = {
         "Criminal", "Civil", "Commercial", "Administrative",
         "Divorce", "Custody", "Traffic", "Dismissal",
@@ -1655,6 +1827,7 @@ public static boolean sortByID() {
             }
         }
 
+        // Ziyaret edilenleri sıfırla
         for (int i = 0; i < graph.numVertices; i++) {
             graph.visited[i] = false;
         }
@@ -1677,10 +1850,11 @@ public static boolean sortByID() {
      * @see BFS(Graph, int) For traversing the graph.
      */
     static boolean casesThatMayBeConnectedMenu() {
-        clearScreen(); 
+        clearScreen(); // İlk açılışta ekranı temizle
         int NUM_CASE_TYPES = caseNames.length;
         Graph graph = new Graph(NUM_CASE_TYPES);
 
+        // Kenarları ekle
         addEdge(graph, 4, 5); // Divorce - Custody
         addEdge(graph, 4, 8); // Divorce - Compensation
         addEdge(graph, 9, 10); // Inheritance - Title deed
@@ -1696,7 +1870,7 @@ public static boolean sortByID() {
             for (int i = 0; i < NUM_CASE_TYPES; i++) {
                 out.println(i + ". " + caseNames[i]);
             }
-            out.println(NUM_CASE_TYPES + ". Return to Main Menu"); 
+            out.println(NUM_CASE_TYPES + ". Return to Main Menu"); // Çıkış seçeneği
 
             out.print("Please Enter The Number Next To Your Case: ");
 
@@ -1705,15 +1879,15 @@ public static boolean sortByID() {
             } else {
 
                 out.println("Invalid input. Please enter a number.");
-                scanner.next(); 
+                scanner.next(); // Geçersiz girdiyi temizle
                 continue;
             }
             clearScreen();
             if (choice >= 0 && choice < NUM_CASE_TYPES) {
-                clearScreen(); 
-                BFS(graph, choice); 
+                clearScreen(); // Seçim yapıldıktan sonra ekranı temizle
+                BFS(graph, choice); // Geçerli bir dava türü seçildiğinde BFS çalıştır
             } else if (choice == NUM_CASE_TYPES) {
-                return true; 
+                return true; // Ana menüye dön
             } else {
                 out.println("Invalid choice. Please try again.");
             }
@@ -1737,11 +1911,6 @@ public static boolean sortByID() {
          * @note Duplicate names, such as "Divorce Cases" and "Custody Cases," are intentional to reflect
          *       different contexts or scenarios in the system.
          *
-         * @example
-         * ```java
-         * CaseTypeForSCC exampleCaseType = caseTypeSCC[0];
-         * System.out.println("ID: " + exampleCaseType.id + ", Name: " + exampleCaseType.name);
-         * ```
          */
         static final CaseTypeForSCC[] caseTypeSCC = {
             new CaseTypeForSCC(0, "Administrative Cases"),
@@ -1825,6 +1994,7 @@ public static boolean sortByID() {
         static boolean casesThatMayAriseMenu() {
             clearScreen();
 
+            // Kenarları ekle
             addEdge(0, 1);
             addEdge(0, 2);
             addEdge(0, 3);
@@ -1868,22 +2038,24 @@ public static boolean sortByID() {
             int caseChoice = -1;
             boolean validInput = false;
 
+            // Geçerli bir giriş alınana kadar döngü
             while (!validInput) {
                 out.print("Please Make Your Choice (1-11): ");
                 if (scanner.hasNextInt()) {
                     caseChoice = scanner.nextInt();
-                    scanner.nextLine(); 
+                    scanner.nextLine(); // Buffer temizleme
                     if (caseChoice >= 1 && caseChoice <= 11) {
-                        validInput = true; 
+                        validInput = true; // Geçerli giriş
                     } else {
                         out.println("Invalid choice. Please enter a number between 1 and 11.");
                     }
                 } else {
                     out.println("Invalid input! Please enter a valid numeric choice.");
-                    scanner.nextLine(); 
+                    scanner.nextLine(); // Geçersiz girdiyi temizle
                 }
             }
 
+            // Seçilen dava türünü göster ve ilgili işlemleri yap
             clearScreen();
             out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
             out.println("\nCases That May Arise:");
@@ -1894,7 +2066,7 @@ public static boolean sortByID() {
             }
 
             out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
-            scanner.nextLine(); 
+            scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
 
             return true;
         }
@@ -1904,11 +2076,6 @@ public static boolean sortByID() {
          *
          * @return The `caseID` of the legal case.
          *
-         * @example
-         * ```java
-         * int id = legalCase.getCaseID();
-         * System.out.println("Case ID: " + id);
-         * ```
          */
         public int getCaseID() {
             return caseID;
@@ -1919,11 +2086,6 @@ public static boolean sortByID() {
          *
          * @return The `plaintiff` associated with the legal case.
          *
-         * @example
-         * ```java
-         * String plaintiffName = legalCase.getPlaintiff();
-         * System.out.println("Plaintiff: " + plaintiffName);
-         * ```
          */
         public String getPlaintiff() {
             return plaintiff;
@@ -1953,11 +2115,6 @@ public static boolean sortByID() {
          * @param data The `LegalCase` object to associate with the new node.
          * @return The updated head node of the XOR linked list.
          *
-         * @example
-         * ```java
-         * PlaintiffNode head = null;
-         * head = addPlaintiffNode(head, legalCase);
-         * ```
          *
          * @note This method uses the `XOR` function to maintain the XOR linked list structure.
          * @see XOR(PlaintiffNode, PlaintiffNode) For calculating XOR links.
@@ -1970,7 +2127,7 @@ public static boolean sortByID() {
                 head.xorLink = XOR(newNode, head.xorLink);
             }
 
-            return newNode; 
+            return newNode; // Yeni head düğümünü döndür
         }
         
         /**
@@ -1980,10 +2137,6 @@ public static boolean sortByID() {
          * @param node The `PlaintiffNode` containing the legal case data to print.
          *
          * @note If the node or its data is `null`, a message is displayed indicating no plaintiff is found.
-         * @example
-         * ```java
-         * printPlaintiff(plaintiffNode);
-         * ```
          */
         public static void printPlaintiff(PlaintiffNode node) {
             if (node == null || node.data == null) {
@@ -2022,15 +2175,16 @@ public static boolean sortByID() {
         public static boolean displayPlaintiffs() {
             PlaintiffNode head = null;
 
+            // Davaları XOR bağlı listeye ekle (dosyadan verileri oku)
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
                 while (true) {
                     try {
                         LegalCase currentCase = (LegalCase) ois.readObject();
                         if (currentCase != null) {
-                            head = addPlaintiffNode(head, currentCase); 
+                            head = addPlaintiffNode(head, currentCase); // Listeye ekle
                         }
                     } catch (EOFException e) {
-                        break; 
+                        break; // Dosyanın sonuna ulaşıldı
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2038,11 +2192,13 @@ public static boolean sortByID() {
                 return false;
             }
 
+            // Eğer liste boşsa kullanıcıya bilgi ver
             if (head == null) {
                 out.println("No plaintiffs found.");
                 return false;
             }
 
+            // Liste üzerinde gezinme
             PlaintiffNode current = head;
             PlaintiffNode prev = null;
             PlaintiffNode next;
@@ -2052,15 +2208,16 @@ public static boolean sortByID() {
                 clearScreen();
                 printPlaintiff(current);
 
+                // Mevcut düğümün bir sonraki düğümünü hesapla
                 next = XOR(prev, current.xorLink);
 
                 // Kullanıcı seçenekleri
                 out.println("Options:");
                 if (prev != null) {
-                    out.println("P - Previous plaintiff"); 
+                    out.println("P - Previous plaintiff"); // Önceki düğüm
                 }
                 if (next != null) {
-                    out.println("N - Next plaintiff"); 
+                    out.println("N - Next plaintiff"); // Sonraki düğüm
                 }
                 out.println("Q - Quit");
                 out.print("Enter your choice: ");
@@ -2072,7 +2229,7 @@ public static boolean sortByID() {
                         pause();
                     } else {
                         PlaintiffNode temp = current;
-                        current = prev; 
+                        current = prev; // Önceki düğüme geç
                         prev = XOR(temp, current.xorLink);
                     }
                 } else if (choice == 'N' || choice == 'n') {
@@ -2082,10 +2239,10 @@ public static boolean sortByID() {
                     } else {
                         PlaintiffNode temp = current;
                         prev = current;
-                        current = next; 
+                        current = next; // Sonraki düğüme geç
                     }
                 } else if (choice == 'Q' || choice == 'q') {
-                    break; 
+                    break; // Çıkış
                 } else {
                     out.println("Invalid choice. Please try again.");
                     pause();
@@ -2101,10 +2258,6 @@ public static boolean sortByID() {
          * to review the current output before proceeding.
          *
          * @note This method ignores any I/O exceptions during execution.
-         * @example
-         * ```java
-         * pause(); // Waits for user input
-         * ```
          */
         private static void pause() {
             out.println("\nPress Enter to continue...");
@@ -2132,10 +2285,43 @@ public static boolean sortByID() {
          * - `sentence`: The sentence or resolution provided for the case.
          */
         public static class LegalCaseDocument implements Serializable {
+        	
+        	/**
+        	 * @brief Unique identifier for serialization.
+        	 *
+        	 * @details
+        	 * The `serialVersionUID` is a unique identifier used during the serialization and deserialization 
+        	 * process to verify that a loaded class corresponds to the serialized object. If no match is found, 
+        	 * an `InvalidClassException` is thrown.
+        	 *
+        	 * @note 
+        	 * - Always define `serialVersionUID` explicitly in a `Serializable` class to avoid issues 
+        	 *   during deserialization when the class structure changes.
+        	 * - The value can be generated automatically by the IDE or defined manually.
+        	 */
             private static final long serialVersionUID = 1L;
             int caseID;
             String title, plaintiff, defendant, winner, loser, decision, sentence;
 
+            /**
+             * @brief Constructor for initializing a `LegalCaseDocument` object.
+             *
+             * @details
+             * Creates a new `LegalCaseDocument` instance with all relevant case details including
+             * the case ID, title, parties involved, and the legal outcome.
+             *
+             * @param caseID The unique identifier for the legal case.
+             * @param title The title of the legal case.
+             * @param plaintiff The name of the plaintiff in the case.
+             * @param defendant The name of the defendant in the case.
+             * @param winner The name of the winning party.
+             * @param loser The name of the losing party.
+             * @param decision The decision made in the case.
+             * @param sentence The sentence or judgment given for the case.
+             *
+             * @note This constructor is used to encapsulate all the essential details of a legal case 
+             * into a single object for storage or processing.
+             */
             public LegalCaseDocument(int caseID, String title, String plaintiff, String defendant,
                                      String winner, String loser, String decision, String sentence) {
                 this.caseID = caseID;
@@ -2208,13 +2394,14 @@ public static boolean sortByID() {
             if (!file.exists()) {
                 out.println("Error: File not found!");
                 out.println("Press Enter to return to the menu...");
-                scanner.nextLine(); 
+                scanner.nextLine(); // Kullanıcının Enter'a basmasını bekler
                 return false;
             }
 
         
             LegalCase selectedCase = null;
 
+            // Dosyadaki mevcut davaları göster
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 out.println("\n===== Current Cases =====");
 
@@ -2238,22 +2425,24 @@ public static boolean sortByID() {
                 return false;
             }
 
-            boolean validCaseID = false;
+            boolean validCaseID = false; // Geçerli bir ID bulundu mu
             int id = -1;
 
+            // Geçerli bir Case ID alana kadar döngü
             while (!validCaseID) {
                 out.print("\nEnter Case ID to create a document for: ");
                 if (scanner.hasNextInt()) {
                     id = scanner.nextInt();
-                    scanner.nextLine(); 
+                    scanner.nextLine(); // Buffer temizleme
 
+                    // Girilen Case ID'nin dosyada olup olmadığını kontrol et
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                         while (true) {
                             try {
                                 LegalCase currentCase = (LegalCase) ois.readObject();
                                 if (currentCase.caseID == id) {
                                     selectedCase = currentCase;
-                                    validCaseID = true; 
+                                    validCaseID = true; // Geçerli bir ID bulundu
                                     break;
                                 }
                             } catch (EOFException e) {
@@ -2270,10 +2459,11 @@ public static boolean sortByID() {
                     }
                 } else {
                     out.println("Invalid input! Please enter a valid numeric Case ID.");
-                    scanner.next(); 
+                    scanner.next(); // Geçersiz girdiyi temizle
                 }
             }
 
+            // Seçilen davanın bilgilerini göster
             clearScreen();
             out.println("\n===== Selected Case =====");
             out.println("Case ID: " + selectedCase.caseID);
@@ -2361,7 +2551,7 @@ public static boolean sortByID() {
                         break;
                     default:
                         out.print("Invalid choice! Please press Enter to continue: ");
-                        scanner.nextLine(); 
+                        scanner.nextLine(); // Kullanıcıdan giriş bekler
                         break;
                 }
             } while (choice != 4);
@@ -2394,8 +2584,10 @@ public static boolean sortByID() {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(docFile))) {
                 while (true) {
                     try {
+                        // Dosyadan bir `LegalCaseDocument` nesnesi oku
                         LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
 
+                        // Nesne bilgilerini ekrana yazdır
                         out.println("Case ID: " + document.caseID);
                         out.println("Title: " + document.title);
                         out.println("Plaintiff: " + document.plaintiff);
@@ -2406,7 +2598,7 @@ public static boolean sortByID() {
                         out.println("Sentence: " + document.sentence);
                         out.println("-----------------------------");
                     } catch (EOFException e) {
-                        break; 
+                        break; // Dosyanın sonuna ulaşıldı
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2416,7 +2608,7 @@ public static boolean sortByID() {
 
             out.println("\nPress Enter to return to the menu...");
             try {
-                new Scanner(System.in).nextLine(); 
+                new Scanner(System.in).nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
             } catch (Exception e) {
                 out.println("Error reading input.");
             }
@@ -2474,8 +2666,8 @@ public static boolean sortByID() {
 
         computeLPSArray(pattern, M, lps);
 
-        int i = 0; 
-        int j = 0; 
+        int i = 0; // index for text
+        int j = 0; // index for pattern
 
         while (i < N) {
             if (pattern.charAt(j) == text.charAt(i)) {
@@ -2526,6 +2718,7 @@ public static boolean sortByID() {
         out.print("Enter the Case Title to search: ");
         String searchTitle = scanner.nextLine();
 
+        // Kullanıcı giriş yapmazsa tekrar iste
         while (searchTitle.isEmpty()) {
         	clearScreen();
             out.println("Invalid input! Please enter a valid case title.");
@@ -2539,8 +2732,10 @@ public static boolean sortByID() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (true) {
                 try {
+                    // `LegalCaseDocument` nesnesini oku
                     LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
 
+                    // Başlık eşleşmesini KMP ile kontrol et
                     if (KMPSearch(searchTitle.toLowerCase(), document.title.toLowerCase())) {
                         out.println("Case ID: " + document.caseID);
                         out.println("Title: " + document.title);
@@ -2554,7 +2749,7 @@ public static boolean sortByID() {
                         found = true;
                     }
                 } catch (EOFException e) {
-                    break; 
+                    break; // Dosyanın sonuna ulaşıldı
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -2568,12 +2763,23 @@ public static boolean sortByID() {
         }
 
         out.println("Press Enter to return to the menu...");
-        scanner.nextLine(); 
+        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
         return true;
     }
    
- // Search for a case in the hash table
-    public static LegalCase[] hashTableCases = new LegalCase[TABLE_SIZE]; 
+    /**
+     * @brief An array to store `LegalCase` objects in the hash table.
+     *
+     * @details 
+     * This static array serves as the primary storage for `LegalCase` instances 
+     * within the hash table. Each index corresponds to a specific hash value calculated 
+     * by the hash function. It ensures efficient retrieval and management of case data.
+     *
+     * @note 
+     * The array size is determined by the `TABLE_SIZE` constant, which defines the maximum 
+     * capacity of the hash table.
+     */
+    public static LegalCase[] hashTableCases = new LegalCase[TABLE_SIZE]; // LegalCase nesnelerini tutar
 
     /**
      * Searches for a legal case in the hash table using linear probing.
@@ -2586,19 +2792,19 @@ public static boolean sortByID() {
      * @see hashFunction(int, int) For calculating the hash table index.
      */
     public static LegalCase searchInHashTable(int caseID) {
-        int index = hashFunction(caseID, TABLE_SIZE); 
+        int index = hashFunction(caseID, TABLE_SIZE); // Başlangıç indeksi hesaplanır
         int startIndex = index;
 
-        while (hashTableProbing[index] != -1) { 
+        while (hashTableProbing[index] != -1) { // Eğer mevcutsa
             if (hashTableProbing[index] == caseID) {
-                return hashTableCases[index]; 
+                return hashTableCases[index]; // İlgili dava döndürülür
             }
-            index = (index + 1) % TABLE_SIZE; 
+            index = (index + 1) % TABLE_SIZE; // Linear probing ile bir sonraki indeks
             if (index == startIndex) {
-                break; 
+                break; // Döngüyü kır
             }
         }
-        return null; 
+        return null; // Bulunamadıysa null döner
     }
     
     /**
@@ -2621,25 +2827,27 @@ public static boolean sortByID() {
      */
     public static boolean searchByID() {
         clearScreen();
-        int id = -1; 
+        int id = -1; // ID değişkeni
         while (true) {
             out.print("Enter Case ID to search: ");
             if (scanner.hasNextInt()) {
                 id = scanner.nextInt();
-                scanner.nextLine(); 
-                break; 
+                scanner.nextLine(); // Buffer temizleme
+                break; // Geçerli giriş alındığında döngüden çık
             } else {
             	clearScreen();
                 out.println("Invalid input! Please enter a valid numeric Case ID.");
-                scanner.nextLine(); 
+                scanner.nextLine(); // Hatalı girdiyi temizle
             }
         }
 
+        // Hash table'da arama
         LegalCase foundCase = searchInHashTable(id);
         if (foundCase != null) {
             out.println("\n===== Case Found in Hash Table =====");
             printCaseDetails(foundCase);
         } else {
+            // Dosyada arama
             boolean found = false;
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
                 while (true) {
@@ -2652,7 +2860,7 @@ public static boolean sortByID() {
                             break;
                         }
                     } catch (EOFException e) {
-                        break; 
+                        break; // Dosyanın sonuna ulaşıldı
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2666,7 +2874,7 @@ public static boolean sortByID() {
         }
 
         out.println("Press Enter to return to the Case Tracking Menu...");
-        scanner.nextLine(); 
+        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
         return true;
     }
 
@@ -2677,11 +2885,6 @@ public static boolean sortByID() {
      * @param legalCase The `LegalCase` object whose details will be printed.
      * @return `true` after printing the case details.
      *
-     * @example
-     * ```java
-     * LegalCase case = new LegalCase(...);
-     * printCaseDetails(case);
-     * ```
      */
     public static boolean printCaseDetails(LegalCase legalCase) {
         out.println("Case ID: " + legalCase.caseID);
@@ -2695,27 +2898,37 @@ public static boolean sortByID() {
 		return true;
     }
     
+    /**
+     * Checks if a specified file is empty or does not exist.
+     * This method determines whether a file contains any serialized objects by attempting to read its contents.
+     *
+     * @param fileName The name of the file to check.
+     * @return `true` if the file is empty or does not exist, `false` otherwise.
+     *
+     * @throws IOException If an error occurs while reading the file.
+     * @throws ClassNotFoundException If the file contains incompatible or corrupted data.
+     */
     public static boolean isFileEmpty(String fileName) {
         File file = new File(fileName);
 
         if (!file.exists()) {
-            return true; 
+            return true; // Eğer dosya yoksa, boş kabul edilir
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (true) {
                 try {
-                    ois.readObject(); 
-                    return false; 
+                    ois.readObject(); // Dosyada en az bir nesne var mı kontrol et
+                    return false; // Nesne bulundu, dosya boş değil
                 } catch (EOFException e) {
-                    break; 
+                    break; // Dosyanın sonuna ulaşıldı
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        return true; 
+        return true; // Dosya tamamen boşsa
     }
         
     /**
@@ -2731,7 +2944,7 @@ public static boolean sortByID() {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         for (char ch : characters.toCharArray()) {
-            map.put(ch, (int) (Math.random() * 100 + 1)); 
+            map.put(ch, (int) (Math.random() * 100 + 1)); // Random frequencies
         }
         return map;
     }
@@ -2846,7 +3059,7 @@ public static boolean sortByID() {
             out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); 
+            scanner.nextLine(); // Consume newline
 
             switch (choice) {
                 case 1:

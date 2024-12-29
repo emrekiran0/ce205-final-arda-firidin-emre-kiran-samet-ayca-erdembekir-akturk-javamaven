@@ -1,3 +1,10 @@
+/**
+ * @brief Package containing the classes and logic for the Legal Case Management System.
+ * 
+ * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
+ * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
+ * It includes classes such as `LegalCase` and other utilities required for managing 
+ */
 package com.arda.erdem.samet.emre.legalcase;
 
 import static java.lang.System.out;
@@ -26,37 +33,31 @@ import static java.lang.System.out;
  *   @return The front element of the queue, or `-1` if the queue is empty.
  *   @note Prints an error message if the queue is empty.
  *
- * @example
- * ```java
- * CustomQueue queue = new CustomQueue(5);
- * queue.enqueue(10);
- * queue.enqueue(20);
- * System.out.println(queue.dequeue()); // Outputs: 10
- * System.out.println(queue.isEmpty()); // Outputs: false
- * ```
  */
 public class CustomQueue {
     int front, rear;
     int[] items;
     int maxSize;
     
+    /**
+     * @brief Constructor for initializing a CustomQueue.
+     * 
+     * @details Creates a queue with a specified maximum size, initializing the 
+     * front and rear pointers to -1 and allocating an array to store the queue elements.
+     * 
+     * @param size The maximum number of elements the queue can hold.
+     */
     public CustomQueue(int size) {
         this.front = -1;
         this.rear = -1;
         this.maxSize = size;
         this.items = new int[size];
     }
-
     /**
      * Checks if the queue is empty.
      *
      * @return `true` if the queue is empty, `false` otherwise.
      *
-     * @example
-     * ```java
-     * CustomQueue queue = new CustomQueue(5);
-     * System.out.println(queue.isEmpty()); // Outputs: true
-     * ```
      */
     public boolean isEmpty() {
         return rear == -1;
@@ -68,11 +69,6 @@ public class CustomQueue {
      * @param value The value to be added to the queue.
      * @note Prints an error message if the queue is full.
      *
-     * @example
-     * ```java
-     * CustomQueue queue = new CustomQueue(5);
-     * queue.enqueue(10);
-     * ```
      */
     public void enqueue(int value) {
         if (rear == maxSize - 1) {
@@ -89,12 +85,6 @@ public class CustomQueue {
      * @return The front element of the queue, or `-1` if the queue is empty.
      * @note Prints an error message if the queue is empty.
      *
-     * @example
-     * ```java
-     * CustomQueue queue = new CustomQueue(5);
-     * queue.enqueue(10);
-     * System.out.println(queue.dequeue()); // Outputs: 10
-     * ```
      */
     public int dequeue() {
         if (isEmpty()) {
@@ -103,7 +93,7 @@ public class CustomQueue {
         }
         int value = items[front++];
         if (front > rear) {
-            front = rear = -1; 
+            front = rear = -1; // Kuyruk sıfırlanır
         }
         return value;
     }}

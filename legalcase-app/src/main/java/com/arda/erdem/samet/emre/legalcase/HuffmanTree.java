@@ -1,7 +1,9 @@
+
 package com.arda.erdem.samet.emre.legalcase;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Represents a Huffman Tree for encoding characters based on their frequencies.
@@ -25,23 +27,49 @@ import java.util.Map;
  * - `getHuffmanCodes()`: Retrieves the generated Huffman codes as a map.
  *   @return A map of characters to their corresponding Huffman codes.
  *
- * @example
- * ```java
- * Map<Character, Integer> frequencyMap = new HashMap<>();
- * frequencyMap.put('a', 5);
- * frequencyMap.put('b', 9);
- * frequencyMap.put('c', 12);
- * frequencyMap.put('d', 13);
- * frequencyMap.put('e', 16);
- * frequencyMap.put('f', 45);
- *
- * HuffmanTree huffmanTree = new HuffmanTree(frequencyMap);
- * Map<Character, String> codes = huffmanTree.getHuffmanCodes();
- * codes.forEach((k, v) -> System.out.println(k + ": " + v));
- * ```
  */
+
+
+
+
+class HuffmanNode {
+    char data;
+    int frequency;
+    HuffmanNode left, right;
+
+    HuffmanNode(char data, int frequency) {
+        this.data = data;
+        this.frequency = frequency;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+
 class HuffmanTree {
+	
+	/**
+	 * @brief Stores the Huffman codes for characters and the root of the Huffman tree.
+	 *
+	 * @details These private fields are integral to the Huffman coding algorithm. 
+	 * The `huffmanCodes` map associates each character with its corresponding Huffman code,
+	 * while the `root` represents the root node of the Huffman tree.
+	 *
+	 * @field `huffmanCodes` (Map<Character, String>): A mapping of characters to their Huffman-encoded binary strings.
+	 * @field `root` (HuffmanNode): The root node of the Huffman tree, which serves as the entry point for encoding and decoding operations.
+	 */
     private Map<Character, String> huffmanCodes;
+    
+    /**
+     * @brief Root node of the Huffman Tree.
+     *
+     * @details The `root` represents the top node in the Huffman Tree structure.
+     * It is used to store the hierarchy of characters and their frequencies
+     * for encoding and decoding operations.
+     *
+     * @note The `root` is initialized as `null` when the Huffman Tree is created
+     * and is populated after constructing the tree based on character frequencies.
+     */
     private HuffmanNode root;
 
     HuffmanTree(Map<Character, Integer> frequencyMap) {
@@ -89,11 +117,6 @@ class HuffmanTree {
      *
      * @return A map of characters to their corresponding binary Huffman codes.
      *
-     * @example
-     * ```java
-     * Map<Character, String> codes = huffmanTree.getHuffmanCodes();
-     * codes.forEach((k, v) -> System.out.println(k + ": " + v));
-     * ```
      */
     public Map<Character, String> getHuffmanCodes() {
         return huffmanCodes;

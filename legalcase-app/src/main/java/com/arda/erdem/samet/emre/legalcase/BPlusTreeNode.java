@@ -1,3 +1,11 @@
+/**
+ * @brief Package containing the classes and logic for the Legal Case Management System.
+ * 
+ * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
+ * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
+ * It includes classes such as `LegalCase` and other utilities required for managing 
+ * legal cases, scheduling, and data operations.
+ */
 package com.arda.erdem.samet.emre.legalcase;
 
 /**
@@ -19,35 +27,44 @@ package com.arda.erdem.samet.emre.legalcase;
  * - `BPlusTreeNode(boolean isLeaf)`: Initializes a new B+ Tree node as either a leaf or internal node.
  *   @param isLeaf A boolean value indicating if the node is a leaf.
  *
- * @example
- * ```java
- * BPlusTreeNode leafNode = new BPlusTreeNode(true);
- * System.out.println("Leaf Node Created: " + leafNode.isLeaf);
- *
- * BPlusTreeNode internalNode = new BPlusTreeNode(false);
- * System.out.println("Internal Node Created: " + internalNode.isLeaf);
- * ```
  *
  * @note Leaf nodes store actual data (`LegalCase` objects) and are linked for efficient traversal.
  *       Internal nodes only store keys and child pointers for navigating the tree.
  */
 class BPlusTreeNode {
-    boolean isLeaf;               
-    int numKeys;                  
-    int[] keys;                   
-    LegalCase[] cases;            
-    BPlusTreeNode[] children;     
-    BPlusTreeNode next;           
+    boolean isLeaf;               // Yaprak düğüm olup olmadığını belirtir
+    int numKeys;                  // Mevcut anahtar sayısı
+    int[] keys;                   // Anahtarları tutan dizi
+    LegalCase[] cases;            // LegalCase nesnelerini tutar
+    BPlusTreeNode[] children;     // Çocuk düğümleri tutan dizi (iç düğümler için)
+    BPlusTreeNode next;           // Yaprak düğümler arasında bağlantıyı sağlayan işaretçi
 
+    
+    /**
+     * @brief Maximum allowed size for specific data structures.
+     * 
+     * @details Represents the maximum number of elements or entries 
+     * that certain arrays or collections can hold. Used in defining 
+     * constraints within data structures like the B+ Tree.
+     */
     public static final int MAX = 50; 
 
- 
+    // (Constructor):
+    /**
+     * @brief Constructor for creating a BPlusTreeNode instance.
+     * 
+     * @details Initializes a BPlusTreeNode, setting whether it's a leaf node
+     * and initializing its arrays for keys, cases, and child nodes. Prepares
+     * the structure for storing or referencing data in the B+ Tree.
+     * 
+     * @param isLeaf Indicates if the node is a leaf node.
+     */
     public BPlusTreeNode(boolean isLeaf) {
-        this.isLeaf = isLeaf;                    
-        this.numKeys = 0;                        
-        this.keys = new int[MAX];                
-        this.cases = new LegalCase[MAX];         
-        this.children = new BPlusTreeNode[MAX + 1]; 
-        this.next = null;                        
+        this.isLeaf = isLeaf;                    // Yaprak düğüm olup olmadığını ayarlar
+        this.numKeys = 0;                        // Başlangıçta anahtar sayısını sıfır yapar
+        this.keys = new int[MAX];                // Anahtarları saklamak için bir dizi oluşturur
+        this.cases = new LegalCase[MAX];         // LegalCase nesnelerini saklamak için bir dizi oluşturur
+        this.children = new BPlusTreeNode[MAX + 1]; // Çocuk düğümler için dizi
+        this.next = null;                        // Yaprak düğümler arasında bağlantı yok
     }
 }

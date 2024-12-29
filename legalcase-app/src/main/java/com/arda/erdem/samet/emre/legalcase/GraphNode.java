@@ -1,3 +1,10 @@
+/**
+ * @brief Package containing the classes and logic for the Legal Case Management System.
+ * 
+ * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
+ * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
+ * It includes classes such as `LegalCase` and other utilities required for managing 
+ */
 package com.arda.erdem.samet.emre.legalcase;
 
 /**
@@ -13,16 +20,19 @@ package com.arda.erdem.samet.emre.legalcase;
  * - `GraphNode(int caseType)`: Initializes a node with the specified case type.
  *   @param caseType The identifier of the case type.
  *
- * @example
- * ```java
- * GraphNode node = new GraphNode(1);
- * System.out.println("Node created with case type: " + node.caseType);
- * ```
  */
 public class GraphNode {
     int caseType;
     GraphNode next;
 
+    /**
+     * @brief Constructor for creating a GraphNode.
+     * 
+     * @details Initializes a graph node with the specified case type and 
+     * sets the next pointer to null.
+     * 
+     * @param caseType The type of the case represented by this node.
+     */
     public GraphNode(int caseType) {
         this.caseType = caseType;
         this.next = null;

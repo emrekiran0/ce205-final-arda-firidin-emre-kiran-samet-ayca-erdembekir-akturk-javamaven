@@ -1,4 +1,15 @@
+/**
+ * @file package-info.java
+ * 
+ * @brief Package declaration for the Legal Case Management System.
+ * 
+ * @details Contains classes and data structures used to implement
+ * the Legal Case Management System. These include components for 
+ * managing cases, implementing graph-based relationships, and 
+ * specialized data structures like B+ Trees and hash tables.
+ */
 package com.arda.erdem.samet.emre.legalcase;
+
 
 /**
  * Represents a doubly linked list node for managing legal cases.
@@ -14,24 +25,25 @@ package com.arda.erdem.samet.emre.legalcase;
  * - `CaseNode(LegalCase data)`: Initializes a node with the given legal case.
  *   @param data The `LegalCase` object to store in this node.
  *
- * @example
- * ```java
- * LegalCase legalCase = new LegalCase(...); // Example LegalCase object
- * CaseNode node = new CaseNode(legalCase);
- * System.out.println("Case Node created with Case ID: " + node.data.caseID);
- * ```
  */
 public class CaseNode {
     LegalCase data;
     CaseNode next;
     CaseNode prev;
 
+    /**
+     * @brief Constructor for creating a CaseNode instance.
+     * 
+     * @details Initializes a CaseNode with the provided LegalCase data.
+     * Sets the next and previous references to null, creating a standalone node.
+     * 
+     * @param data The LegalCase object to store in this node.
+     */
     public CaseNode(LegalCase data) {
         this.data = data;
         this.next = null;
         this.prev = null;
-    }
-    }
+    }}
 
 
 

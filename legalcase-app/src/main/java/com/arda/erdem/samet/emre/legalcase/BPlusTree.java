@@ -1,28 +1,33 @@
+/**
+ * @brief Package containing the classes and logic for the Legal Case Management System.
+ * 
+ * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
+ * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
+ * It includes classes such as `LegalCase`, `BPlusTree`, and other utilities required for managing 
+ * legal cases, scheduling, and data operations.
+ */
 package com.arda.erdem.samet.emre.legalcase;
 
 /**
- * Represents a B+ Tree data structure for storing and managing sorted data.
- * This class provides the foundational structure for a B+ Tree, which is commonly
- * used in database systems and file systems to organize and retrieve data efficiently.
- *
- * @fields
- * - `root` (BPlusTreeNode): The root node of the B+ Tree. Initially set to `null`.
- *
+ * @brief Represents a B+ Tree data structure.
+ * 
+ * @details The B+ Tree is designed for efficiently managing sorted data, commonly used in
+ * database systems and file systems for quick access and insertion. This class initializes
+ * an empty tree with a null root.
+ * 
+ * @field root The root node of the B+ Tree. Initially set to null.
+ * 
  * @constructor
- * - `BPlusTree()`: Initializes an empty B+ Tree with no root.
- *
- * @example
- * ```java
- * BPlusTree tree = new BPlusTree();
- * System.out.println("B+ Tree initialized with root: " + tree.root);
- * ```
- *
- * @note Further methods for insertion, deletion, and traversal would typically
- *       be implemented to fully utilize the B+ Tree structure.
+ * Initializes a new instance of the BPlusTree class with no root node.
  */
 class BPlusTree {
     BPlusTreeNode root;
 
+    /**
+     * @brief Initializes an empty B+ Tree.
+     * 
+     * @details Sets the root node to null, preparing the structure for further operations.
+     */
     public BPlusTree() {
         this.root = null;
     }}

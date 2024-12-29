@@ -1,3 +1,12 @@
+/**
+ * @brief The primary package for the Legal Case Management System.
+ *
+ * @details This package, `com.arda.erdem.samet.emre.legalcase`, contains all the 
+ * essential classes, data structures, and logic required for implementing 
+ * the Legal Case Management System. It includes functionality for managing 
+ * legal cases, scheduling, Huffman encoding, and other utility operations.
+ */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 import java.util.Comparator;
@@ -26,18 +35,15 @@ import java.util.PriorityQueue;
  * - `size()`: Returns the current size of the MinHeap.
  *   @return The number of nodes in the MinHeap.
  *
- * @example
- * ```java
- * Map<Character, Integer> frequencyMap = new HashMap<>();
- * frequencyMap.put('a', 5);
- * frequencyMap.put('b', 9);
- * MinHeap minHeap = new MinHeap(frequencyMap);
- *
- * HuffmanNode smallestNode = minHeap.extractMin();
- * System.out.println("Smallest frequency: " + smallestNode.frequency);
- * ```
  */
 class MinHeap {
+	/**
+	 * @brief A priority queue to manage Huffman nodes.
+	 *
+	 * @details The `heap` is used for building the Huffman Tree. It organizes 
+	 * Huffman nodes based on their frequency, ensuring that the node with the 
+	 * smallest frequency is always at the top for efficient tree construction.
+	 */
     private PriorityQueue<HuffmanNode> heap;
 
     MinHeap(Map<Character, Integer> frequencyMap) {
