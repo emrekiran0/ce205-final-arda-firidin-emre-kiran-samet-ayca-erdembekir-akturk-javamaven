@@ -1,13 +1,17 @@
-
-
 /**
- * @brief The primary package for the Legal Case Management System.
+ * @file LegalCaseApp.java
+ * @brief Entry point for the Legal Case Tracker application.
  *
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, contains all the 
- * essential classes, data structures, and logic required for implementing 
- * the Legal Case Management System. It includes functionality for managing 
- * legal cases, scheduling, Huffman encoding, and other utility operations.
+ * @details
+ * This class initializes the application, manages user authentication, 
+ * and provides access to the main menu. It sets up necessary data 
+ * structures and guides the user through the application's core functionality.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Serves as the starting point of the application.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 import java.io.IOException;

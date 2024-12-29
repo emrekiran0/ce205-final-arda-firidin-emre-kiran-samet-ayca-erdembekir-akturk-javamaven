@@ -1,13 +1,18 @@
 /**
- * @file package-info.java
- * 
- * @brief Package declaration for the Legal Case Management System.
- * 
- * @details Contains classes and data structures used to implement
- * the Legal Case Management System. These include components for 
- * managing cases, implementing graph-based relationships, and 
- * specialized data structures like B+ Trees and hash tables.
+ * @file CaseNode.java
+ * @brief Implements a doubly linked list node for legal case management.
+ *
+ * @details
+ * This class defines a node structure for a doubly linked list used in the 
+ * Legal Case Tracker application. Each node contains a reference to a 
+ * `LegalCase` object and pointers to the previous and next nodes, allowing 
+ * efficient traversal in both directions.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Part of the linked list implementation for case navigation.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 

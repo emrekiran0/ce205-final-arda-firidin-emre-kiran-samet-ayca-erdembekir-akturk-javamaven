@@ -1,10 +1,17 @@
 /**
- * @brief Package containing the classes and logic for the Legal Case Management System.
- * 
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
- * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
- * It includes classes such as `LegalCase` and other utilities required for managing 
+ * @file CustomQueue.java
+ * @brief Implements a custom queue for integer values.
+ *
+ * @details
+ * This class provides a basic queue implementation using an array. It includes 
+ * methods for common queue operations such as enqueue, dequeue, and checking if 
+ * the queue is empty. The queue supports a fixed maximum size, defined at initialization.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Designed for use in operations requiring FIFO (First-In-First-Out) behavior.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 import static java.lang.System.out;

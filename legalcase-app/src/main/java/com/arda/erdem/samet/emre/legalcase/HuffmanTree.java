@@ -1,49 +1,22 @@
+/**
+ * @file HuffmanTree.java
+ * @brief Implements the Huffman Tree for character encoding.
+ *
+ * @details
+ * This class constructs a Huffman Tree using character frequencies 
+ * and generates binary codes for efficient encoding. It relies on 
+ * a MinHeap to build the tree and stores generated codes in a map 
+ * for quick access.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Designed for internal use in Huffman encoding operations.
+ */
 
 package com.arda.erdem.samet.emre.legalcase;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-/**
- * Represents a Huffman Tree for encoding characters based on their frequencies.
- * This class constructs a Huffman Tree using a frequency map and generates
- * binary Huffman codes for each character.
- *
- * @fields
- * - `huffmanCodes` (Map<Character, String>): A map storing the Huffman codes for each character.
- * - `root` (HuffmanNode): The root node of the Huffman Tree.
- *
- * @constructor
- * - `HuffmanTree(Map<Character, Integer> frequencyMap)`: Constructs a Huffman Tree using the provided frequency map.
- *   @param frequencyMap A map containing characters and their corresponding frequencies.
- *   @note This constructor uses a min-heap to build the tree efficiently.
- *
- * @methods
- * - `generateCodes(HuffmanNode node, String code)`: Recursively generates Huffman codes for all characters in the tree.
- *   @param node The current `HuffmanNode` being processed.
- *   @param code The binary code accumulated so far.
- *   @note Internal method used during tree construction.
- * - `getHuffmanCodes()`: Retrieves the generated Huffman codes as a map.
- *   @return A map of characters to their corresponding Huffman codes.
- *
- */
-
-
-
-
-class HuffmanNode {
-    char data;
-    int frequency;
-    HuffmanNode left, right;
-
-    HuffmanNode(char data, int frequency) {
-        this.data = data;
-        this.frequency = frequency;
-        this.left = null;
-        this.right = null;
-    }
-}
 
 
 class HuffmanTree {

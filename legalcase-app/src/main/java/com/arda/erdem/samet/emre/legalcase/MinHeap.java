@@ -1,10 +1,15 @@
 /**
- * @brief The primary package for the Legal Case Management System.
+ * @file MinHeap.java
+ * @brief Manages Huffman nodes with a priority queue.
  *
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, contains all the 
- * essential classes, data structures, and logic required for implementing 
- * the Legal Case Management System. It includes functionality for managing 
- * legal cases, scheduling, Huffman encoding, and other utility operations.
+ * @details
+ * This class provides efficient management of Huffman nodes, 
+ * ensuring the smallest frequency node is accessible for 
+ * tree construction.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note A key utility for building Huffman Trees.
  */
 
 package com.arda.erdem.samet.emre.legalcase;

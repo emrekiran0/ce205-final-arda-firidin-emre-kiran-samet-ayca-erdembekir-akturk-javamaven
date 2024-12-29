@@ -1,11 +1,17 @@
 /**
- * @brief Package containing the classes and logic for the Legal Case Management System.
- * 
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
- * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
- * It includes classes such as `LegalCase` and other utilities required for managing 
- * legal cases, scheduling, and data operations.
+ * @file CaseTypeForSCC.java
+ * @brief Defines a case type for Strongly Connected Components (SCC) analysis.
+ *
+ * @details
+ * This class represents a type of legal case used in SCC analysis. Each case 
+ * type is uniquely identified by an ID and described with a name, enabling 
+ * categorization and analysis of relationships between legal cases.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Designed for SCC analysis in the Legal Case Tracker application.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 /**

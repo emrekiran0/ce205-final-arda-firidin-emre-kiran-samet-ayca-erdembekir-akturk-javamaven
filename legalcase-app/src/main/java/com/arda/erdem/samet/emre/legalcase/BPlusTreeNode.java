@@ -1,11 +1,19 @@
 /**
- * @brief Package containing the classes and logic for the Legal Case Management System.
- * 
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
- * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
- * It includes classes such as `LegalCase` and other utilities required for managing 
- * legal cases, scheduling, and data operations.
+ * @file BPlusTreeNode.java
+ * @brief Represents a node in a B+ Tree data structure.
+ *
+ * @details
+ * This class serves as the fundamental building block for B+ Trees, accommodating both internal
+ * and leaf nodes. It stores keys, data (`LegalCase` objects), and child pointers. Leaf nodes
+ * are linked for efficient sequential traversal, while internal nodes manage child relationships.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note
+ * - Leaf nodes store actual data (`LegalCase` objects) and support linked traversal.
+ * - Internal nodes store keys and child pointers for navigation within the tree.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 /**

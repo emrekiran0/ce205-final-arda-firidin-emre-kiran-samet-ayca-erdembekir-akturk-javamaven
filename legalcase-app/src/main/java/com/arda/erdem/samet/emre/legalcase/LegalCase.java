@@ -1,5 +1,40 @@
-package com.arda.erdem.samet.emre.legalcase;
+/**
+ * @file LegalCase.java
+ * @brief Main class for the Legal Case Management System.
+ *
+ * @details
+ * This file contains the core implementation of the Legal Case Management System.
+ * The system supports:
+ * - Case Management: Adding, deleting, updating, and sorting legal cases.
+ * - Client Tracking: Managing plaintiff and defendant information.
+ * - Hearing Scheduler: Scheduling and managing hearing dates.
+ * - Document Storage: Storing and retrieving legal documents.
+ *
+ * ### Key Features:
+ * - **Data Structures**: Uses Hash Table, B+ Tree, Stack, Sparse Matrix, and Heap Sort.
+ * - **Collision Resolution**: Implements various algorithms such as linear probing, quadratic probing, and double hashing.
+ * - **Huffman Encoding**: Secures user credentials with Huffman coding for encryption.
+ * - **File Handling**: Reads and writes binary files for persistence.
+ *
+ * ### Dependencies:
+ * - Java I/O for file handling.
+ * - Custom data structures for efficient operations.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note
+ * - Ensure the necessary binary files (e.g., `cases.bin`, `documents.bin`, `user.huff`) are available before running the program.
+ * - This project is designed for educational purposes and demonstrates advanced concepts in data structures and algorithms.
+ *
+ * @authors
+ * - Arda, Erdem
+ * - Samet, Emre
+ *
+ * @date 2024-12-29
+ */
 
+
+package com.arda.erdem.samet.emre.legalcase;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -122,6 +157,12 @@ public class LegalCase implements Serializable {
      * and should not be modified directly.
      */
     private static final Map<Character, String> huffmanCodes = new HashMap<>();
+    
+    static {
+        Map<Character, Integer> frequencyMap = initializeFrequencyMap();
+        HuffmanTree huffmanTree = new HuffmanTree(frequencyMap);
+        huffmanCodes.putAll(huffmanTree.getHuffmanCodes());
+    }
 
     /**
      * @brief Defines the maximum number of attempts allowed.
@@ -2958,10 +2999,16 @@ public static boolean sortByID() {
      *
      * @note The Huffman codes must be pre-generated and stored in the `huffmanCodes` map.
      */
-    private static String encodePassword(String password) {
+    private static String encodePassword(String input) {
         StringBuilder encoded = new StringBuilder();
-        for (char ch : password.toCharArray()) {
-            encoded.append(huffmanCodes.get(ch));
+        for (char ch : input.toCharArray()) {
+            String code = huffmanCodes.get(ch);
+            if (code != null) {
+                encoded.append(code);
+            } else {
+                out.println("Error: Character not found in Huffman codes.");
+                return null;
+            }
         }
         return encoded.toString();
     }
@@ -2984,10 +3031,12 @@ public static boolean sortByID() {
         out.print("Enter password: ");
         String password = readPassword(scanner);
 
+        String encodedUsername = encodePassword(username);
         String encodedPassword = encodePassword(password);
 
+        // Dosyaya yazma
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE, true))) {
-            writer.write(username + ":" + encodedPassword);
+            writer.write(encodedUsername + ":" + encodedPassword);
             writer.newLine();
         } catch (IOException e) {
             out.println("Error writing to file.");
@@ -3017,13 +3066,14 @@ public static boolean sortByID() {
         out.print("Enter password: ");
         String password = readPassword(scanner);
 
+        String encodedUsername = encodePassword(username);
         String encodedPassword = encodePassword(password);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(":");
-                if (parts[0].equals(username) && parts[1].equals(encodedPassword)) {
+                if (parts[0].equals(encodedUsername) && parts[1].equals(encodedPassword)) {
                     out.println("Login successful.");
                     return true;
                 }
@@ -3035,6 +3085,7 @@ public static boolean sortByID() {
         out.println("Invalid username or password.");
         return false;
     }
+
 
     /**
      * Entry point for the user authentication system.

@@ -1,10 +1,16 @@
 /**
- * @brief The primary package for the Legal Case Management System.
+ * @file PlaintiffNode.java
+ * @brief Represents a node in an XOR linked list for managing plaintiffs.
  *
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, contains all the 
- * essential classes, data structures, and logic required for implementing 
- * the Legal Case Management System. It includes functionality for managing 
- * legal cases, scheduling, Huffman encoding, and other utility operations.
+ * @details
+ * This node stores a reference to a `LegalCase` object and uses an XOR-combined link
+ * to connect to the previous and next nodes. The XOR linked list reduces memory
+ * usage while maintaining doubly linked list functionality.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note The XOR link simplifies memory usage but requires careful management 
+ * during traversal. Use helper methods to compute and utilize XOR links correctly.
  */
 
 package com.arda.erdem.samet.emre.legalcase;

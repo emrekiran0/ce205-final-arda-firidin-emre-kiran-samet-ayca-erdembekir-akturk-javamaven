@@ -1,10 +1,17 @@
 /**
- * @brief Package containing the classes and logic for the Legal Case Management System.
- * 
- * @details This package, `com.arda.erdem.samet.emre.legalcase`, is the primary namespace
- * for all classes, data structures, and functionalities involved in the Legal Case Management System. 
- * It includes classes such as `LegalCase` and other utilities required for managing 
+ * @file GraphNode.java
+ * @brief Represents a node in an adjacency list for a graph.
+ *
+ * @details
+ * Each node corresponds to a case type and forms a part of a linked list structure
+ * within the graph's adjacency list. It stores a case type identifier and a reference 
+ * to the next node, enabling traversal and representation of graph connections.
+ *
+ * @package com.arda.erdem.samet.emre.legalcase
+ *
+ * @note Used for building adjacency lists in graph data structures.
  */
+
 package com.arda.erdem.samet.emre.legalcase;
 
 /**
