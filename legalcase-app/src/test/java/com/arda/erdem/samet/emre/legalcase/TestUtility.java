@@ -9,24 +9,11 @@ import java.util.Map;
 
 public class TestUtility {
 
-    public static final String TEST_CASE_FILE = "test_cases.bin"; // Test dosyasının adı
-    public static final String TEST_USER_FILE = "test_user.huff"; // Kullanıcı dosyasının doğru adı
-    /**
-     * Kullanıcı girişlerini simüle eder.
-     *
-     * @param userInput Simüle edilecek kullanıcı girişi
-     */
-    public static void simulateUserInput(String userInput) {
-        try (FileWriter fileWriter = new FileWriter("test_input.txt")) { // Giriş dosyası oluştur
-            fileWriter.write(userInput); // Kullanıcı girişini dosyaya yaz
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public static final String TEST_CASE_FILE = "test_cases.bin"; 
+    public static final String TEST_USER_FILE = "test_user.huff"; 
+   
 
-    /**
-     * Test davaları dosyasını oluşturur.
-     */
+   
     public static void createTestCaseFile() {
         LegalCase[] cases = {
             new LegalCase(1, "Case1", "Plaintiff1", "Defendant1", "Type1", "01/01/2023", "05/05/2023"),
@@ -36,7 +23,7 @@ public class TestUtility {
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(TEST_CASE_FILE))) {
             for (LegalCase legalCase : cases) {
-                oos.writeObject(legalCase); // Nesneleri dosyaya yaz
+                oos.writeObject(legalCase); 
             }
             System.out.println("Test cases file '" + TEST_CASE_FILE + "' created successfully!");
         } catch (IOException e) {
@@ -45,9 +32,8 @@ public class TestUtility {
     }
     
 
-    /**
-     * Test kullanıcı dosyasını oluşturur ve örnek bir kullanıcı ekler.
-     */
+   
+     
     public static void createTestUserFile(HuffmanTree huffmanTree) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(TEST_USER_FILE))) {
             String username = "testUser";
@@ -64,10 +50,7 @@ public class TestUtility {
         }
     }
 
-    /**
-     * Verilen stringi Huffman algoritmasıyla encode eder.
-     */
-   
+  
 
     public static String encodeWithHuffman(String input, HuffmanTree huffmanTree) {
         StringBuilder encoded = new StringBuilder();

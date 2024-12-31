@@ -324,11 +324,11 @@ public class LegalCase implements Serializable {
         while (true) {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine(); // Tamponu temizlemek için ekleyelim
+                scanner.nextLine(); 
                 return choice;
             } else {
                 out.println("Invalid choice! Please try again.");
-                scanner.nextLine(); // Tampondaki tüm kalan veriyi temizle
+                scanner.nextLine(); 
             }
         }
     }
@@ -378,14 +378,15 @@ public class LegalCase implements Serializable {
      *       (e.g., February having 28 or 29 days).
      */
     
+    
     public static boolean isValidDate(int day, int month, int year) {
-        if (month < 1 || month > MAX_MONTHS) { // Ayın 1 ile 12 arasında olup olmadığını kontrol eder
+        if (month < 1 || month > MAX_MONTHS) { 
             return false;
         }
-        if (day < 1 || day > MAX_DAYS) { // Günün 1 ile 31 arasında olup olmadığını kontrol eder
+        if (day < 1 || day > MAX_DAYS) { 
             return false;
         }
-        return true; // Tarih geçerliyse `true` döner
+        return true; 
     }
    
     /**
@@ -405,7 +406,7 @@ public class LegalCase implements Serializable {
         for (int year = 0; year < MAX_YEARS; year++) {
             for (int month = 0; month < MAX_MONTHS; month++) {
                 for (int day = 0; day < MAX_DAYS; day++) {
-                    sparseMatrix[year][month][day] = 0; // Tüm tarihleri boş olarak işaretle
+                    sparseMatrix[year][month][day] = 0; 
                 }
             }
         }
@@ -434,10 +435,10 @@ public class LegalCase implements Serializable {
             for (int month = 0; month < sparseMatrix[year].length; month++) {
                 for (int day = 0; day < sparseMatrix[year][month].length; day++) {
                     if (sparseMatrix[year][month][day] == 0 && isValidDate(day + 1, month + 1, 2024 + year)) {
-                        sparseMatrix[year][month][day] = 1; // Tarihi işaretle
-                        scheduledDate[0] = day + 1;        // Gün
-                        scheduledDate[1] = month + 1;      // Ay
-                        scheduledDate[2] = 2024 + year;    // Yıl
+                        sparseMatrix[year][month][day] = 1; 
+                        scheduledDate[0] = day + 1;        
+                        scheduledDate[1] = month + 1;      
+                        scheduledDate[2] = 2024 + year;   
                         return;
                     }
                 }
@@ -466,7 +467,7 @@ public class LegalCase implements Serializable {
      */
     
     public static boolean mainMenu() throws IOException {
-        initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
+        initializeHashTable(hashTableProbing, TABLE_SIZE); 
 
         int choice;
 
@@ -479,17 +480,17 @@ public class LegalCase implements Serializable {
             out.println("4. Exit");
             out.print("\nEnter your choice: ");
 
-            choice = getInput(); // Kullanıcıdan giriş alıyoruz
+            choice = getInput(); 
 
             switch (choice) {
                 case 1:
-                    caseTracking(); // Dava Takibi ile ilgili fonksiyon
+                    caseTracking(); 
                     break;
                 case 2:
-                 createDocument(); // Belge oluşturma fonksiyonu
+                 createDocument(); 
                     break;
                 case 3:
-                  documents(); // Belgeler ile ilgili fonksiyon
+                  documents(); 
                     break;
                 case 4:
                     out.println("Exiting...");
@@ -530,7 +531,7 @@ public class LegalCase implements Serializable {
         int choice;
 
         do {
-            clearScreen(); // Ekranı temizlemek için clearScreen metodunu çağırıyoruz
+            clearScreen(); 
             out.println("\n===== Case Tracking Menu =====");
             out.println("1. Add Case");
             out.println("2. Delete Case");
@@ -544,7 +545,7 @@ public class LegalCase implements Serializable {
             out.println("10. Exit");
             out.print("\nEnter your choice: ");
 
-            choice = getInput(); // Kullanıcıdan seçim alıyoruz
+            choice = getInput(); 
 
             switch (choice) {
                 case 1:
@@ -580,7 +581,7 @@ public class LegalCase implements Serializable {
                 default:
                     out.print("Invalid choice! Please press a key to continue: ");
                     try {
-                        System.in.read(); // Kullanıcıdan bir tuşa basmasını bekliyoruz
+                        System.in.read(); 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -658,14 +659,14 @@ public class LegalCase implements Serializable {
         while (i < TABLE_SIZE) {
             int newIndex = (index + i * i) % TABLE_SIZE;
 
-            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
+            if (hashTableProbing[newIndex] == -1) { 
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d%n", caseID, newIndex);
                    
                 return true;
             }
 
-            i++; // Bir sonraki deneme
+            i++; 
         }
 
         
@@ -690,13 +691,13 @@ public class LegalCase implements Serializable {
         while (i < TABLE_SIZE) {
             int newIndex = (index + i) % TABLE_SIZE;
 
-            if (hashTableProbing[newIndex] == -1) { // Boş yer bulundu
+            if (hashTableProbing[newIndex] == -1) { 
                 hashTableProbing[newIndex] = caseID;
                 out.printf("Case ID: %d inserted at Index: %d (progressive overflow)%n", caseID, newIndex);
                 return true;
             }
 
-            i++; // Bir sonraki deneme
+            i++; 
         }
 
         
@@ -725,7 +726,7 @@ public class LegalCase implements Serializable {
      *
      * @note The size of the table is determined by the constant `TABLE_SIZE`.
      */
-     public static int[] hashTableProbing = new int[TABLE_SIZE]; // Hash table için dizi
+     public static int[] hashTableProbing = new int[TABLE_SIZE]; 
 		
      
      /**
@@ -741,8 +742,8 @@ public class LegalCase implements Serializable {
       * @see secondHashFunction(int caseID) For the implementation of the secondary hash function.
       */
      public static int doubleHashing(int caseID, int attempt) {
-         int primaryHash = hashFunction(caseID);       // Birinci hash fonksiyonu
-         int secondaryHash = secondHashFunction(caseID); // İkinci hash fonksiyonu
+         int primaryHash = hashFunction(caseID);       
+         int secondaryHash = secondHashFunction(caseID); 
          return (primaryHash + attempt * secondaryHash) % TABLE_SIZE; // Double hashing
      }
      
@@ -757,13 +758,13 @@ public class LegalCase implements Serializable {
       * @see doubleHashing(int caseID, int attempt) For an alternative collision resolution method.
       */
      public static boolean linearProbing(int caseID) {
-    	    int index = hashFunction(caseID); // Başlangıç indeksi
+    	    int index = hashFunction(caseID); 
     	    int i = 0;
 
-    	    // Case ID'yi uygun yere yerleştir
+    	    
     	    hashTableProbing[(index + i) % TABLE_SIZE] = caseID;
 
-    	    // Debug çıktısı
+    	   
     	    out.printf("Case ID: %d ----- Inserted at Index: %d (linear probing)%n", caseID, (index + i) % TABLE_SIZE);
 
     	    return true;
@@ -780,7 +781,7 @@ public class LegalCase implements Serializable {
       *       This ensures the step size is relatively prime to the hash table size (`TABLE_SIZE`).
       */
      public static int secondHashFunction(int caseID) {
-         return 7 - (caseID % 7); // Double hashing için ikinci hash fonksiyonu
+         return 7 - (caseID % 7); 
      }
      
      /**
@@ -802,32 +803,32 @@ public class LegalCase implements Serializable {
       * - The `secondHashFunction` must always return a non-zero value to avoid infinite loops.
       */
      public static boolean doubleHashingInsert(int caseID) {
-         int index = hashFunction(caseID); // İlk hash fonksiyonu ile başlangıç indeksi
-         int stepSize = secondHashFunction(caseID); // İkinci hash fonksiyonu ile adım boyutu
+         int index = hashFunction(caseID); 
+         int stepSize = secondHashFunction(caseID); 
          int i = 0;
 
-         // Boş bir yer bulana kadar ilerle
+         
          while (hashTableProbing[(index + i * stepSize) % TABLE_SIZE] != -1) {
-             i++; // Bir sonraki adımı dene
+             i++; 
              if (i >= TABLE_SIZE) {
                  
-                 return false; // Tablo dolu
+                 return false; 
              }
         
-      // Boş bir yere yerleştir
+    
          hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
 
-         // Debug çıktısı
+       
          out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
 
          return true;
      }
 
-         // Boş bir yere yerleştir
+         
          hashTableProbing[(index + i * stepSize) % TABLE_SIZE] = caseID;
          
 
-         // Debug çıktısı
+        
          out.printf("Case ID: %d ----- Inserted at Index: %d (double hashing)%n", caseID, (index + i * stepSize) % TABLE_SIZE);
 
          return true;
@@ -842,10 +843,10 @@ public class LegalCase implements Serializable {
      public static boolean isHashTableFull() {
          for (int i = 0; i < TABLE_SIZE; i++) {
              if (hashTableProbing[i] == -1) {
-                 return false; // Tablo henüz dolu değil
+                 return false; 
              }
          }
-         return true; // Tablodaki tüm slotlar dolu
+         return true; 
      
      }
      
@@ -858,14 +859,14 @@ public class LegalCase implements Serializable {
       * @note This method updates the hash table to associate the given case ID with an available slot.
       */
      public static void insertIntoHashTable(LegalCase newCase) {
-    	    int index = hashFunction(newCase.caseID); // Hash fonksiyonu ile index hesaplanır
+    	    int index = hashFunction(newCase.caseID); 
 
-    	    // Eğer hash tablosunda bu index'e denk gelen bir değer varsa çakışmayı kontrol et
+    	   
     	    while (hashTableProbing[index] != -1) {
-    	        index = (index + 1) % TABLE_SIZE; // Linear probing ile sonraki indeksi kontrol et
+    	        index = (index + 1) % TABLE_SIZE;
     	    }
 
-    	    // Uygun boş index bulundu, yeni davayı tabloya ekle
+    	    
     	    hashTableProbing[index] = newCase.caseID;
 
     	    
@@ -901,7 +902,7 @@ public class LegalCase implements Serializable {
     	    
     	    @Override
     	    protected void writeStreamHeader() throws IOException {
-    	        // Header'ı yazmaz, böylece dosyaya ekleme yapılabilir
+    	        
     	        reset();
     	    }
     	}
@@ -923,15 +924,15 @@ public class LegalCase implements Serializable {
       */
      public static void appendCaseFile(LegalCase legalCase, String fileName) {
          try {
-             // Dosya var mı kontrol et
+            
              boolean fileExists = new File(fileName).exists();
 
              try (FileOutputStream fos = new FileOutputStream(fileName, true);
                   ObjectOutputStream oos = fileExists
-                          ? new AppendableObjectOutputStream(fos) // Header eklenmesini önler
-                          : new ObjectOutputStream(fos)) {       // İlk yazma işlemi için
+                          ? new AppendableObjectOutputStream(fos) 
+                          : new ObjectOutputStream(fos)) {      
 
-                 // Yeni dava bilgilerini binary formatta dosyaya yaz
+                
                  oos.writeObject(legalCase);
              }
 
@@ -952,7 +953,7 @@ public class LegalCase implements Serializable {
       *       (e.g., "31/02/2024" would pass this check but is not a valid calendar date).
       */
      public static boolean isValidDateFormat(String date) {
-    	    return date.matches("\\d{2}/\\d{2}/\\d{4}"); // Tarihin "dd/mm/yyyy" formatında olup olmadığını kontrol eder
+    	    return date.matches("\\d{2}/\\d{2}/\\d{4}"); 
     	}
   
      /**
@@ -985,7 +986,7 @@ public class LegalCase implements Serializable {
      
      public static boolean addCase() {
     	    clearScreen();
-    	    initializeHashTable(hashTableProbing, TABLE_SIZE); // Tabloyu sıfırla (opsiyonel)
+    	    initializeHashTable(hashTableProbing, TABLE_SIZE); 
 
 
     	    Random rand = new Random();
@@ -1051,7 +1052,7 @@ public class LegalCase implements Serializable {
     	        out.print("Date of Opening of the Case (dd/mm/yyyy): ");
     	        date = scanner.nextLine();
 
-    	        // Tarihin formatını kontrol et
+    	        
     	        if (isValidDateFormat(date)) {
     	            String[] parts = date.split("/");
     	            if (parts.length == 3) {
@@ -1060,7 +1061,7 @@ public class LegalCase implements Serializable {
     	                    int month = Integer.parseInt(parts[1]);
     	                    int year = Integer.parseInt(parts[2]);
     	                    if (isValidDate(day, month, year)) {
-    	                        break; // Geçerli bir tarih bulundu
+    	                        break; 
     	                    } else {
     	                        out.println("Invalid date! Please check the day, month, and year values.");
     	     }
@@ -1088,10 +1089,10 @@ public class LegalCase implements Serializable {
     	    LegalCase newCase = new LegalCase(caseID, caseTitle,caseType, defendant,plaintiff,   date, scheduled);
     	    
 
-    	    // Dosyaya yazma işlemini gerçekleştiren fonksiyonu çağırıyoruz
+    	  
     	    appendCaseFile(newCase, FILE_NAME);
 
-    	    // Insert into hash table
+    	    
     	    insertIntoHashTable(newCase);
 
     	    out.println("\nScheduled Hearing Date: " + scheduled);
@@ -1139,15 +1140,15 @@ public class LegalCase implements Serializable {
     	    CaseNode newNode = new CaseNode(data);
 
     	    if (head == null) {
-    	        return newNode; // Eğer liste boşsa, yeni düğüm baş olur
+    	        return newNode; 
     	    } else {
     	        CaseNode temp = head;
     	        while (temp.next != null) {
-    	            temp = temp.next; // Listenin sonuna git
+    	            temp = temp.next; 
     	        }
-    	        temp.next = newNode; // Yeni düğümü sona ekle
-    	        newNode.prev = temp; // Önceki düğümü ayarla
-    	        return head; // Baş düğümü geri döndür
+    	        temp.next = newNode; 
+    	        newNode.prev = temp; 
+    	        return head; 
     	    }}
      
      /**
@@ -1187,13 +1188,13 @@ public class LegalCase implements Serializable {
     	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
     	        out.println("\n===== Current Cases =====\n");
 
-    	        // Dosyadan tüm davaları oku ve listeye ekle
+    	       
     	        while (true) {
     	            try {
     	                LegalCase currentCase = (LegalCase) ois.readObject();
-    	                head = appendNode(head, currentCase); // Tüm davalar listeye eklenir
+    	                head = appendNode(head, currentCase); 
     	            } catch (EOFException e) {
-    	                break; // Dosyanın sonuna ulaşıldı
+    	                break; 
     	            }
     	        }
 
@@ -1202,7 +1203,7 @@ public class LegalCase implements Serializable {
 
     	        while (true) {
     	            clearScreen();
-    	            printCase(currentNode); // Mevcut düğümü ekrana yazdır
+    	            printCase(currentNode); 
 
     	            out.println("Options:");
     	            if (currentNode.prev != null) {
@@ -1217,14 +1218,14 @@ public class LegalCase implements Serializable {
 
     	            if (choice == 'P' || choice == 'p') {
     	                if (currentNode.prev != null) {
-    	                    currentNode = currentNode.prev; // Önceki düğüme git
+    	                    currentNode = currentNode.prev; 
     	                }
     	            } else if (choice == 'N' || choice == 'n') {
     	                if (currentNode.next != null) {
-    	                    currentNode = currentNode.next; // Sonraki düğüme git
+    	                    currentNode = currentNode.next; 
     	                }
     	            } else if (choice == 'Q' || choice == 'q') {
-    	                break; // Çık
+    	                break; 
     	            } else {
     	                out.println("Invalid choice. Please try again.");
     	                out.print(" ");
@@ -1313,16 +1314,16 @@ public class LegalCase implements Serializable {
         clearScreen();
         Scanner scanner = new Scanner(System.in);
 
-        int id = -1; // Varsayılan geçersiz değer
+        int id = -1; 
         while (true) {
             try {
                 out.print("Enter Case ID to delete: ");
-                id = scanner.nextInt(); // Kullanıcıdan tam sayı al
-                scanner.nextLine(); // Tampondaki fazlalıkları temizle
-                break; // Geçerli bir giriş alındıysa döngüden çık
+                id = scanner.nextInt(); 
+                scanner.nextLine(); 
+                break; 
             } catch (InputMismatchException e) {
                 out.println("Invalid input! Please enter a valid numeric Case ID.");
-                scanner.nextLine(); // Geçersiz girişi temizle
+                scanner.nextLine(); 
             }
         }
 
@@ -1340,14 +1341,14 @@ public class LegalCase implements Serializable {
 
                     if (currentCase.caseID == id) {
                         found = true;
-                        pushDeletedCase(currentCase); // Silinen davayı yığına ekle
+                        pushDeletedCase(currentCase); 
                         out.println("Case ID " + id + " deleted successfully.");
                     } else {
-                        oos.writeObject(currentCase); // Diğer davaları geçici dosyaya yaz
+                        oos.writeObject(currentCase); 
                     }
 
                 } catch (EOFException e) {
-                    break; // Dosyanın sonuna ulaşıldı
+                    break; 
                 }
             }
 
@@ -1356,9 +1357,9 @@ public class LegalCase implements Serializable {
         }
 
         if (found) {
-            file.delete(); // Orijinal dosyayı sil
-            tempFile.renameTo(file); // Geçici dosyayı orijinal dosyayla değiştir
-            deleteFromHashTable(id); // Hash tablosundan kaldır
+            file.delete(); 
+            tempFile.renameTo(file); 
+            deleteFromHashTable(id); 
         } else {
             tempFile.delete(); // Geçici dosyayı sil
             out.println("Case ID " + id + " not found.");
@@ -1387,9 +1388,9 @@ public class LegalCase implements Serializable {
         return false;
     }
 
-    LegalCase lastDeletedCase = deletedCasesStack.pop(); // Silinen davayı yığından çıkar
+    LegalCase lastDeletedCase = deletedCasesStack.pop(); 
     try (ObjectOutputStream oos = new AppendableObjectOutputStream(new FileOutputStream(FILE_NAME, true))) {
-        oos.writeObject(lastDeletedCase); // Dosyaya geri ekle
+        oos.writeObject(lastDeletedCase); 
         out.println("Undo successful for Case ID: " + lastDeletedCase.caseID);
         return true;
     } catch (IOException e) {
@@ -1414,7 +1415,7 @@ public class LegalCase implements Serializable {
         return false;
     }
 
-    LegalCase lastDeletedCase = deletedCasesStack.peek(); // Yığındaki son davayı gör
+    LegalCase lastDeletedCase = deletedCasesStack.peek(); 
     out.println("Last deleted case details:");
     out.println("Case ID: " + lastDeletedCase.caseID);
     out.println("Case Title: " + lastDeletedCase.title);
@@ -1424,7 +1425,7 @@ public class LegalCase implements Serializable {
     char confirmation = scanner.nextLine().toLowerCase().charAt(0);
 
     if (confirmation == 'y') {
-        return undoDeleteCase(); // Geri alma işlemini gerçekleştir
+        return undoDeleteCase(); 
     } else {
         out.println("Undo operation cancelled.");
         return false;
@@ -1443,10 +1444,10 @@ public class LegalCase implements Serializable {
 	public static boolean isDeleted(int caseID) {
     for (LegalCase deletedCase : deletedCasesStack) {
         if (deletedCase.caseID == caseID) {
-            return true; // Silinmiş bir dava bulundu
+            return true; 
         }
     }
-    return false; // Silinmiş bir dava yok
+    return false; 
 }
 	/**
 	 * Compares two dates in the "dd/MM/yyyy" format.
@@ -1469,7 +1470,7 @@ public static int compareDates(String date1, String date2) {
         return d1.compareTo(d2);
     } catch (ParseException e) {
         e.printStackTrace();
-        return 0; // Geçersiz tarih durumunda eşit kabul edilir
+        return 0; 
     }
 }
 
@@ -1486,8 +1487,8 @@ public static int compareDates(String date1, String date2) {
  */
 public static void heapify(LegalCase[] cases, int n, int i) {
     int largest = i; // Root
-    int left = 2 * i + 1; // Sol çocuk
-    int right = 2 * i + 2; // Sağ çocuk
+    int left = 2 * i + 1; 
+    int right = 2 * i + 2; 
 
     if (left < n && compareDates(cases[left].scheduled, cases[largest].scheduled) > 0) {
         largest = left;
@@ -1502,7 +1503,7 @@ public static void heapify(LegalCase[] cases, int n, int i) {
         cases[i] = cases[largest];
         cases[largest] = temp;
 
-        // Alt ağacı heapify et
+        
         heapify(cases, n, largest);
     }
 }
@@ -1519,12 +1520,12 @@ public static void heapify(LegalCase[] cases, int n, int i) {
 public static void heapSort(LegalCase[] cases) {
     int n = cases.length;
 
-    // Max heap oluştur
+   
     for (int i = n / 2 - 1; i >= 0; i--) {
         heapify(cases, n, i);
     }
 
-    // Elemanları ayır ve heapify et
+    
     for (int i = n - 1; i > 0; i--) {
         LegalCase temp = cases[0];
         cases[0] = cases[i];
@@ -1569,7 +1570,7 @@ public static boolean caseDates() {
                 LegalCase legalCase = (LegalCase) ois.readObject();
                 caseList.add(legalCase);
             } catch (EOFException e) {
-                break; // Dosyanın sonuna ulaşıldı
+                break; 
             }
         }
     } catch (IOException | ClassNotFoundException e) {
@@ -1577,11 +1578,11 @@ public static boolean caseDates() {
         return false;
     }
 
-    // Listeyi diziye çevir ve sıralama yap
+    
     LegalCase[] caseArray = caseList.toArray(new LegalCase[0]);
     heapSort(caseArray);
 
-    // Sıralı davaları yazdır
+    
     out.println("\n===== Sorted Case Dates =====\n");
     for (LegalCase legalCase : caseArray) {
         out.println("Case ID: " + legalCase.caseID);
@@ -1784,11 +1785,11 @@ public static boolean sortByID() {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
         while (true) {
             try {
-                // Dosyadan davaları oku ve ağaca ekle
+                
                 LegalCase legalCase = (LegalCase) ois.readObject();
                 LegalCase.insert(legalCase.caseID, legalCase);
             } catch (EOFException e) {
-                break; // Dosyanın sonuna ulaşıldı
+                break; 
             }
         }
     } catch (IOException | ClassNotFoundException e) {
@@ -1796,7 +1797,7 @@ public static boolean sortByID() {
         return false;
     }
 
-    // Ağacı sıralı şekilde yazdır
+    
     System.out.println("\n===== Sorted Case Dates =====\n");
     LegalCase.printSortedCases();
 
@@ -1805,7 +1806,7 @@ public static boolean sortByID() {
     return true;
 }
 
-    // Dava türleri için sabit isim listesi
+    
     static final String[] caseNames = {
         "Criminal", "Civil", "Commercial", "Administrative",
         "Divorce", "Custody", "Traffic", "Dismissal",
@@ -1868,7 +1869,7 @@ public static boolean sortByID() {
             }
         }
 
-        // Ziyaret edilenleri sıfırla
+       
         for (int i = 0; i < graph.numVertices; i++) {
             graph.visited[i] = false;
         }
@@ -1891,7 +1892,7 @@ public static boolean sortByID() {
      * @see BFS(Graph, int) For traversing the graph.
      */
     static boolean casesThatMayBeConnectedMenu() {
-        clearScreen(); // İlk açılışta ekranı temizle
+        clearScreen(); 
         int NUM_CASE_TYPES = caseNames.length;
         Graph graph = new Graph(NUM_CASE_TYPES);
 
@@ -1911,7 +1912,7 @@ public static boolean sortByID() {
             for (int i = 0; i < NUM_CASE_TYPES; i++) {
                 out.println(i + ". " + caseNames[i]);
             }
-            out.println(NUM_CASE_TYPES + ". Return to Main Menu"); // Çıkış seçeneği
+            out.println(NUM_CASE_TYPES + ". Return to Main Menu"); 
 
             out.print("Please Enter The Number Next To Your Case: ");
 
@@ -1920,15 +1921,15 @@ public static boolean sortByID() {
             } else {
 
                 out.println("Invalid input. Please enter a number.");
-                scanner.next(); // Geçersiz girdiyi temizle
+                scanner.next(); 
                 continue;
             }
             clearScreen();
             if (choice >= 0 && choice < NUM_CASE_TYPES) {
-                clearScreen(); // Seçim yapıldıktan sonra ekranı temizle
-                BFS(graph, choice); // Geçerli bir dava türü seçildiğinde BFS çalıştır
+                clearScreen(); 
+                BFS(graph, choice); 
             } else if (choice == NUM_CASE_TYPES) {
-                return true; // Ana menüye dön
+                return true; 
             } else {
                 out.println("Invalid choice. Please try again.");
             }
@@ -2079,24 +2080,24 @@ public static boolean sortByID() {
             int caseChoice = -1;
             boolean validInput = false;
 
-            // Geçerli bir giriş alınana kadar döngü
+            
             while (!validInput) {
                 out.print("Please Make Your Choice (1-11): ");
                 if (scanner.hasNextInt()) {
                     caseChoice = scanner.nextInt();
-                    scanner.nextLine(); // Buffer temizleme
+                    scanner.nextLine(); 
                     if (caseChoice >= 1 && caseChoice <= 11) {
-                        validInput = true; // Geçerli giriş
+                        validInput = true; 
                     } else {
                         out.println("Invalid choice. Please enter a number between 1 and 11.");
                     }
                 } else {
                     out.println("Invalid input! Please enter a valid numeric choice.");
-                    scanner.nextLine(); // Geçersiz girdiyi temizle
+                    scanner.nextLine(); 
                 }
             }
 
-            // Seçilen dava türünü göster ve ilgili işlemleri yap
+           
             clearScreen();
             out.println("\nSelected Case Type: " + caseTypeSCC[(caseChoice - 1) * 4].name);
             out.println("\nCases That May Arise:");
@@ -2107,7 +2108,7 @@ public static boolean sortByID() {
             }
 
             out.println("\n\nPlease press Enter to return to the Case Tracking Menu...");
-            scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+            scanner.nextLine(); 
 
             return true;
         }
@@ -2168,7 +2169,7 @@ public static boolean sortByID() {
                 head.xorLink = XOR(newNode, head.xorLink);
             }
 
-            return newNode; // Yeni head düğümünü döndür
+            return newNode; 
         }
         
         /**
@@ -2216,16 +2217,16 @@ public static boolean sortByID() {
         public static boolean displayPlaintiffs() {
             PlaintiffNode head = null;
 
-            // Davaları XOR bağlı listeye ekle (dosyadan verileri oku)
+            
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
                 while (true) {
                     try {
                         LegalCase currentCase = (LegalCase) ois.readObject();
                         if (currentCase != null) {
-                            head = addPlaintiffNode(head, currentCase); // Listeye ekle
+                            head = addPlaintiffNode(head, currentCase); 
                         }
                     } catch (EOFException e) {
-                        break; // Dosyanın sonuna ulaşıldı
+                        break; 
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2233,13 +2234,13 @@ public static boolean sortByID() {
                 return false;
             }
 
-            // Eğer liste boşsa kullanıcıya bilgi ver
+            
             if (head == null) {
                 out.println("No plaintiffs found.");
                 return false;
             }
 
-            // Liste üzerinde gezinme
+          
             PlaintiffNode current = head;
             PlaintiffNode prev = null;
             PlaintiffNode next;
@@ -2249,16 +2250,16 @@ public static boolean sortByID() {
                 clearScreen();
                 printPlaintiff(current);
 
-                // Mevcut düğümün bir sonraki düğümünü hesapla
+               
                 next = XOR(prev, current.xorLink);
 
-                // Kullanıcı seçenekleri
+               
                 out.println("Options:");
                 if (prev != null) {
-                    out.println("P - Previous plaintiff"); // Önceki düğüm
+                    out.println("P - Previous plaintiff"); 
                 }
                 if (next != null) {
-                    out.println("N - Next plaintiff"); // Sonraki düğüm
+                    out.println("N - Next plaintiff"); 
                 }
                 out.println("Q - Quit");
                 out.print("Enter your choice: ");
@@ -2270,7 +2271,7 @@ public static boolean sortByID() {
                         pause();
                     } else {
                         PlaintiffNode temp = current;
-                        current = prev; // Önceki düğüme geç
+                        current = prev; 
                         prev = XOR(temp, current.xorLink);
                     }
                 } else if (choice == 'N' || choice == 'n') {
@@ -2280,10 +2281,10 @@ public static boolean sortByID() {
                     } else {
                         PlaintiffNode temp = current;
                         prev = current;
-                        current = next; // Sonraki düğüme geç
+                        current = next; 
                     }
                 } else if (choice == 'Q' || choice == 'q') {
-                    break; // Çıkış
+                    break; 
                 } else {
                     out.println("Invalid choice. Please try again.");
                     pause();
@@ -2435,14 +2436,14 @@ public static boolean sortByID() {
             if (!file.exists()) {
                 out.println("Error: File not found!");
                 out.println("Press Enter to return to the menu...");
-                scanner.nextLine(); // Kullanıcının Enter'a basmasını bekler
+                scanner.nextLine(); 
                 return false;
             }
 
         
             LegalCase selectedCase = null;
 
-            // Dosyadaki mevcut davaları göster
+            
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 out.println("\n===== Current Cases =====");
 
@@ -2466,24 +2467,24 @@ public static boolean sortByID() {
                 return false;
             }
 
-            boolean validCaseID = false; // Geçerli bir ID bulundu mu
+            boolean validCaseID = false; 
             int id = -1;
 
-            // Geçerli bir Case ID alana kadar döngü
+            
             while (!validCaseID) {
                 out.print("\nEnter Case ID to create a document for: ");
                 if (scanner.hasNextInt()) {
                     id = scanner.nextInt();
-                    scanner.nextLine(); // Buffer temizleme
+                    scanner.nextLine(); 
 
-                    // Girilen Case ID'nin dosyada olup olmadığını kontrol et
+                    
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                         while (true) {
                             try {
                                 LegalCase currentCase = (LegalCase) ois.readObject();
                                 if (currentCase.caseID == id) {
                                     selectedCase = currentCase;
-                                    validCaseID = true; // Geçerli bir ID bulundu
+                                    validCaseID = true; 
                                     break;
                                 }
                             } catch (EOFException e) {
@@ -2500,11 +2501,11 @@ public static boolean sortByID() {
                     }
                 } else {
                     out.println("Invalid input! Please enter a valid numeric Case ID.");
-                    scanner.next(); // Geçersiz girdiyi temizle
+                    scanner.next(); 
                 }
             }
 
-            // Seçilen davanın bilgilerini göster
+           
             clearScreen();
             out.println("\n===== Selected Case =====");
             out.println("Case ID: " + selectedCase.caseID);
@@ -2592,7 +2593,7 @@ public static boolean sortByID() {
                         break;
                     default:
                         out.print("Invalid choice! Please press Enter to continue: ");
-                        scanner.nextLine(); // Kullanıcıdan giriş bekler
+                        scanner.nextLine(); 
                         break;
                 }
             } while (choice != 4);
@@ -2625,10 +2626,10 @@ public static boolean sortByID() {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(docFile))) {
                 while (true) {
                     try {
-                        // Dosyadan bir `LegalCaseDocument` nesnesi oku
+                        
                         LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
 
-                        // Nesne bilgilerini ekrana yazdır
+                       
                         out.println("Case ID: " + document.caseID);
                         out.println("Title: " + document.title);
                         out.println("Plaintiff: " + document.plaintiff);
@@ -2639,7 +2640,7 @@ public static boolean sortByID() {
                         out.println("Sentence: " + document.sentence);
                         out.println("-----------------------------");
                     } catch (EOFException e) {
-                        break; // Dosyanın sonuna ulaşıldı
+                        break; 
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2649,7 +2650,7 @@ public static boolean sortByID() {
 
             out.println("\nPress Enter to return to the menu...");
             try {
-                new Scanner(System.in).nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+                new Scanner(System.in).nextLine(); 
             } catch (Exception e) {
                 out.println("Error reading input.");
             }
@@ -2759,7 +2760,7 @@ public static boolean sortByID() {
         out.print("Enter the Case Title to search: ");
         String searchTitle = scanner.nextLine();
 
-        // Kullanıcı giriş yapmazsa tekrar iste
+        
         while (searchTitle.isEmpty()) {
         	clearScreen();
             out.println("Invalid input! Please enter a valid case title.");
@@ -2773,10 +2774,10 @@ public static boolean sortByID() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (true) {
                 try {
-                    // `LegalCaseDocument` nesnesini oku
+                    
                     LegalCaseDocument document = (LegalCaseDocument) ois.readObject();
 
-                    // Başlık eşleşmesini KMP ile kontrol et
+                    
                     if (KMPSearch(searchTitle.toLowerCase(), document.title.toLowerCase())) {
                         out.println("Case ID: " + document.caseID);
                         out.println("Title: " + document.title);
@@ -2790,7 +2791,7 @@ public static boolean sortByID() {
                         found = true;
                     }
                 } catch (EOFException e) {
-                    break; // Dosyanın sonuna ulaşıldı
+                    break; 
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -2804,7 +2805,7 @@ public static boolean sortByID() {
         }
 
         out.println("Press Enter to return to the menu...");
-        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+        scanner.nextLine(); 
         return true;
     }
    
@@ -2820,7 +2821,7 @@ public static boolean sortByID() {
      * The array size is determined by the `TABLE_SIZE` constant, which defines the maximum 
      * capacity of the hash table.
      */
-    public static LegalCase[] hashTableCases = new LegalCase[TABLE_SIZE]; // LegalCase nesnelerini tutar
+    public static LegalCase[] hashTableCases = new LegalCase[TABLE_SIZE]; 
 
     /**
      * Searches for a legal case in the hash table using linear probing.
@@ -2833,19 +2834,19 @@ public static boolean sortByID() {
      * @see hashFunction(int, int) For calculating the hash table index.
      */
     public static LegalCase searchInHashTable(int caseID) {
-        int index = hashFunction(caseID, TABLE_SIZE); // Başlangıç indeksi hesaplanır
+        int index = hashFunction(caseID, TABLE_SIZE); 
         int startIndex = index;
 
-        while (hashTableProbing[index] != -1) { // Eğer mevcutsa
+        while (hashTableProbing[index] != -1) {
             if (hashTableProbing[index] == caseID) {
-                return hashTableCases[index]; // İlgili dava döndürülür
+                return hashTableCases[index]; 
             }
-            index = (index + 1) % TABLE_SIZE; // Linear probing ile bir sonraki indeks
+            index = (index + 1) % TABLE_SIZE; 
             if (index == startIndex) {
-                break; // Döngüyü kır
+                break; 
             }
         }
-        return null; // Bulunamadıysa null döner
+        return null; 
     }
     
     /**
@@ -2868,27 +2869,27 @@ public static boolean sortByID() {
      */
     public static boolean searchByID() {
         clearScreen();
-        int id = -1; // ID değişkeni
+        int id = -1; 
         while (true) {
             out.print("Enter Case ID to search: ");
             if (scanner.hasNextInt()) {
                 id = scanner.nextInt();
-                scanner.nextLine(); // Buffer temizleme
-                break; // Geçerli giriş alındığında döngüden çık
+                scanner.nextLine(); 
+                break; 
             } else {
             	clearScreen();
                 out.println("Invalid input! Please enter a valid numeric Case ID.");
-                scanner.nextLine(); // Hatalı girdiyi temizle
+                scanner.nextLine(); 
             }
         }
 
-        // Hash table'da arama
+        
         LegalCase foundCase = searchInHashTable(id);
         if (foundCase != null) {
             
             printCaseDetails(foundCase);
         } else {
-            // Dosyada arama
+            
             boolean found = false;
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
                 while (true) {
@@ -2901,7 +2902,7 @@ public static boolean sortByID() {
                             break;
                         }
                     } catch (EOFException e) {
-                        break; // Dosyanın sonuna ulaşıldı
+                        break; 
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -2915,7 +2916,7 @@ public static boolean sortByID() {
         }
 
         out.println("Press Enter to return to the Case Tracking Menu...");
-        scanner.nextLine(); // Kullanıcıdan Enter tuşuna basmasını bekler
+        scanner.nextLine(); 
         return true;
     }
 
@@ -2953,23 +2954,23 @@ public static boolean sortByID() {
         File file = new File(fileName);
 
         if (!file.exists()) {
-            return true; // Eğer dosya yoksa, boş kabul edilir
+            return true; 
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             while (true) {
                 try {
-                    ois.readObject(); // Dosyada en az bir nesne var mı kontrol et
-                    return false; // Nesne bulundu, dosya boş değil
+                    ois.readObject(); 
+                    return false; 
                 } catch (EOFException e) {
-                    break; // Dosyanın sonuna ulaşıldı
+                    break; 
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        return true; // Dosya tamamen boşsa
+        return true; 
     }
         
     /**
@@ -3028,23 +3029,24 @@ public static boolean sortByID() {
         clearScreen();
         out.print("Enter username: ");
         String username = scanner.nextLine();
+
         out.print("Enter password: ");
-        String password = readPassword(scanner);
+        String password = readPassword(scanner); 
 
         String encodedUsername = encodePassword(username);
         String encodedPassword = encodePassword(password);
 
-        // Dosyaya yazma
+       
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE, true))) {
             writer.write(encodedUsername + ":" + encodedPassword);
             writer.newLine();
         } catch (IOException e) {
-            
             return false;
         }
         clearScreen();
         return true;
     }
+
 
     /**
      * Authenticates a user by checking their credentials against the user file.
@@ -3107,8 +3109,17 @@ public static boolean sortByID() {
             out.println("3. Exit");
             out.print("Enter your choice: ");
 
+            
+            if (!scanner.hasNextInt()) {
+            	 clearScreen();
+                out.println("Invalid input! Please enter a numeric value (1, 2, or 3).");
+                scanner.next(); 
+               
+                continue;
+            }
+            
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine(); 
 
             switch (choice) {
                 case 1:
@@ -3123,10 +3134,14 @@ public static boolean sortByID() {
                     out.println("Exiting...");
                     return false;
                 default:
+                	clearScreen();
                     out.println("Invalid choice! Please enter a valid option.");
+                    
             }
         }
     }
+
+
 
     /**
      * Reads a password from the user securely, masking the input with asterisks (`*`).
@@ -3139,8 +3154,8 @@ public static boolean sortByID() {
      *       Otherwise, characters are masked as they are entered.
      */
     public static String readPassword(Scanner scanner) {
-        out.print("Enter password : "); // Kullanıcıya bilgi ver
-        return scanner.nextLine(); // Parolayı açıkça okur
+        
+        return scanner.nextLine(); 
     }
     
     

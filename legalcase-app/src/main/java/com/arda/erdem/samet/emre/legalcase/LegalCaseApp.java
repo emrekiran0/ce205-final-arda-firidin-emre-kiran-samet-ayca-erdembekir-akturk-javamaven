@@ -47,18 +47,18 @@ public class LegalCaseApp {
 	 * @see LegalCase#mainMenu() For accessing the main menu of the application.
 	 */
     public static void main(String[] args) throws IOException {
-        // Hash tablosunu başlat
+        
         LegalCase.initializeHashTable(LegalCase.hashTableProbing, LegalCase.TABLE_SIZE);
 
-        // Scanner ve LegalCase nesnesi oluştur
+       
         Scanner scanner = new Scanner(System.in);
         LegalCase legalCase = new LegalCase(scanner, System.out);
         
 
-        // Kullanıcı giriş ekranını çalıştır
+        
         boolean isLoggedIn = LegalCase.mainEntry();
 
-        // Kullanıcı giriş yaptıysa ana menüyü çalıştır
+       
         if (isLoggedIn) {
             LegalCase.mainMenu();
         } else {

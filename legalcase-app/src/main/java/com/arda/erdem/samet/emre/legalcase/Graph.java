@@ -32,9 +32,9 @@ package com.arda.erdem.samet.emre.legalcase;
  *
  */
 public class Graph {
-    int numVertices;           // Düğüm sayısı
-    GraphNode[] adjLists;      // Bağlı liste
-    boolean[] visited;         // Ziyaret kontrolü
+    int numVertices;           
+    GraphNode[] adjLists;     
+    boolean[] visited;        
 
     /**
      * @brief Constructor for initializing a Graph.
@@ -50,7 +50,7 @@ public class Graph {
         this.adjLists = new GraphNode[vertices];
         this.visited = new boolean[vertices];
 
-        // Başlangıçta tüm düğümler boş ve ziyaret edilmemiş
+        
         for (int i = 0; i < vertices; i++) {
             adjLists[i] = null;
             visited[i] = false;

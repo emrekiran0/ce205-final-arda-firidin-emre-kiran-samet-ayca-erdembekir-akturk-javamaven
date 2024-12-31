@@ -69,18 +69,18 @@ public class LegalCaseTest {
 
   @Before
   public void setUp() {
-      // Huffman ağacını ayarla
+      
       Map<Character, Integer> frequencyMap = new HashMap<>();
       String example = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       for (char c : example.toCharArray()) {
-          frequencyMap.put(c, 1); // Her karakter için eşit frekans
+          frequencyMap.put(c, 1); 
       }
       huffmanTree = new HuffmanTree(frequencyMap);
 
-      // Test kullanıcı dosyasını oluştur
+     
       TestUtility.createTestUserFile(huffmanTree);
 
-      // Test ortamında dosya sabitini test dosyasına yönlendir
+      
       LegalCase.USER_FILE = TestUtility.TEST_USER_FILE;
   }
 
@@ -91,16 +91,27 @@ public class LegalCaseTest {
    */
  
 	  @After
-	  public void tearDown() {
+		  public void tearDown() throws Exception {
+		  
+		      String[] filesToDelete = {"test_user.huff", "test_cases.bin", "non_existent_file.bin"};
+		      for (String fileName : filesToDelete) {
+		          File file = new File(fileName);
+		          if (file.exists()) {
+		              boolean deleted = file.delete();
+		              assertTrue("Dosya silinemedi: " + fileName, deleted);
+		          }
+		      }
+		  }
+
 	     
-	  }
+	  
 	  
   
   
   
   @Before
   public void setUpStreams() {
-      System.setOut(new PrintStream(outContent)); // Çıkış yönlendirme
+      System.setOut(new PrintStream(outContent)); 
       legalcase = new LegalCase(new Scanner(""), new PrintStream(outContent));
   }
 
@@ -130,7 +141,7 @@ public class LegalCaseTest {
   
   @Test
   public void testMainMenuValidCreateDocumentWithID() throws IOException {
-      // Kullanıcı "Create Document" seçeneğini seçiyor, bir ID giriyor ve çıkış yapıyor
+     
 	  TestUtility.createTestCaseFile();
 	  String input = "2\n1\n\n\n\n\n\n4\n";
       System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -142,7 +153,7 @@ public class LegalCaseTest {
 
   @Test
   public void testMainMenuDocuments() throws IOException {
-      String input = "3\n4\n4\n"; // Kullanıcı "Documents" ve ardından "Exit" seçiyor
+      String input = "3\n4\n4\n"; 
       System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       legalcase = new LegalCase(testScanner, new PrintStream(outContent));
@@ -152,7 +163,7 @@ public class LegalCaseTest {
 
   @Test
   public void testMainMenuInvalidInput() throws IOException {
-      String input = "9000\ndfghj\n4\n\n"; // Kullanıcı "Documents" ve ardından "Exit" seçiyor
+      String input = "9000\ndfghj\n4\n\n";
       System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       legalcase = new LegalCase(testScanner, new PrintStream(outContent));
@@ -162,7 +173,7 @@ public class LegalCaseTest {
 
   @Test
   public void testCaseTrackingtoAddCase() throws IOException {
-	  String input = "1\n1\n\nOriginal Title\nJohn Doe\nJane Smith\nCivil\n01/01/2023\n\n\n10\n"; // Kullanıcı "Documents" ve ardından "Exit" seçiyor
+	  String input = "1\n1\n\nOriginal Title\nJohn Doe\nJane Smith\nCivil\n01/01/2023\n\n\n10\n"; 
 	  System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       legalcase = new LegalCase(testScanner, new PrintStream(outContent));
@@ -249,13 +260,6 @@ public class LegalCaseTest {
       assertTrue(result);
   }
   
-  
-  
-  
-  
-  
-  
-  
   @Test
   public void testAddCaseQuadraticProbing_ValidInput() throws IOException {
 	  String input = "1\n1\nOriginal Title\nJohn Doe\nJane Smith\nCivil\n01/01/2023\n\n10\n";
@@ -300,32 +304,32 @@ public class LegalCaseTest {
  
   @Test
   public void testAddCaseInvalidDateFormat() throws IOException {
-      // Geçersiz tarih formatı: "32/13/abcd"
+      
       String input = "1\n1\nTest Title\nJohn Doe\nJane Smith\nCivil\n32/13/abcd\n01/01/2023\n\n10\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.addCase();
-      assertTrue(result); // Fonksiyon başarısız olmalı
+      assertTrue(result); 
   }
   
   @Test
   public void testAddCaseIncompleteDate() throws IOException {
-      // Eksik tarih bilgisi: "01/2023" (gün eksik)
+     
       String input = "1\n1\nTest Title\nJohn Doe\nJane Smith\nCivil\n01/2023\n01/01/2023\n\n10\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.addCase();
-      assertTrue(result); // Fonksiyon başarısız olmalı
+      assertTrue(result); 
   }
   
   @Test
   public void testCurrentCasesNavigation() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "N\nP\nQ\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -336,10 +340,10 @@ public class LegalCaseTest {
   
   @Test
   public void testCurrentCasesInvalidİnput() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "x\nN\nP\nQ\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -350,10 +354,10 @@ public class LegalCaseTest {
   
   @Test
   public void testCaseDates() throws IOException {
-      // Test dosyasını oluştur
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+      
+      TestUtility.createTestCaseFile(); 
       String input = "\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -364,11 +368,10 @@ public class LegalCaseTest {
   
   @Test
   public void test() throws IOException {
-      // Test dosyasını oluştur
-	  
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+   
+      TestUtility.createTestCaseFile(); 
       String input = "\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -379,30 +382,28 @@ public class LegalCaseTest {
   
   @Test
   public void testPrintSortedCases() throws IOException, ClassNotFoundException {
-      // Test dosyasını oluştur
-	    LegalCase.FILE_NAME = TestUtility.TEST_CASE_FILE;
-
+      
+	  LegalCase.FILE_NAME = TestUtility.TEST_CASE_FILE;
       TestUtility.createTestCaseFile();
       
-      // B+ ağacına davaları ekle
       try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(TestUtility.TEST_CASE_FILE))) {
           while (true) {
               try {
                   LegalCase legalCase = (LegalCase) ois.readObject();
                   LegalCase.insert(legalCase.caseID, legalCase);
               } catch (EOFException e) {
-                  break; // Dosyanın sonuna ulaşıldı
+                  break; 
               }
           }
       }
-      // Çıktıyı yakalamak için
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
-      // Metodu çalıştır
+      
       boolean result = LegalCase.printSortedCases();
-      // Metodun doğru şekilde çalıştığını kontrol et
+     
       assertTrue(result);
-      // Çıktıyı kontrol et
+      
       String output = outContent.toString();
       assertTrue(output.contains("Case ID: 1"));
   
@@ -410,36 +411,36 @@ public class LegalCaseTest {
   
   @Test
   public void testSplitNode() {
-      // B+ ağacı oluştur
+    
       BPlusTreeNode root = new BPlusTreeNode(true);
 
-      // B+ ağacını dolduracak anahtarlar
+      
       int maxKeys = BPlusTreeNode.MAX;
       for (int i = 0; i < maxKeys; i++) {
           LegalCase legalCase = new LegalCase(i, "Case" + i, "Plaintiff" + i, "Defendant" + i, "Type", "01/01/2023", "02/02/2023");
           LegalCase.insert(i, legalCase);
       }
 
-      // Yeni bir anahtar ekleyerek split işlemini tetikle
+      
       LegalCase extraCase = new LegalCase(maxKeys, "ExtraCase", "ExtraPlaintiff", "ExtraDefendant", "Type", "01/01/2024", "02/02/2024");
       LegalCase.insert(maxKeys, extraCase);
 
-      // Çıkışı yakalamak için
+    
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
-      // Çıktıyı kontrol et
+   
       String output = outContent.toString();
      
   }
 
   @Test
   public void testSplitNodeWithParentAndNonLeaf() {
-      // B+ ağacı kök düğümü oluştur
-      BPlusTreeNode root = new BPlusTreeNode(false); // Yaprak olmayan kök düğüm
-      BPlusTreeNode childNode = new BPlusTreeNode(true); // Yaprak düğüm
+    
+      BPlusTreeNode root = new BPlusTreeNode(false); 
+      BPlusTreeNode childNode = new BPlusTreeNode(true); 
 
-      // Çocuk düğümü dolduracak anahtarlar ekle
+     
       int maxKeys = BPlusTreeNode.MAX;
       for (int i = 0; i < maxKeys; i++) {
           childNode.keys[i] = i;
@@ -447,125 +448,124 @@ public class LegalCaseTest {
           childNode.numKeys++;
       }
 
-      // Kök düğüme çocuk düğümü ekle
+     
       root.children[0] = childNode;
 
-      // Split işlemini tetikle
+   
       LegalCase.split(root, childNode);
 
-      // Kontroller
-      assertNotNull(root.children[1]); // Yeni düğüm eklendi mi?
-      assertEquals(maxKeys / 2, childNode.numKeys); // Çocuk düğümde kalan anahtar sayısı
-      assertEquals(maxKeys - maxKeys / 2 - 1, root.children[1].numKeys); // Yeni düğümdeki anahtar sayısı
+    
+      assertNotNull(root.children[1]); 
+      assertEquals(maxKeys / 2, childNode.numKeys); 
+      assertEquals(maxKeys - maxKeys / 2 - 1, root.children[1].numKeys); 
   }
 
   
   @Test
   public void testPrintSortedCasesRootNull() {
-      // B+ ağacı kökü boş
+     
       LegalCase.root = null;
 
-      // Çıkışı yakalamak için
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
-      // printSortedCases çağrılır
+     
       boolean result = LegalCase.printSortedCases();
 
-      // Kontroller
-      assertFalse(result); // Fonksiyon false döndürmeli
+      
+      assertFalse(result); 
       String output = outContent.toString();
-      assertTrue(output.contains("No cases to display.")); // Doğru hata mesajını kontrol et
+      assertTrue(output.contains("No cases to display."));
   }
 
   @Test
   public void testPrintSortedCasesNonLeafTraversal() {
-      // Root düğüm ve çocuk düğümler oluştur
-      BPlusTreeNode rootNode = new BPlusTreeNode(false); // Yaprak olmayan kök düğüm
-      BPlusTreeNode childNode = new BPlusTreeNode(true); // Yaprak düğüm
+    
+      BPlusTreeNode rootNode = new BPlusTreeNode(false); 
+      BPlusTreeNode childNode = new BPlusTreeNode(true); 
 
-      // Çocuk düğümü dolduracak anahtarlar ekle
+      
       childNode.keys[0] = 1;
       childNode.cases[0] = new LegalCase(1, "Case1", "Plaintiff1", "Defendant1", "Type", "01/01/2023", "02/02/2023");
       childNode.numKeys = 1;
 
-      // Kök düğüme çocuk düğüm ekle
+     
       rootNode.children[0] = childNode;
       rootNode.numKeys = 1;
       LegalCase.root = rootNode;
 
-      // Çıkışı yakalamak için
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
-      // printSortedCases çağrılır
+    
       boolean result = LegalCase.printSortedCases();
 
-      // Kontroller
-      assertTrue(result); // Fonksiyon true döndürmeli
+      
+      assertTrue(result); 
       String output = outContent.toString();
-      assertTrue(output.contains("Case ID: 1")); // Doğru davanın yazdırıldığını kontrol et
+      assertTrue(output.contains("Case ID: 1")); 
   }
 
   
   @Test
   public void testPrintSortedCasesFileNotFound() {
-      // FILE_NAME'i yanlış bir dosyaya yönlendir
+      
       LegalCase.FILE_NAME = "non_existent_file.bin";
 
-      // Çıkışı yakalamak için
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
-      // printSortedCases çağrılır
+      
       boolean result = LegalCase.printSortedCases();
 
-      // Kontroller
-      assertFalse(result); // Fonksiyon false döndürmeli
+     
+      assertFalse(result); 
       String output = outContent.toString();
   }
 
 
   @Test
   public void testSplitNonLeafNode() {
-      // Yaprak olmayan bir düğüm oluştur
-      BPlusTreeNode parentNode = new BPlusTreeNode(false); // Kök düğüm
-      BPlusTreeNode childNode = new BPlusTreeNode(false); // Yaprak olmayan düğüm
-      BPlusTreeNode grandChildNode1 = new BPlusTreeNode(true); // Yaprak düğüm
-      BPlusTreeNode grandChildNode2 = new BPlusTreeNode(true); // Yaprak düğüm
+      
+      BPlusTreeNode parentNode = new BPlusTreeNode(false); 
+      BPlusTreeNode childNode = new BPlusTreeNode(false); 
+      BPlusTreeNode grandChildNode1 = new BPlusTreeNode(true); 
+      BPlusTreeNode grandChildNode2 = new BPlusTreeNode(true); 
 
-      // Çocuk düğümleri doldur
+     
       childNode.children[0] = grandChildNode1;
       childNode.children[1] = grandChildNode2;
       childNode.numKeys = 2;
 
-      // Parent düğümün bir çocuğu olarak bu düğümü ayarla
+      
       parentNode.children[0] = childNode;
 
-      // ChildNode'a anahtarlar ekle
+      
       for (int i = 0; i < BPlusTreeNode.MAX; i++) {
           childNode.keys[i] = i;
           childNode.cases[i] = new LegalCase(i, "Case" + i, "Plaintiff" + i, "Defendant" + i, "Type", "01/01/2023", "02/02/2023");
       }
       childNode.numKeys = BPlusTreeNode.MAX;
 
-      // Split işlemini tetikle
+    
       LegalCase.split(parentNode, childNode);
 
-      // Kontroller
-      assertNotNull(parentNode.children[1]); // Yeni düğüm eklendi mi?
-      assertNotNull(childNode.children[0]); // Orijinal çocuk düğümleri korundu mu?
-      assertNotNull(childNode.children[1]); // Orijinal çocuk düğümleri korundu mu?
-      assertFalse(childNode.isLeaf); // Çocuk düğüm yaprak değil mi?
+ 
+      assertNotNull(parentNode.children[1]);
+      assertNotNull(childNode.children[0]); 
+      assertNotNull(childNode.children[1]); 
+      assertFalse(childNode.isLeaf); 
   }
 
   
   @Test
   public void testcasesThatMayBeConnectedMenu() throws IOException {
-      // Test dosyasını oluştur
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+     
+      TestUtility.createTestCaseFile(); 
       String input = "1\n\n11"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -576,10 +576,10 @@ public class LegalCaseTest {
   
   @Test
   public void testcasesThatMayBeConnectedMenu_InvalidInput() throws IOException {
-      // Test dosyasını oluştur
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+      
+      TestUtility.createTestCaseFile(); 
       String input = "17\n\1\n\n11"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -590,10 +590,10 @@ public class LegalCaseTest {
   
   @Test
   public void testcasesThatMayAriseMenu() throws IOException {
-      // Test dosyasını oluştur
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+      
+      TestUtility.createTestCaseFile(); 
       String input = "1\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -604,10 +604,10 @@ public class LegalCaseTest {
   
   @Test
   public void testcasesThatMayAriseMenu_InvalidInput() throws IOException {
-      // Test dosyasını oluştur
-      TestUtility.createTestCaseFile(); // Test dosyasını hazırla
+     
+      TestUtility.createTestCaseFile(); 
       String input = "13\nasd\n1\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -618,10 +618,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdisplayPlaintiffs() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "N\nP\nQ\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -631,10 +631,10 @@ public class LegalCaseTest {
 
   @Test
   public void testdisplayPlaintiffsNoAvailable() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "a\nP\nQ\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -644,10 +644,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdisplayNoPlaintiffs() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "N\nN\nN\nN\nN\nQ\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -657,10 +657,10 @@ public class LegalCaseTest {
  
   @Test
   public void testCreateDocument() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "1\n\n\n\n\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -670,10 +670,10 @@ public class LegalCaseTest {
   
   @Test
   public void testCreateDocumenIDnotFound() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "18\n1\n\n\n\n\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -683,10 +683,10 @@ public class LegalCaseTest {
 
   @Test
   public void testCreateDocumenIDnotnumeric() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "abc\n1\n\n\n\n\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -696,40 +696,40 @@ public class LegalCaseTest {
   
   @Test
   public void testCreateDocument_FileNotFound() {
-      // Dosyanın mevcut olmadığından emin ol
+    
       File file = new File(TestUtility.TEST_CASE_FILE);
       if (file.exists()) {
       
       }
       String input = "\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
-      // Çıktıyı yakalamak için akışı yönlendir
+      
       System.setOut(new PrintStream(outContent));
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       boolean result = LegalCase.createDocument();
-      assertFalse(result); // Dosya yoksa false dönmeli
+      assertFalse(result); 
       
   }
   @Test
   public void testIsFileEmpty_FileDoesNotExist() {
-      // Dosyanın mevcut olmadığından emin ol
+      
       File file = new File(TestUtility.TEST_CASE_FILE);
       if (file.exists()) {
           file.delete();
       }
-      // Metodu çağır ve sonucu kontrol et
+      
       boolean result = LegalCase.isFileEmpty(TestUtility.TEST_CASE_FILE);
-      assertTrue(result); // Dosya yoksa, boş kabul edilmeli
+      assertTrue(result); 
   }
 
   @Test
   public void testCreateDocument_Invalidİnput() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "sdf\1\n\n\n\n\n\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -741,10 +741,10 @@ public class LegalCaseTest {
   
   @Test
   public void testallDocuments() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -754,28 +754,28 @@ public class LegalCaseTest {
   
   @Test
   public void testAllDocuments_FileNotFound() {
-      // Test için geçici bir dosya adı
+     
       String tempFileName = "temp_document_file.bin";
 
-      // Dosya mevcut olmadığından emin ol
+     
       File tempFile = new File(tempFileName);
       if (tempFile.exists()) {
          
       }
 
-      // DOCUMENT_FILE_NAME değerini geçici olarak değiştir
+     
       String originalDocumentFileName = LegalCase.DOCUMENT_FILE_NAME;
       LegalCase.DOCUMENT_FILE_NAME = tempFileName;
 
-      // Çıktıyı yakalamak için ByteArrayOutputStream kullan
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
-      // allDocuments metodunu çağır
+    
       boolean result = LegalCase.allDocuments();
 
-      // Doğrulamalar
-      assertFalse(result); // Dosya bulunamadığından false dönmeli
+  
+      assertFalse(result); 
       String output = outContent.toString();
      
   }
@@ -785,10 +785,10 @@ public class LegalCaseTest {
   
   @Test
   public void testsearchingWithCaseTitle() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "a\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -801,7 +801,7 @@ public class LegalCaseTest {
       int[] lps = new int[pattern.length()];
       LegalCase.computeLPSArray(pattern, pattern.length(), lps);
 
-      // Beklenen LPS dizisi
+     
       int[] expectedLPS = {0, 0, 1, 2, 0, 1, 2, 3, 4};
       assertArrayEquals(expectedLPS, lps);
   }
@@ -810,22 +810,22 @@ public class LegalCaseTest {
   public void testKMPSearch_PatternFound() {
       String pattern = "ABAB";
       String text = "ABABDABACDABABCABAB";
-      assertTrue(LegalCase.KMPSearch(pattern, text)); // Eşleşme olmalı
+      assertTrue(LegalCase.KMPSearch(pattern, text)); 
   }
 
   @Test
   public void testKMPSearch_PatternNotFound() {
       String pattern = "XYZ";
       String text = "ABABDABACDABABCABAB";
-      assertFalse(LegalCase.KMPSearch(pattern, text)); // Eşleşme olmamalı
+      assertFalse(LegalCase.KMPSearch(pattern, text)); 
   }
 
   @Test
   public void testsearchingWithCaseTitle_NoMatching() throws IOException {
-      // Test dosyasını oluştur
+ 
       TestUtility.createTestCaseFile();
       String input = "x\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -835,23 +835,25 @@ public class LegalCaseTest {
   
   @Test
   public void testsearchingWithCaseTitlefirstEnter() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
-      String input = "\n\\a\n\n"; // `\a` metin olarak yazılır, kaçış dizisi olarak algılanmaz
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      String input = "\n\\a\n\n"; 
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
       boolean result = LegalCase.searchingWithCaseTitle();
-      assertTrue(result); 
+      String output = outContent.toString();
+      assertTrue(output.contains("Invalid input! Please enter a valid case title."));
+      assertTrue(output.contains("Enter the Case Title to search: "));
 }
   
   @Test
   public void testsearchByID() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "1\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -861,10 +863,10 @@ public class LegalCaseTest {
   
   @Test
   public void testsearchByID_NoMatch() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "178\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -874,7 +876,7 @@ public class LegalCaseTest {
   
   @Test
   public void testSearchInHashTable() {
-      // Hash tablosunu hazırlayın
+    
       int caseIDToSearch = 101;
       LegalCase case1 = new LegalCase(101, "Test Case 1", "Plaintiff 1", "Defendant 1", "Civil", "01/01/2023", "05/01/2023");
 
@@ -886,20 +888,20 @@ public class LegalCaseTest {
       LegalCase.hashTableCases[index] = case1;
       LegalCase.hashTableProbing[index] = case1.caseID;
 
-      // Başarılı arama testi
+      
       assertEquals(case1, LegalCase.searchInHashTable(caseIDToSearch));
 
-      // Başarısız arama testi
+      
       assertNull(LegalCase.searchInHashTable(999));
   }
   
   
   @Test
   public void testsearchByID_İnvalidİnput() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "x\n1\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -910,10 +912,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdeleteCaset() throws IOException {
-      // Test dosyasını oluştur
+      
       TestUtility.createTestCaseFile();
       String input = "1\n\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -923,10 +925,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdeleteCase_InvalidInput() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "19\n\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -936,10 +938,10 @@ public class LegalCaseTest {
  
   @Test
   public void testdeleteCase_NonNumericInput() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
-      String input = "An\n1\n\n"; // `\1` yerine `1` kullanılabilir.
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      String input = "An\n1\n\n"; 
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -949,10 +951,10 @@ public class LegalCaseTest {
   
   @Test
   public void incorrectDeletionCase() throws IOException {
-      // Test dosyasını oluştur
+   
       TestUtility.createTestCaseFile();
-      String input = "yn"; // `\1` yerine `1` kullanılabilir.
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      String input = "yn"; 
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -963,40 +965,40 @@ public class LegalCaseTest {
   
   @Test
   public void testPopDeletedCase_WithPreloadedCases() {
-      // Test dosyasını kullanarak davaları yükleyin
+      
       TestUtility.createTestCaseFile();
       
-      // Test için bir dava ekle
+      
       LegalCase testCase = new LegalCase(1, "Case1", "Plaintiff1", "Defendant1", "Type1", "01/01/2023", "05/05/2023");
       LegalCase.deletedCasesStack.push(testCase);
 
-      // popDeletedCase metodunu çağır ve sonucu kontrol et
+     
       LegalCase result = LegalCase.popDeletedCase();
-      assertNotNull(result); // Geri dönen dava null olmamalı
-      assertEquals(1, result.caseID); // Dava ID'si kontrol et
-      assertTrue(LegalCase.deletedCasesStack.isEmpty()); // Yığın boş olmalı
+      assertNotNull(result); 
+      assertEquals(1, result.caseID); 
+      assertTrue(LegalCase.deletedCasesStack.isEmpty()); 
   }
 
   @Test
   public void testIsDeleted_WithPreloadedCases() {
-      // Test dosyasını kullanarak davaları yükleyin
+     
       TestUtility.createTestCaseFile();
       
-      // Test için bir dava ekle
+
       LegalCase testCase = new LegalCase(3, "Case3", "Plaintiff3", "Defendant3", "Type3", "03/01/2023", "07/07/2023");
       LegalCase.deletedCasesStack.push(testCase);
 
-      // isDeleted metodunu çağır ve sonucu kontrol et
-      assertTrue(LegalCase.isDeleted(3)); // Dava silinmiş olmalı
+    
+      assertTrue(LegalCase.isDeleted(3)); 
       
   }
   
   @Test
   public void testUndoDeleteCase_SuccessfulUndo() throws IOException, ClassNotFoundException {
-      // Silinen bir dava ekleyin
+    
       LegalCase case1 = new LegalCase(1, "Case1", "Plaintiff1", "Defendant1", "Type1", "01/01/2023", "05/05/2023");
       LegalCase.pushDeletedCase(case1);
-      // Geri alma işlemini test et
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
       boolean result = LegalCase.undoDeleteCase();
@@ -1007,49 +1009,49 @@ public class LegalCaseTest {
   
   @Test
   public void testDoubleHashingInsert() {
-      // Test için tablo boyutunu ayarla
+     
       LegalCase.TABLE_SIZE = 10;
-      // Hash tablosunu temizle
+ 
       LegalCase.hashTableProbing = new int[LegalCase.TABLE_SIZE];
       for (int i = 0; i < LegalCase.TABLE_SIZE; i++) {
-          LegalCase.hashTableProbing[i] = -1; // Tüm girişleri boş yap
+          LegalCase.hashTableProbing[i] = -1;
       }
-      // Geçerli bir caseID ekle
+    
       int caseID = 123456;
       boolean result = LegalCase.doubleHashingInsert(caseID);
-      // Test: Başarılı bir şekilde eklenmeli
+      
       assertTrue("Case ID should be successfully inserted into the hash table.", result);
-      // Eklenen değerin tabloda doğru konuma yerleştiğini kontrol et
+     
       int expectedIndex = LegalCase.doubleHashing(caseID, 0);
-      // Tabloyu tamamen doldur
+     
       for (int i = 1; i < LegalCase.TABLE_SIZE; i++) {
-          LegalCase.doubleHashingInsert(caseID + i); // Farklı caseID'ler ekle
+          LegalCase.doubleHashingInsert(caseID + i); 
       }
-      // Tablo doluyken ekleme yapmayı dene
+      
       result = LegalCase.doubleHashingInsert(caseID + 1000);
   }
 
   @Test
   public void testUndoDeletedCase() {
-      // Silinmiş davaları içeren yığını temizle
+     
       LegalCase.deletedCasesStack.clear();
-      // Test verisi: Silinmiş bir dava
+    
       LegalCase testCase = new LegalCase(12345, "Civil", "Test Title", "John Doe", "Jane Doe", "01/01/2024", "02/02/2024");
-      LegalCase.deletedCasesStack.push(testCase); // Yığına ekle
-      // Kullanıcı girişi: Geri alma isteği
-      String input = "y\n"; // 'y' ile onaylıyor
+      LegalCase.deletedCasesStack.push(testCase); 
+      
+      String input = "y\n"; 
       System.setIn(new ByteArrayInputStream(input.getBytes()));
-      // Çıktıyı yakalamak için PrintStream
+    
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       PrintStream testPrintStream = new PrintStream(outContent);
-      // LegalCase sınıfı için gerekli ayarlar
+     
       LegalCase.scanner = new Scanner(System.in);
       LegalCase.out = testPrintStream;
-      // Test edilen metod: incorrectDeletionCase
+      
       boolean result = LegalCase.incorrectDeletionCase();
-      // Doğrulamalar
+     
       assertTrue("Undo operation should be successful.", result);
-      // Çıktıyı kontrol et
+     
       String output = outContent.toString();
       assertTrue("Last deleted case details should be displayed.", output.contains("Last deleted case details:"));
       assertTrue("Correct case ID should be displayed.", output.contains("Case ID: 12345"));
@@ -1059,35 +1061,35 @@ public class LegalCaseTest {
   
   @Test
   public void testNoPlaintiffsFound() {
-      // Çıkışı yakalamak için ByteArrayOutputStream kullan
+      
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       PrintStream originalOut = System.out;
       System.setOut(new PrintStream(outContent));
 
       try {
-          // Dosya yokmuş gibi davran
+        
           File file = new File(LegalCase.FILE_NAME);
           if (file.exists()) {
           }
 
-          // `displayPlaintiffs` çağrılır
+        
           boolean result = LegalCase.displayPlaintiffs();
 
-          // Kontroller
+      
           assertFalse("Function should return false when no plaintiffs are found.", result);
           String output = outContent.toString();
       } finally {
-          // Orijinal System.out'u geri yükle
+        
           System.setOut(originalOut);
       }
   }
   
   @Test
   public void testdocumentstoalldocuments() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "1\n\n4\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -1097,10 +1099,10 @@ public class LegalCaseTest {
 
   @Test
   public void testdocumentstosearchingWithCaseTitle2() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "2\nc\n\n4\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -1110,10 +1112,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdocumentstosearchingWithCaseID() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "3\n125\n\n4\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -1123,10 +1125,10 @@ public class LegalCaseTest {
   
   @Test
   public void testdocumentstosearchingWithCaseTitle() throws IOException {
-      // Test dosyasını oluştur
+    
       TestUtility.createTestCaseFile();
       String input = "2\\cn\n4\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -1136,10 +1138,10 @@ public class LegalCaseTest {
 
   @Test
   public void testdocumentsİnvalidInput() throws IOException {
-      // Test dosyasını oluştur
+     
       TestUtility.createTestCaseFile();
       String input = "5\n\n\n4\n"; 
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş akışını ayarla
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       System.setOut(new PrintStream(outContent));
@@ -1151,17 +1153,17 @@ public class LegalCaseTest {
   
   @Test
   public void testIsHashTableFull() {
-      // Hash table temizleme
+     
       for (int i = 0; i < LegalCase.TABLE_SIZE; i++) {
-          LegalCase.hashTableProbing[i] = -1; // Tüm slotları boş olarak işaretle
+          LegalCase.hashTableProbing[i] = -1;
       }
-      // Tablo boşken kontrol et
+     
       assertFalse(LegalCase.isHashTableFull());
-      // Tabloyu tamamen doldur
+     
       for (int i = 0; i < LegalCase.TABLE_SIZE; i++) {
-          LegalCase.hashTableProbing[i] = i; // Her bir slotu dolu olarak işaretle
+          LegalCase.hashTableProbing[i] = i; 
       }
-      // Tablo doluyken kontrol et
+    
       assertTrue(LegalCase.isHashTableFull());
   }
  
@@ -1169,52 +1171,52 @@ public class LegalCaseTest {
   
   @Test
   public void testIsFileEmpty_FileExistsButEmpty() throws IOException {
-      // Geçici dosya adı belirle
+    
       String tempFileName = "temp_empty_file.bin";
 
-      // Boş bir dosya oluştur
+      
       File tempFile = new File(tempFileName);
       try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
-          // Boş dosya oluşturulmuş oluyor
+          
       }
 
-      // isFileEmpty metodunu çağır
+     
       boolean result = LegalCase.isFileEmpty(tempFileName);
 
-      // Doğrulamalar
-      assertTrue(result); // Dosya boşsa true dönmeli
+      
+      assertTrue(result); 
 
-      // Geçici dosyayı temizle
+      
       tempFile.delete();
   }
 
   @Test
   public void testIsFileEmpty_FileExistsAndNotEmpty() throws IOException {
-      // Geçici dosya adı belirle
+      
       String tempFileName = "temp_non_empty_file.bin";
 
-      // İçinde veri olan bir dosya oluştur
+      
       File tempFile = new File(tempFileName);
       try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(tempFile))) {
           oos.writeObject(new LegalCase(1, "Test Title", "John Doe", "Jane Smith", "Civil", "01/01/2023", "02/02/2023"));
       }
 
-      // isFileEmpty metodunu çağır
+     
       boolean result = LegalCase.isFileEmpty(tempFileName);
 
-      // Doğrulamalar
-      assertFalse(result); // Dosya doluysa false dönmeli
 
-      // Geçici dosyayı temizle
+      assertFalse(result);
+
+    
       tempFile.delete();
   }
 
   @Test
   public void testBPlusTreeInitialization() {
-      // B+ ağacını oluştur
+      
       BPlusTree tree = new BPlusTree();
 
-      // Başlangıç durumunu kontrol et
+      
       assertNull("The root of the B+ Tree should be null upon initialization.", tree.root);
   }
   
@@ -1223,7 +1225,7 @@ public class LegalCaseTest {
       TestUtility.createTestUserFile(huffmanTree);
 
       String input = "testUser\ntestPassword\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş simülasyonu
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, System.out);
@@ -1237,19 +1239,19 @@ public class LegalCaseTest {
       TestUtility.createTestUserFile(huffmanTree);
 
       String input = "testUser\ntestPassword\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş simülasyonu
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, System.out);
 
       boolean result = LegalCase.registerUser();
-      assertTrue(result); // Başarılı giriş bekleniyor
+      assertTrue(result); 
   }
   
   @Test
   public void testMainEntrytoExit() throws IOException {
 	  String input = "3\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.mainEntry();
@@ -1259,18 +1261,30 @@ public class LegalCaseTest {
   @Test
   public void testMainEntrytoInvalidChoice() throws IOException {
 	  String input = "4\n3\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.mainEntry();
       assertFalse(result);
   }
   
+  
+  @Test
+  public void testMainEntrytoInvalidChoice2() throws IOException {
+	  String input = "f\n3\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); 
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
+      boolean result = legalcase.mainEntry();
+      assertFalse(result);
+  }
+  
+  
   @Test
   public void testMainEntrytoRegister() throws IOException {
 	  TestUtility.createTestUserFile(huffmanTree);
 	  String input = "1\n\testUser\ntestPassword\n3\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.mainEntry();
@@ -1281,7 +1295,7 @@ public class LegalCaseTest {
   public void testMainEntrytoLogin() throws IOException {
 	  TestUtility.createTestUserFile(huffmanTree);
 	  String input = "2\ntestUser\ntestPassword\n3\n";
-      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
       Scanner testScanner = new Scanner(System.in);
       LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
       boolean result = legalcase.mainEntry();
@@ -1290,14 +1304,14 @@ public class LegalCaseTest {
   
   @Test
   public void testMainSuccessfulLogin() throws IOException {
-      // Kullanıcı girişini ve ana menüye erişimi simüle et
-      String input = "1\nusername\npassword\n3\n"; // 1: Register, 3: Exit
+      
+      String input = "1\nusername\npassword\n3\n"; 
       System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-      // Testi çalıştır
+   
       LegalCaseApp.main(new String[]{});
 
-      // Çıktıyı doğrula
+      
       String output = outContent.toString();
       assertTrue(output.contains("===== User Authentication System ====="));
       assertTrue(output.contains("Enter username:"));
@@ -1307,14 +1321,14 @@ public class LegalCaseTest {
 
   @Test
   public void testMainExitWithoutLogin() throws IOException {
-      // Kullanıcı giriş yapmadan çıkmayı simüle et
+     
       String input = "3\n"; // 3: Exit
       System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-      // Testi çalıştır
+      
       LegalCaseApp.main(new String[]{});
 
-      // Çıktıyı doğrula
+     
       String output = outContent.toString();
       assertTrue(output.contains("===== User Authentication System ====="));
       assertTrue(output.contains("Exiting the application. Goodbye!"));
