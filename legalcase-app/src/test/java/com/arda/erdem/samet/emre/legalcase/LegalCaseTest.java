@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.junit.After;
@@ -62,24 +64,36 @@ public class LegalCaseTest {
    * @brief This method is executed before each test method.
    * @throws Exception
    */
+  
+  private HuffmanTree huffmanTree; // Global değişken
+
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
+      // Huffman ağacını ayarla
+      Map<Character, Integer> frequencyMap = new HashMap<>();
+      String example = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      for (char c : example.toCharArray()) {
+          frequencyMap.put(c, 1); // Her karakter için eşit frekans
+      }
+      huffmanTree = new HuffmanTree(frequencyMap);
+
+      // Test kullanıcı dosyasını oluştur
+      TestUtility.createTestUserFile(huffmanTree);
+
+      // Test ortamında dosya sabitini test dosyasına yönlendir
+      LegalCase.USER_FILE = TestUtility.TEST_USER_FILE;
   }
+
 
   /**
    * @brief This method is executed after each test method.
    * @throws Exception
    */
-  @After
-  public void tearDown() throws Exception {
-	  System.setOut(null);
-	  System.setIn(null);
-	  
-		    File file = new File("non_existent_file.bin");
-		    if (file.exists()) {
-		        file.delete();
-		    }
-		}
+ 
+	  @After
+	  public void tearDown() {
+	     
+	  }
 	  
   
   
@@ -223,7 +237,7 @@ public class LegalCaseTest {
       assertTrue(result);
   }
   
-  
+
    
   @Test
   public void testCaseTrackingınvalidchoice() throws IOException {
@@ -1204,10 +1218,112 @@ public class LegalCaseTest {
       assertNull("The root of the B+ Tree should be null upon initialization.", tree.root);
   }
   
+  @Test
+  public void testLoginUserSuccess() throws IOException {
+      TestUtility.createTestUserFile(huffmanTree);
+
+      String input = "testUser\ntestPassword\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş simülasyonu
+
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, System.out);
+
+      boolean result = LegalCase.loginUser();
+      assertFalse(result);
+  }
+
+  @Test
+  public void testRegisterUserSuccess() throws IOException {
+      TestUtility.createTestUserFile(huffmanTree);
+
+      String input = "testUser\ntestPassword\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Giriş simülasyonu
+
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, System.out);
+
+      boolean result = LegalCase.registerUser();
+      assertTrue(result); // Başarılı giriş bekleniyor
+  }
   
- 
+  @Test
+  public void testMainEntrytoExit() throws IOException {
+	  String input = "3\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
+      boolean result = legalcase.mainEntry();
+      assertFalse(result);
+  }
+  
+  @Test
+  public void testMainEntrytoInvalidChoice() throws IOException {
+	  String input = "4\n3\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
+      boolean result = legalcase.mainEntry();
+      assertFalse(result);
+  }
+  
+  @Test
+  public void testMainEntrytoRegister() throws IOException {
+	  TestUtility.createTestUserFile(huffmanTree);
+	  String input = "1\n\testUser\ntestPassword\n3\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
+      boolean result = legalcase.mainEntry();
+      assertFalse(result);
+  }
+  
+  @Test
+  public void testMainEntrytoLogin() throws IOException {
+	  TestUtility.createTestUserFile(huffmanTree);
+	  String input = "2\ntestUser\ntestPassword\n3\n";
+      System.setIn(new ByteArrayInputStream(input.getBytes())); // Girdiyi simüle et
+      Scanner testScanner = new Scanner(System.in);
+      LegalCase legalcase = new LegalCase(testScanner, new PrintStream(outContent));
+      boolean result = legalcase.mainEntry();
+      assertFalse(result);
+  }
+  
+  @Test
+  public void testMainSuccessfulLogin() throws IOException {
+      // Kullanıcı girişini ve ana menüye erişimi simüle et
+      String input = "1\nusername\npassword\n3\n"; // 1: Register, 3: Exit
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+      // Testi çalıştır
+      LegalCaseApp.main(new String[]{});
+
+      // Çıktıyı doğrula
+      String output = outContent.toString();
+      assertTrue(output.contains("===== User Authentication System ====="));
+      assertTrue(output.contains("Enter username:"));
+      assertTrue(output.contains("Enter password:"));
+      assertTrue(output.contains("Exiting the application. Goodbye!"));
+  }
+
+  @Test
+  public void testMainExitWithoutLogin() throws IOException {
+      // Kullanıcı giriş yapmadan çıkmayı simüle et
+      String input = "3\n"; // 3: Exit
+      System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+      // Testi çalıştır
+      LegalCaseApp.main(new String[]{});
+
+      // Çıktıyı doğrula
+      String output = outContent.toString();
+      assertTrue(output.contains("===== User Authentication System ====="));
+      assertTrue(output.contains("Exiting the application. Goodbye!"));
+  }
+  
+  
   
 }
+
 
 
       

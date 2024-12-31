@@ -144,7 +144,7 @@ public class LegalCase implements Serializable {
      *
      * @note Changing the file name requires updating all references to this constant.
      */
-    private static final String USER_FILE = "user.huff";
+    public static  String USER_FILE = "user.huff";
     
     /**
      * @brief Stores Huffman codes for characters.
@@ -668,7 +668,7 @@ public class LegalCase implements Serializable {
             i++; // Bir sonraki deneme
         }
 
-        out.println("Hash table is full. Cannot insert case ID: " + caseID);
+        
         return false;
         
     }
@@ -699,7 +699,7 @@ public class LegalCase implements Serializable {
             i++; // Bir sonraki deneme
         }
 
-        out.println("Hash table is full. Cannot insert case ID: " + caseID);
+        
         return false;
     }
 
@@ -810,7 +810,7 @@ public class LegalCase implements Serializable {
          while (hashTableProbing[(index + i * stepSize) % TABLE_SIZE] != -1) {
              i++; // Bir sonraki adımı dene
              if (i >= TABLE_SIZE) {
-                 out.println("Hash table is full. Cannot insert case ID: " + caseID);
+                 
                  return false; // Tablo dolu
              }
         
@@ -936,7 +936,7 @@ public class LegalCase implements Serializable {
              }
 
          } catch (IOException e) {
-             out.println("Error appending case to file: " + e.getMessage());
+             
          }
      }
 
@@ -1025,7 +1025,7 @@ public class LegalCase implements Serializable {
     	    } while (!inserted && attempt < LegalCase.MAX_ATTEMPTS);
 
     	    if (!inserted) {
-    	        out.println("Failed to insert Case ID after maximum attempts.");
+    	        
     	        return false;
     	    }
 
@@ -1061,14 +1061,14 @@ public class LegalCase implements Serializable {
     	                    int year = Integer.parseInt(parts[2]);
     	                    if (isValidDate(day, month, year)) {
     	                        break; // Geçerli bir tarih bulundu
-    	                    }
+    	                    } else {
+    	                        out.println("Invalid date! Please check the day, month, and year values.");
+    	     }
     	                } catch (NumberFormatException e) {
-    	                    out.println("Invalid date format! Please enter numbers only (dd/mm/yyyy).");
+    	                    
     	                    
     	                }
-    	            } else {
-    	                out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
-    	            }
+    	            } 
     	        } else {
     	            out.println("Invalid date format! Please enter the date in dd/mm/yyyy format.");
     	        }
@@ -1079,7 +1079,7 @@ public class LegalCase implements Serializable {
     	    findNextAvailableDate(sparseMatrix, scheduledDate);
 
     	    if (scheduledDate[0] == 0 && scheduledDate[1] == 0 && scheduledDate[2] == 0) {
-    	        out.println("No available date for scheduling.");
+    	       
     	        return false;
     	    }
 
@@ -1235,7 +1235,7 @@ public class LegalCase implements Serializable {
     	        }
 
     	    } catch (IOException | ClassNotFoundException e) {
-    	        out.println("Error reading cases: " + e.getClass().getName() + ": " + e.getMessage());
+    	        
     	    }
 
     	    return true;
@@ -1283,7 +1283,7 @@ public class LegalCase implements Serializable {
     int index = hashFunction(caseID);
     if (hashTableProbing[index] == caseID) {
         hashTableProbing[index] = -1; // Mark slot as empty
-        out.println("Case ID " + caseID + " removed from hash table.");
+        
     }
 }
     /**
@@ -1573,7 +1573,7 @@ public static boolean caseDates() {
             }
         }
     } catch (IOException | ClassNotFoundException e) {
-        out.println("Error reading cases: " + e.getMessage());
+        
         return false;
     }
 
@@ -1792,7 +1792,7 @@ public static boolean sortByID() {
             }
         }
     } catch (IOException | ClassNotFoundException e) {
-        System.out.println("Error reading cases: " + e.getMessage());
+        
         return false;
     }
 
@@ -2403,7 +2403,7 @@ public static boolean sortByID() {
 
                 out.println("Document saved successfully to " + DOCUMENT_FILE_NAME);
             } catch (IOException e) {
-                out.println("Error saving document: " + e.getMessage());
+                
             }
 			return false;
         }
@@ -2491,7 +2491,7 @@ public static boolean sortByID() {
                             }
                         }
                     } catch (IOException | ClassNotFoundException e) {
-                        out.println("Error reading cases: " + e.getMessage());
+                        
                         return false;
                     }
 
@@ -2643,7 +2643,7 @@ public static boolean sortByID() {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                out.println("Error reading document file: " + e.getMessage());
+                
                 return false;
             }
 
@@ -2794,7 +2794,7 @@ public static boolean sortByID() {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            out.println("Error reading document file: " + e.getMessage());
+           
             return false;
         }
 
@@ -2885,7 +2885,7 @@ public static boolean sortByID() {
         // Hash table'da arama
         LegalCase foundCase = searchInHashTable(id);
         if (foundCase != null) {
-            out.println("\n===== Case Found in Hash Table =====");
+            
             printCaseDetails(foundCase);
         } else {
             // Dosyada arama
@@ -3024,7 +3024,7 @@ public static boolean sortByID() {
      *
      * @see encodePassword(String) For encoding the password.
      */
-    private static boolean registerUser() {
+    static boolean registerUser() {
         clearScreen();
         out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -3039,11 +3039,9 @@ public static boolean sortByID() {
             writer.write(encodedUsername + ":" + encodedPassword);
             writer.newLine();
         } catch (IOException e) {
-            out.println("Error writing to file.");
+            
             return false;
         }
-
-        out.println("User registered successfully.");
         clearScreen();
         return true;
     }
@@ -3059,7 +3057,7 @@ public static boolean sortByID() {
      *
      * @see encodePassword(String) For encoding the password.
      */
-    private static boolean loginUser() {
+    public static boolean loginUser() {
         clearScreen();
         out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -3074,12 +3072,12 @@ public static boolean sortByID() {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(":");
                 if (parts[0].equals(encodedUsername) && parts[1].equals(encodedPassword)) {
-                    out.println("Login successful.");
+                    
                     return true;
                 }
             }
         } catch (IOException e) {
-            out.println("Error reading from file.");
+           
         }
 
         out.println("Invalid username or password.");
@@ -3140,21 +3138,13 @@ public static boolean sortByID() {
      * @note If a secure console is available, the password is read without displaying it on the screen.
      *       Otherwise, characters are masked as they are entered.
      */
-    private static String readPassword(Scanner scanner) {
-        Console console = System.console();
-        if (console != null) {
-            char[] passwordArray = console.readPassword();
-            return new String(passwordArray);
-        } else {
-            StringBuilder password = new StringBuilder();
-            while (true) {
-                char ch = scanner.nextLine().charAt(0);
-                if (ch == '\n') break;
-                password.append(ch);
-                out.print("*");
-            }
-            return password.toString();
-        }
+    public static String readPassword(Scanner scanner) {
+        out.print("Enter password : "); // Kullanıcıya bilgi ver
+        return scanner.nextLine(); // Parolayı açıkça okur
+    }
+    
+    
+
     }
 
-}
+

@@ -79,7 +79,7 @@ public class CustomQueue {
      */
     public void enqueue(int value) {
         if (rear == maxSize - 1) {
-            out.println("Queue is full. Cannot enqueue " + value);
+           
             return;
         }
         if (front == -1) front = 0;
@@ -95,7 +95,7 @@ public class CustomQueue {
      */
     public int dequeue() {
         if (isEmpty()) {
-            out.println("Queue is empty. Cannot dequeue.");
+           
             return -1;
         }
         int value = items[front++];
