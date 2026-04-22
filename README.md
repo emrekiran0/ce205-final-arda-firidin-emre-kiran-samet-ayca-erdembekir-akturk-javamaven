@@ -2,8 +2,6 @@
 
 A console-based **Legal Case Management System** built in Java, designed as a university course final project for **CE205 — Data Structures**. The application manages legal cases end-to-end — from registration and scheduling to document storage — while demonstrating practical use of advanced data structures and algorithms.
 
-> **Course:** CE205 Data Structures · Recep Tayyip Erdogan University  
-> **Built with:** Java 8 · Apache Maven · JUnit 4 · JaCoCo
 
 ---
 
